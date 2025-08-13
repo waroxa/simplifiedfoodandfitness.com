@@ -1,0 +1,12 @@
+/**
+ * Helper
+ * Create a chatbot with AI features for your website.
+ * Exclusively on https://1.envato.market/helper
+ *
+ * @encoding        UTF-8
+ * @version         1.0.25
+ * @copyright       (C) 2018 - 2023 Merkulove ( https://merkulov.design/ ). All rights reserved.
+ * @license         Envato License https://1.envato.market/KYbje
+ * @contributors    Cherviakov Vlad (vladchervjakov@gmail.com), Nemirovskiy Vitaliy (nemirovskiyvitaliy@gmail.com), Dmytro Merkulov (dmitry@merkulov.design)
+ * @support         help@merkulov.design
+ **/

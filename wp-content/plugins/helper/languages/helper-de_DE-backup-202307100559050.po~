@@ -1,0 +1,3549 @@
+# Copyright (C) 2023 Helper
+# This file is distributed under the same license as the Helper package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Helper\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2023-06-18 08:01+0000\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:"
+"1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2023-07-10 05:58+0000\n"
+"Last-Translator: \n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.4; wp-6.2.2"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:304
+msgid ""
+" You must enable DOM extension (Document Object Model) in PHP. It's used for "
+"HTML processing. Contact the support service of your hosting provider. They "
+"know what to do."
+msgstr ""
+" Sie müssen die DOM-Erweiterung (Document Object Model) in PHP aktivieren. "
+"Es wird für die HTML-Verarbeitung verwendet. Kontaktieren Sie den Support "
+"Ihres Hosting-Anbieters. Sie wissen, was zu tun ist."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:461
+msgid ""
+" Your server's clock is not in sync with network time protocol - NTP. "
+"Contact the support service of your hosting provider. They know what to do."
+msgstr ""
+" Die Uhr Ihres Servers ist nicht mit dem Netzwerkzeitprotokoll NTP "
+"synchronisiert. Kontaktieren Sie den Support Ihres Hosting-Anbieters. Sie "
+"wissen, was zu tun ist."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:353
+msgid ", but this is"
+msgstr ", aber das ist"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:550
+msgid ".htaccess file"
+msgstr ".htaccess-Datei"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:176
+msgid "12 hours format"
+msgstr "12-Stunden-Format"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:410
+msgid "Action button"
+msgstr "Aktionsknopf"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:339
+msgid "Activate"
+msgstr "aktivieren Sie"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:107
+msgid "Activated"
+msgstr "Aktiviert"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:361
+msgid "Activation"
+msgstr "Aktivierung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:388
+msgid "Activation FAQ'S"
+msgstr "Häufig gestellte Fragen zur Aktivierung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:418
+msgid ""
+"Activation of the plugin allows you to use all the functionality of the "
+"plugin on your site. In addition, in some cases, activating the plugin "
+"allows you to access additional features and capabilities of the plugin. "
+"Also, using an authored version of the plugin, you can be sure that you will "
+"not violate the license."
+msgstr ""
+"Durch die Aktivierung des Plugins können Sie alle Funktionen des Plugins auf "
+"Ihrer Website nutzen. Darüber hinaus können Sie durch die Aktivierung des "
+"Plugins in einigen Fällen auf zusätzliche Funktionen und Fähigkeiten des "
+"Plugins zugreifen. Wenn Sie eine verfasste Version des Plugins verwenden, "
+"können Sie außerdem sicher sein, dass Sie nicht gegen die Lizenz verstoßen."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:360
+msgid "Active"
+msgstr "Aktiv"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterPlugins.php:90,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterPlugins.php:123
+msgid "Active Plugins"
+msgstr "Aktive Plugins"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:717,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:817
+msgid "Add bot message"
+msgstr "Bot-Nachricht hinzufügen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:284
+msgid "Add custom CSS here."
+msgstr "Fügen Sie hier benutzerdefiniertes CSS hinzu."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:53
+msgid "Add initial message"
+msgstr "Fügen Sie die erste Nachricht hinzu"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:412
+msgid "Add messages"
+msgstr "Nachrichten hinzufügen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:57,
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:58
+msgid "Add New"
+msgstr "Neue hinzufügen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:545
+msgid "Add question/answer"
+msgstr "Frage/Antwort hinzufügen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:73
+msgid "Admin Email"
+msgstr "Admin-E-Mail"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:225
+msgid "AI"
+msgstr "KI"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:288
+msgid "ALL"
+msgstr "ALLE"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:567
+msgid "All right"
+msgstr "In Ordnung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1039
+msgid "Allowed file types:"
+msgstr "Zulässige Dateitypen:"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:545,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:262
+msgid "Animation delay"
+msgstr "Animationsverzögerung"
+
+#. translators: %s: animation delay
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:548
+msgid "Animation delay %s seconds."
+msgstr "Animationsverzögerung %s Sekunden."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:527,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:238
+msgid "Animation duration"
+msgstr "Animationsdauer"
+
+#. translators: %s: animation duration
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:530
+msgid "Animation duration %s seconds."
+msgstr "Animationsdauer %s Sekunden."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:280
+msgid ""
+"Answer questions that users have about the text according to the text above."
+msgstr ""
+"Beantworten Sie Fragen, die Benutzer zum Text haben, gemäß dem obigen Text."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:289
+msgid "ANY"
+msgstr "BELIEBIG"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:226
+msgid "Artificial Intelligence Settings"
+msgstr "Einstellungen für künstliche Intelligenz"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:787
+msgid "Ask user email"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:788
+msgid "Ask user email address for example \"Provide your email address\""
+msgstr ""
+"Fragen Sie den Benutzer nach der E-Mail-Adresse, zum Beispiel „Geben Sie "
+"Ihre E-Mail-Adresse an.“"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:800,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:801
+msgid "Ask user message"
+msgstr "Benutzernachricht fragen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:311
+msgid "Assignments"
+msgstr "Zuordnungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:312
+msgid "Assignments Settings"
+msgstr "Aufgabeneinstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:197
+msgid "Aura animation"
+msgstr "Aura-Animation"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:109
+msgid ""
+"Author has banned the use of this plugin for sites representing terrorist "
+"states, associations and formations. Details:"
+msgstr ""
+"Der Autor hat die Verwendung dieses Plugins für Websites verboten, die "
+"terroristische Staaten, Vereinigungen und Formationen repräsentieren. "
+"Einzelheiten:"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:173
+msgid ""
+"Author has banned the use of this plugin in states recognized as sponsors of "
+"terrorism. Details:"
+msgstr ""
+"Der Autor hat die Verwendung dieses Plugins in Staaten verboten, die als "
+"Sponsoren des Terrorismus gelten. Einzelheiten:"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:63
+msgid "Auto-submit"
+msgstr "Automatisch einreichen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:877,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:54,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:103
+msgid "Avatar"
+msgstr "Benutzerbild"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:208
+#, fuzzy
+#| msgid "Bot border radius"
+msgid "Avatar border radius"
+msgstr "Bot-Randradius"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:151
+msgid "Avatar box size"
+msgstr "Größe der Avatar-Box"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:167,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:168
+msgid "Avatar gap"
+msgstr "Avatar-Lücke"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:153
+msgid "Avatar icon"
+msgstr "Avatar-Symbol"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:165
+msgid "Avatar image"
+msgstr "Avatar-Bild"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:184
+msgid "Avatar margin"
+msgstr "Avatar-Rand"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:196
+msgid "Avatar padding"
+msgstr "Avatar-Polsterung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:150
+msgid "Avatar size"
+msgstr "Avatargröße"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:69
+msgid "Back to start menu"
+msgstr "Zurück zum Startmenü"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:265,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:345,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:470
+msgid "Background Color"
+msgstr "Hintergrundfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:99,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:100,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:122,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:126,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:124,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:296,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:113,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:133
+msgid "Background color"
+msgstr "Hintergrundfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:266,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:346
+msgid "Background color of the bot message."
+msgstr "Hintergrundfarbe der Bot-Nachricht."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:471
+msgid "Background color of the message container."
+msgstr "Hintergrundfarbe des Nachrichtencontainers."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:129
+msgid "Background hover color"
+msgstr "Hover-Hintergrundfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:183,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:187
+msgid "Blur"
+msgstr "Verwischen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:177,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:138
+msgid "Border color"
+msgstr "Randfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:196,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:152,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:153,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:101
+msgid "Border radius"
+msgstr "Grenzradius"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:159,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:120
+msgid "Border style"
+msgstr "Grenzstil"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:184,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:145
+msgid "Border width"
+msgstr "Rahmenbreite"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:519
+msgid "Bot answer"
+msgstr "Bot-Antwort"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:53
+msgid "Bot avatar"
+msgstr "Bot-Avatar"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:89
+msgid "Bot background"
+msgstr "Bot-Hintergrund"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:925,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:926
+msgid "Bot behavior"
+msgstr "Bot-Verhalten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:59,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:97
+msgid "Bot commands"
+msgstr "Bot-Befehle"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:310,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:316
+msgid "Bot commands button"
+msgstr "Schaltfläche „Bot-Befehle“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:323
+msgid "Bot commands icon"
+msgstr "Symbol für Bot-Befehle"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:335
+msgid "Bot commands text"
+msgstr "Bot-Befehlstext"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:401
+msgid "Bot error message"
+msgstr "Bot-Fehlermeldung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:90
+msgid "Bot features"
+msgstr "Bot-Funktionen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:69
+msgid "Bot icon"
+msgstr "Bot-Symbol"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:252
+msgid "Bot Message"
+msgstr "Bot-Nachricht"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:378,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:703,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:704
+msgid "Bot message"
+msgstr "Bot-Nachricht"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:297
+msgid "Bot message animation"
+msgstr "Bot-Nachrichtenanimation"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:253
+msgid "Bot message bubble settings"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:108
+msgid "Bot position"
+msgstr "Bot-Position"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:175,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:176
+msgid "Bot respond delay"
+msgstr "Bot-Antwortverzögerung"
+
+#. translators: %s: seconds
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:186
+msgid "Bot respond delay %s seconds."
+msgstr "Bot-Antwortverzögerung %s Sekunden."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:367
+msgid "Bot response messages"
+msgstr "Bot-Antwortnachrichten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:390
+msgid "Bot success message"
+msgstr "Bot-Erfolgsmeldung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:152,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:153,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:154
+msgid "Bot typing animation"
+msgstr "Bot-Tippanimation"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:160,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:164
+msgid "Box shadow"
+msgstr "Box Schatten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:190,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:194
+msgid "Box shadow color"
+msgstr "Box-Schattenfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:172,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:176
+msgid "Box shadow offset"
+msgstr "Box-Schattenversatz"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:547,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:559
+msgid "Browsers"
+msgstr "Browser"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:288
+msgid "Button caption"
+msgstr "Schaltflächenbeschriftung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:83
+msgid "Button color"
+msgstr "Knopffarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:71,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:224
+msgid "Button icon"
+msgstr "Schaltflächensymbol"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:474,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:596,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:767
+msgid "Button name"
+msgstr "Schaltflächenname"
+
+#. translators: %s: size
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:93
+msgid "Button size %s pixels."
+msgstr "Schaltflächengröße %s Pixel."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:700
+msgid ""
+"By selecting the specific assignments you can limit where plugin should or "
+"shouldn't be published. To have it published on all pages, simply do not "
+"specify any assignments."
+msgstr ""
+"Durch Auswahl der spezifischen Zuweisungen können Sie einschränken, wo das "
+"Plugin veröffentlicht werden soll oder nicht. Um es auf allen Seiten zu "
+"veröffentlichen, geben Sie einfach keine Zuordnungen an."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:482
+msgid "Call"
+msgstr "Forderung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:467
+msgid "Call button"
+msgstr "Anrufknopf"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:494
+msgid "Call button icon"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:487
+msgid "Call button link"
+msgstr "Link zur Anrufschaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:480
+msgid "Call button text"
+msgstr "Text der Anrufschaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:403
+msgid "Can I use one Purchase Code on multiple sites?"
+msgstr "Kann ich einen Kaufcode auf mehreren Websites verwenden?"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:244
+msgid "Caption"
+msgstr "Untertitel"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:325
+msgid "Caption text hover color"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:91
+msgid "Center"
+msgstr "Center"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:539
+msgid "Chat"
+msgstr "Plaudern"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:223
+msgid "Chat bot appearance animation"
+msgstr "Animation des Aussehens des Chat-Bots"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:869
+msgid "Chat Bubble"
+msgstr "Chat-Blase"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:870
+msgid "Chat Bubble settings"
+msgstr "Chat-Blase-Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:885
+msgid "Chat Container"
+msgstr "Chat-Container"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:886
+msgid "Chat Container settings"
+msgstr "Chat-Container-Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:69
+msgid "Chat container styles"
+msgstr "Chat-Container-Stile"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:853
+msgid "Chat Footer"
+msgstr "Chat-Fußzeile"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:854
+msgid "Chat Footer settings"
+msgstr "Einstellungen für die Chat-Fußzeile"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:901
+msgid "Chat Header"
+msgstr "Chat-Header"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:184
+msgid "Chat header"
+msgstr "Chat-Header"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:902
+msgid "Chat Header settings"
+msgstr "Chat-Header-Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:215,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:216
+msgid "Chat header text"
+msgstr "Chat-Kopfzeilentext"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:198,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:199
+msgid "Chat header text size"
+msgstr "Textgröße im Chat-Header"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:150
+msgid "Chat message top line settings to display message name and time."
+msgstr ""
+"Einstellungen für die oberste Zeile der Chat-Nachricht, um den Namen und die "
+"Uhrzeit der Nachricht anzuzeigen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:909
+msgid "Chat Popup"
+msgstr "Chat-Popup"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:910
+msgid "Chat Popup Settings"
+msgstr "Chat-Popup-Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:76
+msgid "Chat popup styles"
+msgstr "Chat-Popup-Stile"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:79
+msgid "Chat toolbar settings"
+msgstr "Einstellungen der Chat-Symbolleiste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:213
+msgid "Chat window close button settings"
+msgstr "Einstellungen für die Schaltfläche zum Schließen des Chatfensters"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:72
+msgid "Chat window footer styles"
+msgstr "Fußzeilenstile für Chatfenster"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:71
+msgid "Chat window header settings"
+msgstr "Einstellungen für die Kopfzeile des Chatfensters"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:178
+#, fuzzy
+#| msgid "Chat window heater text settings"
+msgid "Chat window header text settings"
+msgstr "Texteinstellungen für die Chat-Fensterheizung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:220
+msgid "Chat with us"
+msgstr "chatte mit uns"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:109
+msgid "Choose bot position or use shortcode"
+msgstr "Wählen Sie die Bot-Position oder verwenden Sie den Shortcode"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:252
+msgid "Choose content tha will be included in your prompt"
+msgstr ""
+"Wählen Sie Inhalte aus, die in Ihre Eingabeaufforderung aufgenommen werden "
+"sollen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:62,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:63,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:111,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:112
+msgid "Choose image"
+msgstr "Bild auswählen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:307
+msgid "Choose model. Learn more about models at "
+msgstr "Modell auswählen. Erfahren Sie mehr über Modelle unter"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:87
+msgid "Choose open bot button alignment"
+msgstr "Wählen Sie die Ausrichtung der Bot-Schaltfläche öffnen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:566
+msgid "Choose question"
+msgstr "Frage auswählen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:122
+msgid ""
+"Choose which data to delete upon using the \"Delete\" action in the "
+"\"Plugins\" admin page."
+msgstr ""
+"Wählen Sie aus, welche Daten gelöscht werden sollen, indem Sie die Aktion "
+"„Löschen“ auf der Admin-Seite „Plugins“ verwenden."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabUpdates.php:98
+msgid "Clear cache"
+msgstr "Cache leeren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:219
+msgid "Close button"
+msgstr "Schaltfläche „Schließen“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:226
+msgid "Close button margin"
+msgstr "Schaltflächenrand schließen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:238
+msgid "Close button padding"
+msgstr "Knopfpolsterung schließen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:250
+msgid "Close icon"
+msgstr "Schließen-Symbol"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:102
+msgid "CodeCanyon License"
+msgstr "CodeCanyon-Lizenz"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:586,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:587
+msgid "Collect data"
+msgstr "Daten sammeln"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:95
+msgid "Collect user data"
+msgstr "Sammeln Sie Benutzerdaten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:605
+msgid "Collects data that user provided in chat bot to database"
+msgstr ""
+"Sammelt Daten, die der Benutzer im Chat-Bot zur Datenbank bereitgestellt hat"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:117,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:289,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:258,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:338,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:456
+msgid "Color"
+msgstr "Farbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:259,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:339
+msgid "Color of the bot message."
+msgstr "Farbe der Bot-Nachricht."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:457
+msgid "Color of the message container."
+msgstr "Farbe des Nachrichtencontainers."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:210
+msgid "Color of the message upper-line."
+msgstr "Farbe der oberen Zeile der Nachricht."
+
+#. translators: %s: avatar gap in pixels.
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:171
+msgid "Current avatar gap is %s pixels."
+msgstr "Die aktuelle Avatar-Lücke beträgt %s Pixel."
+
+#. translators: %s: avatar size in pixels.
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:154
+msgid "Current avatar size is %s pixels."
+msgstr "Die aktuelle Avatargröße beträgt %s Pixel."
+
+#. translators: %s: Current font-size
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:254
+msgid "Current caption font-size is: %s pixel(s)"
+msgstr "Die aktuelle Schriftgröße der Untertitel beträgt: %s Pixel(s)"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:378
+msgid "Current date/time:"
+msgstr "Aktuelles Datum/Uhrzeit:"
+
+#. translators: %s: font size
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:170
+msgid "Current font size: %s pixels."
+msgstr "Aktuelle Schriftgröße: %s Pixel."
+
+#. translators: %s: Current font-size
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:195
+msgid "Current footer font-size is: %s pixel(s)"
+msgstr "Aktuelle Schriftgröße der Fußzeile ist: %s Pixel(s)"
+
+#. translators: %s: text size
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:202
+msgid "Current heading size: %s pixels."
+msgstr "Aktuelle Überschriftengröße: %s Pixel."
+
+#. translators: %s: Current icon size
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:277
+msgid "Current icon size is: %s pixel(s)"
+msgstr "Die aktuelle Symbolgröße beträgt: %s Pixel(s)"
+
+#. translators: %s: icon size
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:140,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:265
+msgid "Current icon size: %s pixels."
+msgstr "Aktuelle Symbolgröße: %s Pixel."
+
+#. translators: %s: Current font-size
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:105
+msgid "Current input font-size is: %s pixel(s)"
+msgstr "Aktuelle Eingabeschriftgröße ist: %s Pixel(s)"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:255,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:653
+msgid "Custom"
+msgstr "Brauch"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:277,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:278
+msgid "Custom CSS"
+msgstr "Benutzerdefinierte CSS"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:671
+msgid "Custom PHP"
+msgstr "Benutzerdefiniertes PHP"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:165,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:126
+msgid "Dashed"
+msgstr "Gestrichelt"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:361
+msgid "Date & Time"
+msgstr "Terminzeit"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:74
+msgid "Debug Mode"
+msgstr "Debug-Modus"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:183
+msgid "Delay"
+msgstr "Verzögerung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:206
+msgid "Delay animation"
+msgstr "Animation verzögern"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:177
+msgid ""
+"Delay before answering, simulating the delay of a real person before "
+"replying to a message"
+msgstr ""
+"Verzögerung vor der Beantwortung, wodurch die Verzögerung einer realen "
+"Person simuliert wird, bevor sie auf eine Nachricht antwortet"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:128
+msgid "Delete plugin"
+msgstr "Plugin löschen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:490
+msgid "Delete plugin and settings"
+msgstr "Plugin und Einstellungen löschen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:489
+msgid "Delete plugin only"
+msgstr "Nur Plugin löschen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:491
+msgid "Delete plugin, settings and data"
+msgstr "Plugin, Einstellungen und Daten löschen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:481
+msgid "Desktop"
+msgstr "Desktop"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:130,
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:194
+msgid "Details"
+msgstr "Einzelheiten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:468
+msgid "Devices"
+msgstr "Geräte"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:214
+msgid ""
+"Display and style settings for the close button inside the header of the "
+"chat window. If the button is disabled, then you can close the popup using "
+"the ESC button."
+msgstr ""
+"Anzeige- und Stileinstellungen für die Schaltfläche „Schließen“ in der "
+"Kopfzeile des Chatfensters. Wenn die Schaltfläche deaktiviert ist, können "
+"Sie das Popup mit der ESC-Taste schließen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:179
+msgid ""
+"Display and style settings for the header inside the header of the chat "
+"window."
+msgstr ""
+"Anzeige- und Stileinstellungen für die Kopfzeile innerhalb der Kopfzeile des "
+"Chatfensters."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:55
+msgid "Display bot avatar"
+msgstr "Bot-Avatar anzeigen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:317
+msgid "Display bot commands button."
+msgstr "Schaltfläche „Bot-Befehle anzeigen“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:185
+msgid "Display chat header."
+msgstr "Chat-Header anzeigen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:220
+msgid "Display close button."
+msgstr "Schaltfläche zum Schließen der Anzeige."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:184
+msgid "Display message controls"
+msgstr "Nachrichtensteuerelemente anzeigen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:156
+msgid "Display message name."
+msgstr "Nachrichtenname anzeigen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:170
+msgid "Display message timestamp."
+msgstr "Zeitstempel der Nachricht anzeigen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:155
+msgid "Display name"
+msgstr "Anzeigename"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:169
+msgid "Display time"
+msgstr "Anzeigezeit"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:177
+msgid "Display time in 12 hours format."
+msgstr "Anzeigezeit im 12-Stunden-Format."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:104
+msgid "Display user avatar"
+msgstr "Benutzeravatar anzeigen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginHelper.php:141,
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginHelper.php:141,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:189
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:164,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:127
+msgid "Dotted"
+msgstr "Gepunktet"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:167,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:128
+msgid "Double"
+msgstr "Doppelt"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginUpdater.php:446
+msgid "download "
+msgstr "herunterladen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:146
+msgid "Drag & Drop file here"
+msgstr "Datei per Drag & Drop hierher ziehen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:955
+msgid "Drag and drop or click on the form to add file"
+msgstr ""
+"Ziehen Sie das Formular per Drag-and-Drop oder klicken Sie darauf, um eine "
+"Datei hinzuzufügen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1036
+msgid "Drag and drop or click on the form to add file."
+msgstr ""
+"Ziehen Sie das Formular per Drag-and-Drop oder klicken Sie darauf, um eine "
+"Datei hinzuzufügen."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1027
+msgid "Drag and drop or click on the form to replace file."
+msgstr ""
+"Ziehen Sie das Formular per Drag-and-Drop oder klicken Sie darauf, um die "
+"Datei zu ersetzen."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:950
+msgid "Drag and drop or click on the form to replace file. |"
+msgstr ""
+"Ziehen Sie das Formular per Drag-and-Drop oder klicken Sie darauf, um die "
+"Datei zu ersetzen. |"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:943,
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1007
+msgid "Drop file here or click to upload"
+msgstr "Legen Sie die Datei hier ab oder klicken Sie zum Hochladen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:945,
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1014
+msgid "Drop file here or click to upload."
+msgstr "Legen Sie die Datei hier ab oder klicken Sie zum Hochladen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:425
+msgid "E-mail"
+msgstr "Email"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:60
+msgid "Edit User Data"
+msgstr "Benutzerdaten bearbeiten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:651
+msgid "Email"
+msgstr "Email"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:198
+msgid "Enable aura animation on hover"
+msgstr "Aktivieren Sie die Aura-Animation beim Schweben"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:64
+msgid "Enable auto-submit"
+msgstr "Aktivieren Sie die automatische Übermittlung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:473
+msgid "Enable call button"
+msgstr "Anruftaste aktivieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:474
+msgid "Enable call button."
+msgstr "Anruftaste aktivieren."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:294
+msgid "Enable caption"
+msgstr "Untertitel aktivieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:230
+msgid "Enable icon"
+msgstr "Symbol aktivieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:416
+msgid "Enable mail button"
+msgstr "E-Mail-Schaltfläche aktivieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:417
+msgid "Enable mail button."
+msgstr "E-Mail-Schaltfläche aktivieren."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:530
+msgid "Enable messenger button"
+msgstr "Messenger-Schaltfläche aktivieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:531
+msgid "Enable messenger button."
+msgstr "Messenger-Schaltfläche aktivieren."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:123
+msgid "Enable multilingual"
+msgstr "Mehrsprachigkeit aktivieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:366
+msgid "Enable mute button"
+msgstr "Aktivieren Sie die Stummschalttaste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:367
+msgid "Enable mute button."
+msgstr "Aktivieren Sie die Stummschalttaste."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:295
+msgid "Enable or disable open button caption."
+msgstr ""
+"Aktivieren oder deaktivieren Sie die Beschriftung der offenen Schaltfläche."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:231
+msgid "Enable or disable open button icon."
+msgstr ""
+"Aktivieren oder deaktivieren Sie das Symbol für die Schaltfläche „Öffnen“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:587
+msgid "Enable social contact button"
+msgstr "Schaltfläche für soziale Kontakte aktivieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:588
+msgid "Enable social contact button."
+msgstr "Schaltfläche für soziale Kontakte aktivieren."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:56
+msgid "Enable Speech to Text"
+msgstr "Aktivieren Sie Speech-to-Text"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:115
+msgid "Enable Text to Speech"
+msgstr "Aktivieren Sie Text-to-Speech"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabUpdates.php:120
+msgid "Enable to activate the SSL check when receiving updates"
+msgstr ""
+"Aktivieren Sie diese Option, um die SSL-Prüfung beim Empfang von Updates zu "
+"aktivieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:483
+msgid "Enables pagination for faq feature"
+msgstr "Aktiviert die Paginierung für die FAQ-Funktion"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:454
+msgid "Enter (part of) the URLs to match."
+msgstr "Geben Sie (einen Teil) der URLs ein, die übereinstimmen sollen."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:681
+msgid ""
+"Enter a piece of PHP code to evaluate. The code must return the value true "
+"or false."
+msgstr ""
+"Geben Sie einen PHP-Code zur Auswertung ein. Der Code muss den Wert true "
+"oder false zurückgeben."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:530
+msgid "Enter category for question"
+msgstr "Geben Sie die Kategorie für die Frage ein"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:672
+msgid "Enter max accepted number"
+msgstr "Geben Sie die maximal akzeptierte Anzahl ein"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:661
+msgid "Enter min accepted number"
+msgstr "Geben Sie die minimal akzeptierte Anzahl ein"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:286
+msgid "Enter post ids separated by comma from what you want get content"
+msgstr ""
+"Geben Sie die Beitrags-IDs durch Komma getrennt von den gewünschten Inhalten "
+"ein"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:683
+msgid "Enter the regular expression on which the text will be validated"
+msgstr ""
+"Geben Sie den regulären Ausdruck ein, anhand dessen der Text validiert "
+"werden soll"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:366
+msgid ""
+"Enter your CodeCanyon purchase code. Allowed only one Purchase Code per "
+"website."
+msgstr ""
+"Geben Sie Ihren CodeCanyon-Kaufcode ein. Es ist nur ein Kaufcode pro Website "
+"zulässig."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:408
+msgid "Envato License"
+msgstr "Envato-Lizenz"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Messages.php:76
+msgid "ERROR"
+msgstr "FEHLER"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Caster.php:213,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Caster.php:224
+msgid "Error occurred while saving file!"
+msgstr "Beim Speichern der Datei ist ein Fehler aufgetreten!"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:301,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:325,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:335,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:366,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:392,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:422,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:449,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:473,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:497,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:552,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:649,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:676
+msgid "Exclude"
+msgstr "Ausschließen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:164
+msgid "Explore more plugins"
+msgstr "Entdecken Sie weitere Plugins"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:172
+msgid "Export all settings from"
+msgstr "Exportieren Sie alle Einstellungen von"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:186
+msgid "Export settings"
+msgstr "Exporteinstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:93
+msgid "Export settings:"
+msgstr "Exporteinstellungen:"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:596
+msgid "Facebook"
+msgstr "Facebook"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:49,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:232
+msgid "Fade"
+msgstr "Verblassen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:415,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:433
+msgid ""
+"Failed to check time synchronization on your server. Your server's clock "
+"must be in sync with network time protocol - NTP."
+msgstr ""
+"Die Zeitsynchronisierung auf Ihrem Server konnte nicht überprüft werden. Die "
+"Uhr Ihres Servers muss mit dem Netzwerkzeitprotokoll NTP synchronisiert sein."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/AjaxActions.php:384
+msgid "Failed to send email!"
+msgstr "E-Mail konnte nicht gesendet werden!"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/AjaxActions.php:382
+msgid "Failed to send!"
+msgstr "Senden fehlgeschlagen!"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:464,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:465,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:476,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:94
+msgid "FAQ"
+msgstr "FAQ"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:481,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:482
+msgid "FAQ pagination"
+msgstr "FAQ-Paginierung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:632
+msgid "Field name"
+msgstr "Feldname"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:645,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:646
+msgid "Field validation"
+msgstr "Feldvalidierung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:992
+msgid "File"
+msgstr "Datei"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:942,
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1006
+msgid "File exist"
+msgstr "Datei vorhanden"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:118
+msgid "Fixed bottom centre"
+msgstr "Unten in der Mitte fixiert"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:117
+msgid "Fixed bottom left"
+msgstr "Unten links fixiert"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:119
+msgid "Fixed bottom right"
+msgstr "Unten rechts fixiert"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:115
+msgid "Fixed left centre"
+msgstr "Feste linke Mitte"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:116
+msgid "Fixed right centre"
+msgstr "Rechts in der Mitte fixiert"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:113
+msgid "Fixed top centre"
+msgstr "Oben in der Mitte fixiert"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:112
+msgid "Fixed top left"
+msgstr "Oben links behoben"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:114
+msgid "Fixed top right"
+msgstr "Oben rechts behoben"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:917
+msgid "Float Button"
+msgstr "Float-Taste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:918
+msgid "Float Button Settings"
+msgstr "Float-Button-Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:118
+msgid "Font Size"
+msgstr "Schriftgröße"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:308,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:192,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:102,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:251,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:167
+msgid "Font size"
+msgstr "Schriftgröße"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:120
+msgid "Font size of the message container. Current: %s px"
+msgstr "Schriftgröße des Nachrichtencontainers. Aktuell: %s px"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:218
+msgid "Font size of the message upper-line. Current: %s px"
+msgstr "Schriftgröße der oberen Zeile der Nachricht. Aktuell: %s px"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:169
+msgid "Footer text"
+msgstr "Fusszeile"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:162
+msgid "Footer text content"
+msgstr "Textinhalt der Fußzeile"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:156
+msgid "Footer text description settings"
+msgstr "Einstellungen für die Fußzeilentextbeschreibung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:328,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:352
+msgid "for "
+msgstr "für"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:683
+msgid "For instance:"
+msgstr "Zum Beispiel:"
+
+#. translators: %s: Plugin website
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:173
+msgid "For more information visit %s page."
+msgstr "Weitere Informationen finden Sie auf der Seite %s."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:129
+msgid "for sites representing terrorist states, associations and formations"
+msgstr ""
+"für Websites, die terroristische Staaten, Vereinigungen und Formationen "
+"repräsentieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:250
+msgid "General"
+msgstr "Allgemein"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:251
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:62
+msgid "Get back to main menu"
+msgstr "Kehren Sie zum Hauptmenü zurück"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:757,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:758
+msgid "Get emails"
+msgstr "Erhalten Sie E-Mails"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:195
+msgid "Get help"
+msgstr "Hilfe bekommen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:96
+msgid "Get user emails"
+msgstr "Erhalten Sie Benutzer-E-Mails"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:84
+msgid "Global settings"
+msgstr "Globale Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:168,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:129
+msgid "Groove"
+msgstr "Rille"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:45,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:228
+msgid "Grow"
+msgstr "Wachsen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:118
+msgid "Height"
+msgstr "Höhe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:337
+msgid "Help"
+msgstr "Hilfe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:55
+msgid "Helper"
+msgstr "Helfer"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Caster.php:265
+msgid "Helper Settings"
+msgstr "Helfereinstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:185
+msgid "Helpful links"
+msgstr "Hilfreiche Links"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:57
+msgid "Hi! How can i help you?"
+msgstr "Hallo! Womit kann ich Ihnen behilflich sein?"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:41
+msgid "Hide"
+msgstr "Verstecken"
+
+#. translators: %s is a link to the Open Ai api key page.
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:332
+msgid ""
+"Higher values like 0.8 will make the output more random, while lower values "
+"like 0.2 will make it more focused and deterministic. Current temperature is:"
+" %s"
+msgstr ""
+"Höhere Werte wie 0,8 machen die Ausgabe zufälliger, während niedrigere Werte "
+"wie 0,2 sie fokussierter und deterministischer machen. Aktuelle Temperatur "
+"ist: %s"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:320
+msgid "Home Page"
+msgstr "Startseite"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:66
+msgid "Home URL"
+msgstr "Home-URL"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:477
+msgid "Hover Background Color"
+msgstr "Bewegen Sie den Mauszeiger über die Hintergrundfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:138,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:310
+msgid "Hover background color"
+msgstr "Bewegen Sie den Mauszeiger über die Hintergrundfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:478
+msgid "Hover background color of the message container."
+msgstr ""
+"Bewegen Sie den Mauszeiger über die Hintergrundfarbe des "
+"Nachrichtencontainers."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:463
+msgid "Hover Color"
+msgstr "Hover-Farbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:131,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:303
+msgid "Hover color"
+msgstr "Hover-Farbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:464
+msgid "Hover color of the message container."
+msgstr "Hover-Farbe des Nachrichtencontainers."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:285
+msgid "Hover Icon color"
+msgstr "Farbe des Hover-Symbols"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:397
+msgid "How to find your purchase code"
+msgstr "So finden Sie Ihren Kaufcode"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:146
+msgid "Humanoid behavior"
+msgstr "Humanoides Verhalten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:302
+msgid ""
+"Hurray! We received your Subscription request. Check your inbox for an email "
+"from us."
+msgstr ""
+"Hurra! Wir haben Ihre Abonnementanfrage erhalten. Überprüfen Sie Ihren "
+"Posteingang auf eine E-Mail von uns."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:39,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:266
+msgid "Icon"
+msgstr "Symbol"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:82,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:130,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:256,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:202,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:153,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:278
+msgid "Icon color"
+msgstr "Symbolfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:263,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:160
+msgid "Icon hover color"
+msgstr "Farbe des Symbols beim Schweben"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:616
+msgid "Icon Library"
+msgstr "Symbolbibliothek"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:90,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:246,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:274,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:137,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:262
+msgid "Icon size"
+msgstr "Symbolgröße"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:203
+msgid "Icons Color."
+msgstr "Symbole Farbe."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:299,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:323,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:333,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:364,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:390,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:420,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:447,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:471,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:495,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:550,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:647,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:674
+msgid "Ignore"
+msgstr "Ignorieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:40
+msgid "Image"
+msgstr "Bild"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:145
+msgid "Import settings"
+msgstr "Importeinstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:92
+msgid "Import settings:"
+msgstr "Importeinstellungen:"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:239
+msgid "In"
+msgstr "In"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:193
+msgid "in states recognized as sponsors of terrorism"
+msgstr "in Staaten, die als Sponsoren des Terrorismus gelten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:360
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:300,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:324,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:334,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:365,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:391,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:421,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:448,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:472,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:496,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:551,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:648,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:675
+msgid "Include"
+msgstr "Enthalten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:69
+msgid "Insert to User Data"
+msgstr "In Benutzerdaten einfügen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:170,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:131
+msgid "Inset"
+msgstr "Einsatz"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:166,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:170
+msgid "Inside box-shadow"
+msgstr "Im Kastenschatten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:64,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:65,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:67,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:68,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:69,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:70,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:72,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:73,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:74,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:75
+msgid "Installed"
+msgstr "Eingerichtet"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:559
+msgid "Invalid purchase code."
+msgstr "Ungültiger Kaufcode."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabUpdates.php:80
+msgid "Invalidate caches"
+msgstr "Caches ungültig machen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:644
+msgid "IP Addresses"
+msgstr "IP-Adressen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:654
+msgid "IP Addresses / Ranges"
+msgstr "IP-Adressen/Bereiche"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:71
+msgid "Language"
+msgstr "Sprache"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:387
+msgid "Languages"
+msgstr "Sprachen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:306
+msgid "Latest"
+msgstr "Neueste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:72
+msgid "Learn more from"
+msgstr "Erfahren Sie mehr von"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:90
+msgid "Left"
+msgstr "Links"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:100
+msgid "Licensed"
+msgstr "Lizenziert"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1075
+msgid "Linked"
+msgstr "Verlinkt"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:660
+msgid "List of IP addresses or IP ranges. Example: "
+msgstr "Liste der IP-Adressen oder IP-Bereiche. Beispiel:"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:410
+msgid "Mail button"
+msgstr "Mail-Button"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:437
+msgid "Mail button icon"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:430
+msgid "Mail button link"
+msgstr "Link zum Mail-Button"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:423
+msgid "Mail button text"
+msgstr "Text der Mail-Schaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:75,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:76,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:110,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:90,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:90,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:218,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:89,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:94,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:416,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:82,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:85
+msgid "Margin"
+msgstr "Rand"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:95,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:417
+msgid "Margin of the message container."
+msgstr "Rand des Nachrichtencontainers."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:285
+msgid "Matching Method"
+msgstr "Matching-Methode"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:670,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:671
+msgid "Max number"
+msgstr "Maximale Anzahl"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:322
+msgid "Max tokens"
+msgstr "Max. Token"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:323
+msgid "Max tokens (0-4000) depending on the model"
+msgstr "Max. Token (0–4000), je nach Modell"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:68
+msgid "Max Upload Size"
+msgstr "Maximale Upload-Größe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:94,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:95
+msgid "Max width 100%"
+msgstr "Maximale Breite 100 %"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:96
+msgid "Max width and margins equals 100% of screen"
+msgstr "Die maximale Breite und die Ränder betragen 100 % des Bildschirms"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:688
+msgid "Media library"
+msgstr "Medienbibliothek"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:69
+msgid "Memory limit"
+msgstr "Speicherlimit"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:441
+msgid "Menu button width"
+msgstr "Breite der Menüschaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:442
+msgid "Menu button width "
+msgstr "Breite der Menüschaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:331
+msgid "Menu Items"
+msgstr "Menüpunkte"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:88
+msgid "Message Container"
+msgstr "Nachrichtencontainer"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:183
+msgid "Message control buttons"
+msgstr "Tasten zur Nachrichtensteuerung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:72
+msgid "Message input field settings"
+msgstr "Einstellungen für das Nachrichteneingabefeld"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:149
+msgid "Message upper-line"
+msgstr "Obere Zeile der Nachricht"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:524
+msgid "Messenger button"
+msgstr "Messenger-Schaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:551
+msgid "Messenger button icon"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:544
+msgid "Messenger button link"
+msgstr "Link zur Messenger-Schaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:537
+msgid "Messenger button text"
+msgstr "Text der Messenger-Schaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:481
+msgid "Migration"
+msgstr "Migration"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:482
+msgid "Migration Settings"
+msgstr "Migrationseinstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:659,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:660
+msgid "Min number"
+msgstr "Mindestanzahl"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:483
+msgid "Mobile"
+msgstr "Handy, Mobiltelefon"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:616
+msgid "Mobile Browsers:"
+msgstr "Mobile Browser:"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:306
+msgid "Model"
+msgstr "Modell"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:205
+msgid "More plugins"
+msgstr "Weitere Plugins"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:164
+msgid "Mr. Helper"
+msgstr "Herr Helfer"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:122
+msgid "Multilingual"
+msgstr "Mehrsprachig"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:360
+msgid "Mute button"
+msgstr "Stummschalttaste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:380
+msgid "Mute button icon"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:373
+msgid "Mute button text"
+msgstr "Schaltflächentext stumm schalten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:162
+msgid "Name"
+msgstr "Name"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:59
+msgid "New User Data"
+msgstr "Neue Benutzerdaten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:66
+msgid "Next"
+msgstr "Nächste"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:119,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:211,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:233,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:255,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:278,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:302,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:326,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:350,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:374,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:413,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:431,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:459
+msgid "NO"
+msgstr "NEIN"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:186
+msgid "No"
+msgstr "NEIN"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:102
+msgid "No licence data"
+msgstr "Keine Lizenzdaten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:101
+msgid "No license"
+msgstr "Keine Lizenz"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:341
+msgid "No settings for import"
+msgstr "Keine Einstellungen für den Import"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:407
+msgid ""
+"No, this is prohibited by license terms. You can use the purchase code on "
+"only one website at a time. Learn more about "
+msgstr ""
+"Nein, dies ist durch die Lizenzbestimmungen verboten. Sie können den "
+"Kaufcode jeweils nur auf einer Website verwenden. Lerne mehr über"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:163,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:650,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:164,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:124,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:44,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:168,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:227
+msgid "None"
+msgstr "Keiner"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:112
+msgid "Not Activated"
+msgstr "Nicht aktiviert"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginUpdater.php:441
+msgid "not activated"
+msgstr "nicht aktiviert"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:295
+msgid "Notice"
+msgstr "Notiz"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:652
+msgid "Number"
+msgstr "Nummer"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:277
+msgid "Objective"
+msgstr "Zielsetzung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:75
+msgid "Off"
+msgstr "Aus"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:303
+msgid "Oh! Sorry, but we cannot send messages to this email."
+msgstr ""
+"Oh! Leider können wir an diese E-Mail-Adresse keine Nachrichten senden."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:74
+msgid "On"
+msgstr "An"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:396
+msgid "on the CodeCanyon. Learn more about "
+msgstr "auf dem CodeCanyon. Lerne mehr über"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:304
+msgid "Oops! Something went wrong. Please try later."
+msgstr "Hoppla! Etwas ist schief gelaufen. Bitte versuch es später."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:235
+msgid "Open Ai api key"
+msgstr "Öffnen Sie den Ai-API-Schlüssel"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:309
+msgid "Open AI documentation"
+msgstr "Öffnen Sie die KI-Dokumentation"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:72
+msgid "Open Bot button"
+msgstr "Schaltfläche „Bot öffnen“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:86
+msgid "Open bot button alignment"
+msgstr "Ausrichtung der Bot-Schaltfläche öffnen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:78,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:79,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:80
+msgid "Open bot with button"
+msgstr "Öffnen Sie den Bot mit der Schaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:237
+msgid "Open button icon"
+msgstr "Schaltflächensymbol „Öffnen“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:111
+msgid "Open button margin"
+msgstr "Schaltflächenrand öffnen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:99
+msgid "Open button padding"
+msgstr "Offene Knopfpolsterung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:301
+msgid "Open button text"
+msgstr "Schaltflächentext öffnen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Caster.php:583
+msgid "Open chat"
+msgstr "Chat öffnen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:303
+msgid "Open helper"
+msgstr "Helfer öffnen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:165,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:266,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:385
+msgid "opens in a new window"
+msgstr "öffnet sich in einem neuen Fenster"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:62
+msgid "Operating System"
+msgstr "Betriebssystem"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:492
+msgid "Operating Systems"
+msgstr "Betriebssysteme"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:171,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:132
+msgid "Outset"
+msgstr "Anfang"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:165,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:169
+msgid "Outside box-shadow"
+msgstr "Außenkastenschatten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:230
+msgid "Overlap"
+msgstr "Überlappung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:87,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:88,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:98,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:78,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:78,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:206,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:77,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:106,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:428,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:97
+msgid "Padding"
+msgstr "Polsterung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:107,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:429
+msgid "Padding of the message container."
+msgstr "Auffüllen des Nachrichtencontainers."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:70
+msgid "Permalink Structure"
+msgstr "Permalink-Struktur"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:237
+msgid "Placeholder"
+msgstr "Platzhalter"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:250
+msgid "Plain"
+msgstr "Schmucklos"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginUpdater.php:443
+msgid ""
+"Please activate the license to receive automatic updates in one click, or "
+"visit the plugin page on the Envato market to "
+msgstr ""
+"Bitte aktivieren Sie die Lizenz, um automatische Updates mit einem Klick zu "
+"erhalten, oder besuchen Sie die Plugin-Seite im Envato-Markt"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:73
+msgid "Please provide correct email!"
+msgstr "Bitte geben Sie die korrekte E-Mail-Adresse an!"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:553
+msgid "Plugin activated successfully."
+msgstr "Das Plugin wurde erfolgreich aktiviert."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:362
+msgid "Plugin Activation"
+msgstr "Plugin-Aktivierung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:292
+msgid "Plugin licence status"
+msgstr "Plugin-Lizenzstatus"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:124
+msgid "Plugin settings"
+msgstr "Plugin-Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:127,
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:191
+msgid "Plugin was deactivated! Author has banned the use"
+msgstr "Plugin wurde deaktiviert! Der Autor hat die Verwendung verboten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginHelper.php:142,
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginHelper.php:142
+msgid "Plugins"
+msgstr "Plugins"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:123
+msgid "Plugins Manager"
+msgstr "Plugins-Manager"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:257
+msgid "Post content"
+msgstr "Inhalte posten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:285
+msgid "Post id"
+msgstr "Beitrags-ID"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabUpdates.php:99
+msgid "Press to clear all nonsensitive caches and check for updates."
+msgstr ""
+"Drücken Sie diese Taste, um alle nicht sensiblen Caches zu löschen und nach "
+"Updates zu suchen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:67
+msgid "Prev"
+msgstr "Vorher"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:663
+msgid "Preview image"
+msgstr "Vorschaubild"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:267
+msgid "Prompt"
+msgstr "Prompt"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:251
+msgid "Prompt type"
+msgstr "Eingabeaufforderungstyp"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:598
+msgid "Provide info about yourself!"
+msgstr "Machen Sie Angaben zu Ihrer Person!"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:812
+msgid "Provide your email"
+msgstr "Geben Sie Ihre E-Mail-Adresse an"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:813
+msgid "Provide your message"
+msgstr "Geben Sie Ihre Nachricht an"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:365
+msgid "Purchase code"
+msgstr "Kaufcode"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:429
+msgid "Purchase Code is Not Working"
+msgstr "Der Kaufcode funktioniert nicht"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:508,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:509
+msgid "Question"
+msgstr "Frage"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:529
+msgid "Question category"
+msgstr "Fragekategorie"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:489
+msgid "Questions per page"
+msgstr "Fragen pro Seite"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:198
+msgid "Random delay"
+msgstr "Zufällige Verzögerung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:199
+msgid "Randomize delay"
+msgstr "Verzögerung randomisieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:199
+msgid "Rate this plugin"
+msgstr "Bewerten Sie dieses Plugin"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginHelper.php:163
+msgid "Rate this plugin:"
+msgstr "Bewerten Sie dieses Plugin:"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:71
+msgid "Read more..."
+msgstr "Weiterlesen..."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:137
+msgid "Receive message sound(WAV, MP3, OGG)"
+msgstr "Nachrichtenton empfangen (WAV, MP3, OGG)"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:619,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:774
+msgid "Recipient email"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:78
+msgid "Recognition error"
+msgstr "Erkennungsfehler"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Caster.php:509
+msgid "Recognize voice message"
+msgstr "Sprachnachricht erkennen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:218,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:224
+msgid "Remembrance"
+msgstr "Erinnerung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:95
+msgid "Removal settings:"
+msgstr "Entfernungseinstellungen:"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:686
+msgid "Remove"
+msgstr "Entfernen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:728,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:828
+msgid "Remove bot message"
+msgstr "Bot-Nachricht entfernen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:54
+msgid "Remove initial message"
+msgstr "Ursprüngliche Nachricht entfernen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:425
+msgid "Remove messages"
+msgstr "Nachrichten entfernen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:556
+msgid "Remove question/answer"
+msgstr "Frage/Antwort entfernen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:951,
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1028
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:861
+msgid "Response Form"
+msgstr "Antwortformular"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:862
+msgid "Response Form Settings"
+msgstr "Einstellungen des Antwortformulars"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:70
+msgid "Return to FAQ questions"
+msgstr "Zurück zu den FAQ-Fragen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:190
+msgid "Return to main menu icon"
+msgstr "Zurück zum Hauptmenüsymbol"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:169,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:130
+msgid "Ridge"
+msgstr "Grat"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:92
+msgid "Right"
+msgstr "Rechts"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:594
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:225,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:226
+msgid "Save last question and answer"
+msgstr "Letzte Frage und Antwort speichern"
+
+#. translators: %s: hours
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:235
+msgid "Save last question and answer for %s hours."
+msgstr "Speichern Sie die letzte Frage und Antwort für %s Stunden."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:603,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:604
+msgid "Save to database"
+msgstr "In der Datenbank speichern"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:164,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:165
+msgid "Scrollbar color"
+msgstr "Farbe der Bildlaufleiste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:179
+msgid "Scrollbar hover thumb color"
+msgstr "Farbe des Hover-Daumens der Bildlaufleiste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:145
+msgid "Scrollbar styles"
+msgstr "Scrollbar-Stile"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:171,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:172
+msgid "Scrollbar thumb color"
+msgstr "Farbe des Bildlaufleisten-Daumens"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:178
+msgid "Scrollbar thumb hover color"
+msgstr "Hover-Farbe des Bildlaufleisten-Daumens"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:63
+msgid "Search User Data"
+msgstr "Benutzerdaten durchsuchen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:160
+msgid "Select border style on disable border for block."
+msgstr ""
+"Wählen Sie den Rahmenstil aus, um den Rahmen für den Block zu deaktivieren."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:306
+msgid ""
+"Select on what page types or categories the assignment should be active."
+msgstr ""
+"Wählen Sie aus, auf welchen Seitentypen oder Kategorien die Zuweisung aktiv "
+"sein soll."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:91
+msgid "Select one or more bot features to be used"
+msgstr ""
+"Wählen Sie eine oder mehrere Bot-Funktionen aus, die verwendet werden sollen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:556
+msgid ""
+"Select the browsers to assign to. Keep in mind that browser detection is not "
+"always 100% accurate. Users can setup their browser to mimic other browsers."
+msgstr ""
+"Wählen Sie die Browser aus, denen Sie sie zuweisen möchten. Beachten Sie, "
+"dass die Browsererkennung nicht immer 100 % genau ist. Benutzer können ihren "
+"Browser so einrichten, dass er andere Browser nachahmt."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:477
+msgid ""
+"Select the devices to assign to. Keep in mind that device detection is not "
+"always 100% accurate. Users can setup their device to mimic other devices."
+msgstr ""
+"Wählen Sie die Geräte aus, denen Sie sie zuweisen möchten. Beachten Sie, "
+"dass die Geräteerkennung nicht immer 100 % genau ist. Benutzer können ihr "
+"Gerät so einrichten, dass es andere Geräte nachahmt."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:396
+msgid "Select the languages to assign to."
+msgstr "Wählen Sie die Sprachen aus, denen Sie zuweisen möchten."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:339
+msgid "Select the menu items to assign to."
+msgstr "Wählen Sie die Menüelemente aus, die Sie zuweisen möchten."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:501
+msgid ""
+"Select the operating systems to assign to. Keep in mind that operating "
+"system detection is not always 100% accurate. Users can setup their browser "
+"to mimic other operating systems."
+msgstr ""
+"Wählen Sie die Betriebssysteme aus, denen Sie zuweisen möchten. Beachten Sie,"
+" dass die Betriebssystemerkennung nicht immer 100 % genau ist. Benutzer "
+"können ihren Browser so einrichten, dass er andere Betriebssysteme nachahmt."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:426
+msgid "Select the user roles to assign to."
+msgstr "Wählen Sie die Benutzerrollen aus, denen Sie sie zuweisen möchten."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:231
+msgid "Send button overlap the input field."
+msgstr "Die Schaltfläche „Senden“ überlappt das Eingabefeld."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:193
+msgid "Send message button settings"
+msgstr "Einstellungen für die Schaltfläche „Nachricht senden“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:127
+msgid "Send message sound(WAV, MP3, OGG)"
+msgstr "Nachrichtenton senden (WAV, MP3, OGG)"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:611,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:612
+msgid "Send to email"
+msgstr "An E-Mail senden"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:769
+msgid "Send us email"
+msgstr "Senden Sie uns eine E-Mail"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:613
+msgid "Sends to email data that user provided"
+msgstr "Sendet die vom Benutzer bereitgestellten E-Mail-Daten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:45
+msgid "Server Environment"
+msgstr "Serverumgebung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:209
+msgid "Set avatar border radius."
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:185
+msgid "Set avatar margin."
+msgstr "Avatar-Rand festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:197,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:79,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:79,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:207,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:78
+msgid "Set avatar padding."
+msgstr "Stellen Sie die Avatar-Auffüllung ein."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:178
+msgid "Set border color."
+msgstr "Rahmenfarbe festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:185
+msgid "Set border width."
+msgstr "Legen Sie die Randbreite fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:197
+msgid "Set border-radius"
+msgstr "Randradius festlegen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:224
+msgid "Set bot appearance animation"
+msgstr "Legen Sie die Animation für das Erscheinungsbild des Bots fest"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:90
+msgid "Set bot background."
+msgstr "Bot-Hintergrund festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:91,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:91,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:219,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:90,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:83
+msgid "Set bot border radius."
+msgstr "Legen Sie den Randradius des Bots fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:324
+msgid "Set bot commands icon."
+msgstr "Symbol „Bot-Befehle festlegen“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:336
+msgid "Set bot commands text."
+msgstr "Legen Sie den Bot-Befehlstext fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:121
+msgid "Set bot container height. Current height is %s"
+msgstr "Stellen Sie die Höhe des Bot-Containers ein. Aktuelle Höhe ist %s"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:105
+msgid "Set bot container width. Current width is %s"
+msgstr ""
+"Legen Sie die Breite des Bot-Containers fest. Die aktuelle Breite beträgt %s"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:402
+msgid "Set bot error message"
+msgstr "Bot-Fehlermeldung festlegen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:71
+msgid "Set bot icon."
+msgstr "Bot-Symbol festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:379,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:705
+msgid "Set bot message"
+msgstr "Bot-Nachricht festlegen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:298
+msgid "Set bot message animation"
+msgstr "Legen Sie die Animation der Bot-Nachricht fest"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:368
+msgid "Set bot response messages"
+msgstr "Legen Sie Bot-Antwortnachrichten fest"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:391
+msgid "Set bot success message"
+msgstr "Bot-Erfolgsmeldung festlegen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:475,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:597,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:768
+msgid "Set button name"
+msgstr "Legen Sie den Namen der Schaltfläche fest"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:495
+msgid "Set call button icon."
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:488
+msgid "Set call button link."
+msgstr "Ruftastenverknüpfung festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:481
+msgid "Set call button text."
+msgstr "Legen Sie den Text für die Anrufschaltfläche fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:319
+msgid "Set caption text color."
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:264
+msgid ""
+"Set chat bot appearance animation delay. Current animation delay is %s "
+"seconds."
+msgstr ""
+"Legen Sie die Animationsverzögerung für das Erscheinungsbild des Chat-Bots "
+"fest. Die aktuelle Animationsverzögerung beträgt %s Sekunden."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:240
+msgid ""
+"Set chat bot appearance animation duration. Current animation duration is %s "
+"seconds."
+msgstr ""
+"Legen Sie die Animationsdauer für das Erscheinungsbild des Chat-Bots fest. "
+"Die aktuelle Animationsdauer beträgt %s Sekunden."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:127,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:125,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:139,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:297,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:311,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:114
+msgid "Set chat header background color."
+msgstr "Legen Sie die Hintergrundfarbe für den Chat-Header fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:139
+msgid "Set chat header border color."
+msgstr "Legen Sie die Randfarbe des Chat-Headers fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:102
+msgid "Set chat header border radius."
+msgstr "Legen Sie den Randradius des Chat-Headers fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:121
+msgid "Set chat header border style."
+msgstr "Legen Sie den Rahmenstil für den Chat-Header fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:146
+msgid "Set chat header border width."
+msgstr "Legen Sie die Randbreite des Chat-Headers fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:191
+msgid "Set chat header box shadow color."
+msgstr "Legen Sie die Schattenfarbe des Chat-Header-Felds fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:173
+msgid "Set chat header box shadow offset."
+msgstr "Legen Sie den Schattenversatz des Chat-Header-Felds fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:161
+msgid "Set chat header box shadow."
+msgstr "Legen Sie den Schatten des Chat-Header-Felds fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:192
+msgid "Set chat header text color."
+msgstr "Legen Sie die Textfarbe für den Chat-Header fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:217
+msgid "Set chat header text."
+msgstr "Legen Sie den Text für die Chat-Kopfzeile fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:134
+msgid "Set chat window background color."
+msgstr "Legen Sie die Hintergrundfarbe des Chatfensters fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:195
+msgid "Set chat window box shadow color."
+msgstr "Legen Sie die Schattenfarbe des Chat-Fensterfelds fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:177
+msgid "Set chat window box shadow offset."
+msgstr "Legen Sie den Schattenversatz der Chat-Fensterbox fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:165
+msgid "Set chat window box shadow."
+msgstr "Legen Sie den Schatten des Chat-Fensterfelds fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:86,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:227
+msgid "Set close button margin."
+msgstr "Legen Sie den Rand der Schaltfläche „Schließen“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:98,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:239
+msgid "Set close button padding."
+msgstr "Legen Sie die Polsterung der Schließtasten fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:251
+msgid "Set close chat icon."
+msgstr "Legen Sie das Symbol zum Schließen des Chats fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:286
+msgid "Set close icon color on hover."
+msgstr "Legen Sie die Farbe des Schließen-Symbols beim Schweben fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:279
+msgid "Set close icon color."
+msgstr "Legen Sie die Farbe des Schließen-Symbols fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:647
+msgid "Set field validation"
+msgstr "Feldvalidierung festlegen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:83,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:131
+msgid "Set icon color"
+msgstr "Symbolfarbe festlegen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:154
+msgid "Set icon color."
+msgstr "Symbolfarbe festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:161
+msgid "Set icon hover color."
+msgstr "Legen Sie die Hover-Farbe des Symbols fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:438
+msgid "Set mail button icon."
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:431
+msgid "Set mail button link."
+msgstr "Link zum Mail-Button festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:424
+msgid "Set mail button text."
+msgstr "Legen Sie den Text der Mail-Schaltfläche fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:552
+msgid "Set messenger button icon."
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:545
+msgid "Set messenger button link."
+msgstr "Link zur Messenger-Schaltfläche festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:538
+msgid "Set messenger button text."
+msgstr "Legen Sie den Text der Messenger-Schaltfläche fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:381
+msgid "Set mute button icon."
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:374
+msgid "Set mute button text."
+msgstr "Legen Sie den Text für die Stummschalttaste fest."
+
+#. translators: %s is a link to the Open Ai api key page.
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:238
+msgid ""
+"Set Open AI api key. You should sign up and get it by following link: %s"
+msgstr ""
+"Legen Sie den Open-AI-API-Schlüssel fest. Sie sollten sich anmelden und es "
+"über den folgenden Link erhalten: %s"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:302
+msgid "Set open bot button text"
+msgstr "Legen Sie den Text für die Schaltfläche „Bot öffnen“ fest"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:123
+msgid "Set open button background color."
+msgstr "Legen Sie die Hintergrundfarbe der Schaltfläche „Öffnen“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:130
+msgid "Set open button background hover color."
+msgstr ""
+"Legen Sie die Hintergrundfarbe für die Hover-Schaltfläche „Öffnen“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:309
+msgid "Set open button font size."
+msgstr "Legen Sie die Schriftgröße der Schaltfläche „Öffnen“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:257
+msgid "Set open button icon color."
+msgstr "Legen Sie die Farbe des Symbols für die Schaltfläche „Öffnen“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:264
+msgid "Set open button icon hover color."
+msgstr "Legen Sie die Hoverfarbe für das Symbol „Öffnen“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:247
+msgid "Set open button icon size."
+msgstr "Legen Sie die Größe des Symbols zum Öffnen der Schaltfläche fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:239
+msgid "Set open button icon."
+msgstr "Legen Sie das Symbol für die Schaltfläche „Öffnen“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:326
+msgid "Set open caption text hover color."
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:491
+msgid "Set questions per page. Current: %s"
+msgstr "Legen Sie Fragen pro Seite fest. Aktuell: %s"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:775
+msgid "Set recipient email addresses separated with coma"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:620
+msgid "Set recipient email to get user data from the chatbot"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:191
+msgid "Set return to main menu button icon."
+msgstr "Legen Sie das Symbol für die Schaltfläche „Zurück zum Hauptmenü“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:245
+msgid "Set send button caption. Leave empty if you want to use icon only."
+msgstr ""
+"Legen Sie die Beschriftung der Schaltfläche „Senden“ fest. Lassen Sie das "
+"Feld leer, wenn Sie nur das Symbol verwenden möchten."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:118,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:132,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:290,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:304
+msgid "Set send button color."
+msgstr "Legen Sie die Farbe der Schaltfläche „Senden“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:267
+msgid "Set send button icon."
+msgstr "Legen Sie das Symbol für die Schaltfläche „Senden“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:238
+msgid "Set send button placeholder."
+msgstr "Legen Sie den Platzhalter für die Schaltfläche „Senden“ fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:609
+msgid "Set social contact button icon."
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:602
+msgid "Set social contact button link."
+msgstr "Legen Sie den Link für die Schaltfläche für soziale Kontakte fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:595
+msgid "Set social contact button text."
+msgstr "Legen Sie den Text für die Schaltfläche für soziale Kontakte fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:185
+msgid "Set text color in chat footer."
+msgstr "Legen Sie die Textfarbe in der Chat-Fußzeile fest."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:184
+msgid "Set text color."
+msgstr "Textfarbe festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:138
+msgid "Set user background."
+msgstr "Benutzerhintergrund festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:119
+msgid "Set user icon."
+msgstr "Benutzersymbol festlegen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:377
+msgid "Set user message animation"
+msgstr "Legen Sie die Animation der Benutzernachrichten fest"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:694
+msgid "Set validation error message"
+msgstr "Validierungsfehlermeldung festlegen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:520
+msgid "Set your answer"
+msgstr "Legen Sie Ihre Antwort fest"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:510
+msgid "Set your question"
+msgstr "Stellen Sie Ihre Frage"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:208
+msgid ""
+"Sets message preloader in loading message when respond delay is grater than 0"
+msgstr ""
+"Legt den Nachrichten-Preloader beim Laden der Nachricht fest, wenn die "
+"Antwortverzögerung größer als 0 ist"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Caster.php:266,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:349,
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginHelper.php:140,
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginHelper.php:140,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:327,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:351,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:371
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:411
+msgid "Settings block for action buttons."
+msgstr "Einstellungsblock für Aktionsschaltflächen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:70,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:89
+msgid "Settings block for the chat container."
+msgstr "Einstellungsblock für den Chat-Container."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabChatContainer.php:146
+msgid "Settings block for the scrollbar."
+msgstr "Einstellungsblock für die Bildlaufleiste."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:77
+msgid "Settings block that matches the styles of the chat bot container."
+msgstr "Einstellungsblock, der den Stilen des Chatbot-Containers entspricht."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:73
+msgid ""
+"Settings for managing footer styles in the chat window. The footer contains "
+"a form for sending a message and a short text block can be placed."
+msgstr ""
+"Einstellungen zum Verwalten von Fußzeilenstilen im Chatfenster. In der "
+"Fußzeile befindet sich ein Formular zum Versenden einer Nachricht und es "
+"kann ein kurzer Textblock platziert werden."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:365
+msgid "Settings imported"
+msgstr "Einstellungen importiert"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:73
+msgid "Settings responsible for the display and styles of the floating button"
+msgstr ""
+"Einstellungen, die für die Anzeige und den Stil der schwebenden Schaltfläche "
+"verantwortlich sind"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:529
+msgid "Settings saved!"
+msgstr "Einstellungen gespeichert!"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:120
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:286
+msgid "Should all or any assignments be matched?"
+msgstr "Sollten alle oder einige Aufgaben übereinstimmen?"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:207
+msgid "Show animation"
+msgstr "Animation anzeigen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:63
+msgid "Show info about bot commands."
+msgstr "Informationen zu Bot-Befehlen anzeigen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:199
+msgid "Show send button"
+msgstr "Schaltfläche „Senden“ anzeigen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:200
+msgid "Show send button."
+msgstr "Schaltfläche „Senden“ anzeigen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:163
+msgid "Show text in the footer of the chatbot window."
+msgstr "Text in der Fußzeile des Chatbot-Fensters anzeigen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:46,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:229
+msgid "Shrink"
+msgstr "Schrumpfen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:300
+msgid ""
+"Sign up for the newsletter to be the first to know about news and discounts."
+msgstr ""
+"Melden Sie sich für den Newsletter an, um als Erster über Neuigkeiten und "
+"Rabatte informiert zu werden."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:65
+msgid "Site URL"
+msgstr "Seiten-URL"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:48,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:231
+msgid "Slide down"
+msgstr "Herunterrutschen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:47,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:230
+msgid "Slide up"
+msgstr "Nach oben schieben"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:581
+msgid "Social contact button"
+msgstr "Schaltfläche für soziale Kontakte"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:608
+msgid "Social contact button icon"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:601
+msgid "Social contact button link"
+msgstr "Link zur Schaltfläche für soziale Kontakte"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:594
+msgid "Social contact button text"
+msgstr "Text der Schaltfläche „Soziale Kontakte“."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:63
+msgid "Software"
+msgstr "Software"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:166,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:125
+msgid "Solid"
+msgstr "Solide"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabStatus.php:238
+msgid ""
+"Some data will be sent to our server to verify purchase and to ensure that a "
+"plugin is compatible with your install. We will never collect any "
+"confidential data. All data is stored anonymously."
+msgstr ""
+"Einige Daten werden an unseren Server gesendet, um den Kauf zu bestätigen "
+"und sicherzustellen, dass ein Plugin mit Ihrer Installation kompatibel ist. "
+"Wir werden niemals vertrauliche Daten sammeln. Alle Daten werden anonym "
+"gespeichert."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:567,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:739
+msgid "Something went wrong"
+msgstr "Etwas ist schief gelaufen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/OpenAiBot.php:176
+msgid "Something went wrong. Try again later."
+msgstr "Etwas ist schief gelaufen. Versuchen Sie es später erneut."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/OpenAiBot.php:178
+msgid "Sorry, but I don't know how to answer that."
+msgstr "Entschuldigung, aber ich weiß nicht, wie ich darauf antworten soll."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabGlobal.php:58
+msgid "Sorry, I don't understand this"
+msgstr "Entschuldigung, ich verstehe das nicht"
+
+#. translators: %s: link
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:134
+msgid ""
+"Specify the name of the voice. You can view and listen to all available "
+"voices by following this link %s. You can also set separate voices for "
+"Webkit browsers"
+msgstr ""
+"Geben Sie den Namen der Stimme an. Sie können alle verfügbaren Stimmen "
+"ansehen und anhören, indem Sie diesem Link %s folgen. Sie können auch "
+"separate Stimmen für Webkit-Browser festlegen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:49
+msgid "Speech recognition"
+msgstr "Spracherkennung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:57
+msgid "Speech recognition based on WebSpeech API"
+msgstr "Spracherkennung basierend auf der WebSpeech-API"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:84
+msgid "Speech recognition button color"
+msgstr "Farbe der Spracherkennungstaste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:72
+msgid "Speech recognition button icon"
+msgstr "Symbol für die Schaltfläche „Spracherkennung“."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:108
+msgid "Speech syntheses"
+msgstr "Sprachsynthesen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:116
+msgid "Speech synthesis based on WebSpeech API"
+msgstr "Sprachsynthese basierend auf der WebSpeech-API"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:55
+msgid "Speech to Text"
+msgstr "Sprache zum Text"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:184,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:188
+msgid "Spread"
+msgstr "Ausbreitung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabUpdates.php:83,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabUpdates.php:119
+msgid "SSL verification"
+msgstr "SSL-Überprüfung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:388
+msgid "Status"
+msgstr "Status"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:76
+msgid "Stop message typing"
+msgstr "Hören Sie auf, Nachrichten einzutippen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:232
+msgid "Storage duration"
+msgstr "Speicherdauer"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:289
+msgid "Styles of the button caption in the floating button"
+msgstr "Stile der Schaltflächenbeschriftung in der schwebenden Schaltfläche"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:225
+msgid "Styles of the icon in the floating button opens the chat bot"
+msgstr "Stile des Symbols in der schwebenden Schaltfläche öffnen den Chatbot"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:65
+msgid "Submit form after speech recognition is complete"
+msgstr "Senden Sie das Formular, nachdem die Spracherkennung abgeschlossen ist"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:333
+msgid "Subscribe"
+msgstr "Abonnieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:299
+msgid "Subscribe to newsletter"
+msgstr "Newsletter abonnieren"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:131,
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:195
+msgid "Support"
+msgstr "Unterstützung"
+
+#. translators: %s: Codex URL
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterTheme.php:211
+msgctxt "System Info"
+msgid ""
+"If you want to modify the source code of your theme, we recommend using a <a "
+"href=\"%s\">child theme</a>."
+msgstr ""
+"Wenn Sie den Quellcode Ihres Themes ändern möchten, empfehlen wir die "
+"Verwendung eines <a href=\"%s\">Child-Themes</a> ."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:389
+msgid "System Status"
+msgstr "Systemstatus"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Tab.php:193,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Tab.php:194,
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:171
+msgid "Tab"
+msgstr "Tab"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:172
+msgid "tab"
+msgstr "Tab"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:482
+msgid "Tablet"
+msgstr "Tablette"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:329
+msgid "Temperature"
+msgstr "Temperatur"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:408
+msgid "terms. "
+msgstr "Bedingungen."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:318,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:184,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:191,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:209,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:183
+msgid "Text color"
+msgstr "Textfarbe"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:216
+msgid "Text size"
+msgstr "Textgröße"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:114
+msgid "Text to Speech"
+msgstr "Text zu Sprache"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:315
+msgid "text-ada-001"
+msgstr "text-ada-001"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:316
+msgid "text-babbage-001"
+msgstr "text-babbage-001"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:314
+msgid "text-davinci-002"
+msgstr "text-davinci-002"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:313
+msgid "text-davinci-003"
+msgstr "text-davinci-003"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:738
+msgid "Thank you!"
+msgstr "Danke schön!"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:124
+msgid ""
+"The bot will speak in the language of the page locale and ignore voice "
+"chooses"
+msgstr ""
+"Der Bot spricht in der Sprache des Seitengebietsschemas und ignoriert "
+"Sprachauswahlen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:376
+msgid ""
+"The date and time assignments use the date/time of your servers, not that of "
+"the visitors system."
+msgstr ""
+"Die Datums- und Uhrzeitzuweisungen verwenden das Datum/die Uhrzeit Ihrer "
+"Server, nicht die des Besuchersystems."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:633
+msgid "The field name which will be displayed in email or in user data record"
+msgstr ""
+"Der Feldname, der in der E-Mail oder im Benutzerdatensatz angezeigt wird"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginUpdater.php:448
+msgid "the latest version."
+msgstr "Die neueste version."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/CheckCompatibility.php:372
+msgid "The minimum PHP version required for Helper plugin is %s."
+msgstr "Die für das Helper-Plugin erforderliche Mindest-PHP-Version ist %s."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:163
+msgid "The name of the bot that is displayed in the chat"
+msgstr "Der Name des Bots, der im Chat angezeigt wird"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:291
+msgid ""
+"The plugin is enabled on the page if ALL the selected rules matched, or if "
+"ANY of the selected rules matched"
+msgstr ""
+"Das Plugin wird auf der Seite aktiviert, wenn ALLE ausgewählten Regeln "
+"zutreffen oder wenn EINE der ausgewählten Regeln zutrifft"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:395
+msgid ""
+"The purchase code is a unique combination of characters that confirms that "
+"you bought the plugin. You can find your purchase code in "
+msgstr ""
+"Der Kaufcode ist eine eindeutige Zeichenkombination, die bestätigt, dass Sie "
+"das Plugin gekauft haben. Ihren Kaufcode finden Sie in"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:428
+msgid ""
+"There are several reasons why the purchase code may not work on your site. "
+"Learn more why your "
+msgstr ""
+"Es gibt mehrere Gründe, warum der Kaufcode auf Ihrer Website möglicherweise "
+"nicht funktioniert. Erfahren Sie mehr, warum Ihr"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:562
+msgid ""
+"There are some writing permissions issues with the following "
+"directories/files:"
+msgstr ""
+"Es gibt einige Probleme mit den Schreibberechtigungen für die folgenden "
+"Verzeichnisse/Dateien:"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:311
+msgid "These settings bot commands button styles of the chatbot window header."
+msgstr ""
+"Diese Einstellungen Bot-Befehle Schaltflächenstile der Chatbot-"
+"Fensterkopfzeile."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabHeader.php:72
+msgid "These settings control the global styles of the chatbot window header."
+msgstr ""
+"Diese Einstellungen steuern die globalen Stile der Kopfzeile des Chatbot-"
+"Fensters."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:132
+msgid "These settings control toolbar links and buttons styles."
+msgstr ""
+"Diese Einstellungen steuern Symbolleisten-Links und Schaltflächenstile."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:80
+msgid "These settings control toolbar styles of the chatbot window header."
+msgstr ""
+"Diese Einstellungen steuern die Symbolleistenstile der Kopfzeile des Chatbot-"
+"Fensters."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:73
+msgid ""
+"This block of settings determines how the form for sending a message will "
+"look and work."
+msgstr ""
+"Dieser Einstellungsblock bestimmt, wie das Formular zum Senden einer "
+"Nachricht aussehen und funktionieren wird."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:194
+msgid ""
+"This block of settings determines how the message submit button  will look "
+"and work."
+msgstr ""
+"Dieser Einstellungsblock bestimmt, wie die Schaltfläche zum Senden von "
+"Nachrichten aussieht und funktioniert."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:157
+msgid ""
+"This group of settings controls the text that is displayed at the bottom of "
+"the chat window."
+msgstr ""
+"Diese Einstellungsgruppe steuert den Text, der unten im Chatfenster "
+"angezeigt wird."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:200
+msgid ""
+"This setting creates a random delay for each message between 100 "
+"milliseconds and the specified value."
+msgstr ""
+"Diese Einstellung erstellt für jede Nachricht eine zufällige Verzögerung "
+"zwischen 100 Millisekunden und dem angegebenen Wert."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFooter.php:170
+msgid "This text is displayed in the footer of the chatbot window."
+msgstr "Dieser Text wird in der Fußzeile des Chatbot-Fensters angezeigt."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:72
+msgid "Timezone"
+msgstr "Zeitzone"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:893
+msgid "Toolbar"
+msgstr "Symbolleiste"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:131
+msgid "Toolbar elements"
+msgstr "Symbolleistenelemente"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:894
+msgid "Toolbar Settings"
+msgstr "Symbolleisteneinstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Messages.php:82
+msgid "Troubleshooting"
+msgstr "Fehlerbehebung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:61
+msgid "Type and send message"
+msgstr "Nachricht eingeben und senden"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Caster.php:525,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabForm.php:239
+msgid "Type your message"
+msgstr "Geben Sie Ihre Nachricht ein"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:160
+msgid "Typing animation delay"
+msgstr "Verzögerung bei der Eingabeanimation"
+
+#. translators: %s: delay
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:163
+msgid "Typing animation delay %s milliseconds."
+msgstr "Verzögerung der Eingabeanimation in %s Millisekunden."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1255
+msgid "Unit"
+msgstr "Einheit"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:1098
+msgid "Units"
+msgstr "Einheiten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:371
+msgid "Unknown error"
+msgstr "Unbekannter Fehler"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:305
+msgid "Update to"
+msgstr "Aktualisieren zu"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:454,
+#: wp-content/plugins/helper/src/Merkulove/Unity/Plugin.php:455
+msgid "Updates"
+msgstr "Aktualisierung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/UI.php:617
+msgid "Upload SVG"
+msgstr "Laden Sie SVG hoch"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:70
+msgid "Uploaded to this User Data"
+msgstr "Auf diese Benutzerdaten hochgeladen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:444
+msgid "URL"
+msgstr "URL"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:455
+msgid "Use a new line for each different match."
+msgstr "Verwenden Sie für jede Übereinstimmung eine neue Zeile."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:878
+msgid "User and Bot Avatar settings"
+msgstr "Benutzer- und Bot-Avatar-Einstellungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:102
+msgid "User avatar"
+msgstr "Benutzer-Avatar"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:137
+msgid "User background"
+msgstr "Benutzerhintergrund"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:56,
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:66
+msgid "User Data"
+msgstr "Benutzerdaten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:67
+msgid "User Data Archives"
+msgstr "Benutzerdatenarchive"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:68
+msgid "User Data Attributes"
+msgstr "Benutzerdatenattribute"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:64
+msgid "User Data not found"
+msgstr "Benutzerdaten nicht gefunden"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:65
+msgid "User Data not found in Trash"
+msgstr "Benutzerdaten wurden nicht im Papierkorb gefunden"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:112
+msgid "User data record"
+msgstr "Benutzerdatensatz"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabAvatar.php:118
+msgid "User icon"
+msgstr "Benutzersymbol"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:332
+msgid "User Message"
+msgstr "Benutzernachricht"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:376
+msgid "User message animation"
+msgstr "Animation der Benutzernachricht"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabMessage.php:333
+msgid "User message bubble settings"
+msgstr ""
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:417
+msgid "User Roles"
+msgstr "Benutzerregeln"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Settings.php:588
+msgid "v."
+msgstr "v."
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:692,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:693
+msgid "Validation error message"
+msgstr "Validierungsfehlermeldung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:681,
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:682
+msgid "Validation regex"
+msgstr "Validierungs-Regex"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:64
+msgid "Version"
+msgstr "Ausführung"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:61,
+#: wp-content/plugins/helper/src/Merkulove/Helper/UserData.php:62
+msgid "View User Data"
+msgstr "Benutzerdaten anzeigen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:131
+msgid "Voice name"
+msgstr "Sprachname"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabToolbar.php:375
+msgid "Voicing"
+msgstr "Stimme"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/Dashboard.php:103
+msgid "Wait"
+msgstr "Warten"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:142
+msgid ""
+"We recommend setting memory to at least 64M. For more information, ask your "
+"hosting provider."
+msgstr ""
+"Wir empfehlen, den Speicher auf mindestens 64 MB einzustellen. Für weitere "
+"Informationen fragen Sie Ihren Hosting-Anbieter."
+
+#. translators: %1$s: PHP version, %2$s: Required PHP version.
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:184
+msgid "We recommend to use PHP %1$s or higher. Your version is %2$s"
+msgstr ""
+"Wir empfehlen die Verwendung von PHP %1$s oder höher. Ihre Version ist %2$s"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:135
+msgid "Web Speech API supported voices"
+msgstr "Von der Web Speech API unterstützte Stimmen"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:77
+msgid "WebSpeech recognition is not available for this browser"
+msgstr "Die WebSpeech-Erkennung ist für diesen Browser nicht verfügbar"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabBehavior.php:130
+msgid "WebSpeech voice name"
+msgstr "Name der WebSpeech-Stimme"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:414
+msgid "What are the benefits of plugin activation?"
+msgstr "Welche Vorteile bietet die Plugin-Aktivierung?"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:540
+msgid "What is the plugin name?"
+msgstr "Wie lautet der Plugin-Name?"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:713
+msgid "What is your name?"
+msgstr "Wie heissen Sie?"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:424
+msgid "What should I do if my Purchase Code does not work?"
+msgstr "Was soll ich tun, wenn mein Kaufcode nicht funktioniert?"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:392
+msgid "Where is my Purchase Code?"
+msgstr "Wo ist mein Einkaufscode?"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:103
+msgid "Width"
+msgstr "Breite"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:256
+msgid "WooCommerce products"
+msgstr "WooCommerce-Produkte"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabAssignments.php:296
+msgid "WordPress Content"
+msgstr "WordPress-Inhalte"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:49
+msgid "WordPress Environment"
+msgstr "WordPress-Umgebung"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:536
+msgid "WordPress root directory"
+msgstr "WordPress-Stammverzeichnis"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:544
+msgid "WordPress root uploads directory"
+msgstr "WordPress-Root-Upload-Verzeichnis"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:67
+msgid "WP Multisite"
+msgstr "WP Multisite"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:268
+msgid ""
+"Write description or documentation about your product, website, service or "
+"something else as the context of bot answers"
+msgstr ""
+"Schreiben Sie eine Beschreibung oder Dokumentation zu Ihrem Produkt, Ihrer "
+"Website, Ihrer Dienstleistung oder etwas anderem als Kontext für Bot-"
+"Antworten"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:296
+msgid ""
+"Write how bot should respond if it can`t find answer in \n"
+"                                              prompt"
+msgstr ""
+"Schreiben Sie, wie der Bot reagieren soll, wenn er keine Antwort findet\n"
+"                                              prompt"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/Config.php:278
+#, fuzzy
+#| msgid ""
+#| "Write objective for ai bot how it should answer based on\n"
+#| "                                                    provided "
+#| "documentation. For multilingual sites, it is recommended to add \"answer "
+#| "in the language in which the question was asked\""
+msgid ""
+"Write objective for AI bot how it should answer based on\n"
+"                                                    provided text. For "
+"multilingual sites, it is recommended to add \"answer in the language in "
+"which the question was asked\""
+msgstr ""
+"Schreiben Sie ein Ziel für den KI-Bot, auf dessen Grundlage er antworten "
+"soll\n"
+"                                                    bereitgestellte "
+"Dokumentation. Bei mehrsprachigen Websites wird empfohlen, „Antwort in der "
+"Sprache, in der die Frage gestellt wurde“ hinzuzufügen."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:66
+msgid "Write Permissions"
+msgstr "Schreibberechtigungen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/AdminScripts.php:89
+msgid ""
+"Wrong format! It looks like you are using the Envato Elements license code "
+"instead of CodeCanyon purchase ID."
+msgstr ""
+"Falsches Format! Anscheinend verwenden Sie den Envato Elements-Lizenzcode "
+"anstelle der CodeCanyon-Kauf-ID."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/AdminScripts.php:90
+msgid ""
+"Wrong format! It looks like you are using the Invoice Number instead of "
+"CodeCanyon purchase ID."
+msgstr ""
+"Falsches Format! Anscheinend verwenden Sie die Rechnungsnummer anstelle der "
+"CodeCanyon-Kauf-ID."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/AdminScripts.php:91
+msgid ""
+"Wrong format! It looks like you are using the Order ID instead of CodeCanyon "
+"purchase ID."
+msgstr ""
+"Falsches Format! Anscheinend verwenden Sie die Bestell-ID anstelle der "
+"CodeCanyon-Kauf-ID."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/AdminScripts.php:92
+msgid "Wrong format! The purchase code must be 36 characters long"
+msgstr "Falsches Format! Der Kaufcode muss 36 Zeichen lang sein"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabUpdates.php:269
+msgid "Wrong Parameter Value."
+msgstr "Falscher Parameterwert."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:347
+msgid "Wrong settings format"
+msgstr "Falsches Einstellungsformat"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:181,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:185
+msgid "X-offset"
+msgstr "X-Versatz"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabFloatButton.php:182,
+#: wp-content/plugins/helper/src/Merkulove/Helper/TabPopup.php:186
+msgid "Y-offset"
+msgstr "Y-Offset"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:119,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:211,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:233,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:255,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:278,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:302,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:326,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:350,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:374,
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:459
+msgid "YES"
+msgstr "JA"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterWordPress.php:186
+msgid "Yes"
+msgstr "Ja"
+
+#: wp-content/plugins/helper/src/Merkulove/Helper/FrontScripts.php:123
+msgid "You"
+msgstr "Du"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:353
+msgid "You are importing settings for"
+msgstr "Sie importieren Einstellungen für"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabMigration.php:359
+msgid "You are importing settings for version"
+msgstr "Sie importieren Einstellungen für die Version"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:121
+msgid ""
+"You must enable allow_url_fopen option in PHP. Contact the support service "
+"of your hosting provider. They know what to do."
+msgstr ""
+"Sie müssen die Option „allow_url_fopen“ in PHP aktivieren. Kontaktieren Sie "
+"den Support Ihres Hosting-Anbieters. Sie wissen, was zu tun ist."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:352
+msgid ""
+"You must enable BCMath extension (Arbitrary Precision Mathematics) in PHP. "
+"Contact the support service of your hosting provider. They know what to do."
+msgstr ""
+"Sie müssen die BCMath-Erweiterung (Arbitrary Precision Mathematics) in PHP "
+"aktivieren. Kontaktieren Sie den Support Ihres Hosting-Anbieters. Sie wissen,"
+" was zu tun ist."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:235
+msgid ""
+"You must enable CURL (Client URL Library) in PHP. Contact the support "
+"service of your hosting provider. They know what to do."
+msgstr ""
+"Sie müssen CURL (Client URL Library) in PHP aktivieren. Kontaktieren Sie den "
+"Support Ihres Hosting-Anbieters. Sie wissen, was zu tun ist."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:376
+msgid ""
+"You must enable mbstring extension (Multibyte String) in PHP. Contact the "
+"support service of your hosting provider. They know what to do."
+msgstr ""
+"Sie müssen die MBstring-Erweiterung (Multibyte String) in PHP aktivieren. "
+"Kontaktieren Sie den Support Ihres Hosting-Anbieters. Sie wissen, was zu tun "
+"ist."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:328
+msgid ""
+"You must enable XML extension in PHP. It's used for XML processing. Contact "
+"the support service of your hosting provider. They know what to do."
+msgstr ""
+"Sie müssen die XML-Erweiterung in PHP aktivieren. Es wird für die XML-"
+"Verarbeitung verwendet. Kontaktieren Sie den Support Ihres Hosting-Anbieters."
+" Sie wissen, was zu tun ist."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:257
+msgid ""
+"You need install and activate Elementor builder. Go to Elementor site "
+"(elementor.com) for details."
+msgstr ""
+"Sie müssen den Elementor Builder installieren und aktivieren. Weitere "
+"Informationen finden Sie auf der Elementor-Website (elementor.com)."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/ReporterServer.php:280
+msgid ""
+"You need install and activate WPBakery builder. Go to WPBakery site "
+"(wpbakery.com) for details."
+msgstr ""
+"Sie müssen den WPBakery Builder installieren und aktivieren. Weitere "
+"Informationen finden Sie auf der WPBakery-Website (wpbakery.com)."
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:396
+msgid "your account"
+msgstr "ihr Konto"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:322
+msgid "Your E-Mail"
+msgstr "Deine E-Mail"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/TabActivation.php:311
+msgid "Your Name"
+msgstr "Ihren Namen"
+
+#: wp-content/plugins/helper/src/Merkulove/Unity/PluginUpdater.php:439
+msgid "Your plugin license is "
+msgstr "Ihre Plugin-Lizenz ist"

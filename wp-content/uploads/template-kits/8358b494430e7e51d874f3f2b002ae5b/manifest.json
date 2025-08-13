@@ -1,0 +1,1577 @@
+{
+    "manifest_version": "1.0.21",
+    "title": "Freshco - Healthy Food & Nutrition Service Elementor Template Kit",
+    "page_builder": "elementor",
+    "kit_version": "1.0.0",
+    "templates": [
+        {
+            "name": "Global Kit Styles",
+            "screenshot": "screenshots\/global-kit-styles.jpg",
+            "source": "templates\/global.json",
+            "preview_url": "http:\/\/askproject.net",
+            "type": "section",
+            "category": "page",
+            "metadata": {
+                "template_type": "global-styles",
+                "include_in_zip": "1",
+                "elementor_pro_required": null,
+                "additional_template_information": [
+                    "These are the global theme styles configured through the Elementor Theme Styles area."
+                ]
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Header",
+            "screenshot": "screenshots\/header.jpg",
+            "source": "templates\/header.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/header\/",
+            "type": "section",
+            "category": "section",
+            "metadata": {
+                "template_type": "section-header",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Footer",
+            "screenshot": "screenshots\/footer.jpg",
+            "source": "templates\/footer.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/footer\/",
+            "type": "section",
+            "category": "section",
+            "metadata": {
+                "template_type": "section-footer",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Home",
+            "screenshot": "screenshots\/home.jpg",
+            "source": "templates\/home.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/home\/",
+            "type": "section",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-home",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "About",
+            "screenshot": "screenshots\/about.jpg",
+            "source": "templates\/about.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/about\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Services",
+            "screenshot": "screenshots\/services.jpg",
+            "source": "templates\/services.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/services\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Service Detail",
+            "screenshot": "screenshots\/service-detail.jpg",
+            "source": "templates\/service-detail.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/service-detail\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Team",
+            "screenshot": "screenshots\/team.jpg",
+            "source": "templates\/team.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/team\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Process",
+            "screenshot": "screenshots\/process.jpg",
+            "source": "templates\/process.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/process\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Pricing",
+            "screenshot": "screenshots\/pricing.jpg",
+            "source": "templates\/pricing.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/pricing\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "FAQs",
+            "screenshot": "screenshots\/faqs.jpg",
+            "source": "templates\/faqs.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/faqs\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Contact",
+            "screenshot": "screenshots\/contact.jpg",
+            "source": "templates\/contact.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/contact\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Blog",
+            "screenshot": "screenshots\/blog.jpg",
+            "source": "templates\/blog.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/blog\/",
+            "type": "page",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-page",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "Single Post",
+            "screenshot": "screenshots\/single-post.jpg",
+            "source": "templates\/single-post.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/single-post\/",
+            "type": "section",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-post",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        },
+        {
+            "name": "404 Page",
+            "screenshot": "screenshots\/404-page.jpg",
+            "source": "templates\/404-page.json",
+            "preview_url": "http:\/\/askproject.net\/freshco\/template-kit\/404-page\/",
+            "type": "section",
+            "category": "page",
+            "metadata": {
+                "template_type": "single-404",
+                "include_in_zip": "1",
+                "elementor_pro_required": null
+            },
+            "elementor_pro_required": false
+        }
+    ],
+    "required_plugins": [
+        {
+            "name": "Sticky Header Effects for Elementor",
+            "version": "1.5.3",
+            "file": "sticky-header-effects-for-elementor\/sticky-header-effects-for-elementor.php",
+            "author": "Rwattner"
+        },
+        {
+            "name": "Elementor",
+            "version": "3.7.3",
+            "file": "elementor\/elementor.php",
+            "author": "Elementor.com"
+        },
+        {
+            "name": "WPForms Lite",
+            "version": "1.7.6",
+            "file": "wpforms-lite\/wpforms.php",
+            "author": "WPForms"
+        },
+        {
+            "name": "DethemeKit for Elementor",
+            "version": "2.0.2",
+            "file": "dethemekit-for-elementor\/detheme-kit.php",
+            "author": "deTheme"
+        },
+        {
+            "name": "Elementor Header & Footer Builder",
+            "version": "1.6.13",
+            "file": "header-footer-elementor\/header-footer-elementor.php",
+            "author": "Brainstorm Force, Nikhil Chavan"
+        },
+        {
+            "name": "ElementsKit Lite",
+            "version": "2.7.0",
+            "file": "elementskit-lite\/elementskit-lite.php",
+            "author": "Wpmet"
+        }
+    ],
+    "images": [
+        {
+            "filename": "logo_Asset-4.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/logo_Asset-4-800x321.png",
+            "templates": [
+                {
+                    "source": "templates\/header.json",
+                    "name": "Header"
+                }
+            ],
+            "filesize": 30262,
+            "dimensions": [
+                1093,
+                438
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "ketogenic-diet-ingredients-LJS2FBZ.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/ketogenic-diet-ingredients-LJS2FBZ-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/footer.json",
+                    "name": "Footer"
+                }
+            ],
+            "filesize": 233147,
+            "dimensions": [
+                1500,
+                1000
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-LJS2FBZ"
+        },
+        {
+            "filename": "logo_Asset-6.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/logo_Asset-6-800x321.png",
+            "templates": [
+                {
+                    "source": "templates\/footer.json",
+                    "name": "Footer"
+                }
+            ],
+            "filesize": 28645,
+            "dimensions": [
+                1093,
+                438
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "2herobg.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/2herobg-800x533.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                }
+            ],
+            "filesize": 12740,
+            "dimensions": [
+                2250,
+                1500
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "icon_1.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/icon_1-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 22643,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "icon_2.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/icon_2-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 19170,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "circleAsset-5.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/circleAsset-5-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                }
+            ],
+            "filesize": 16162,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "adult-woman-drinking-healthy-smoothie-after-workout-XNGWDX3-1.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/adult-woman-drinking-healthy-smoothie-after-workout-XNGWDX3-1.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                }
+            ],
+            "filesize": 260668,
+            "dimensions": [
+                651,
+                1100
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-XNGWDX3"
+        },
+        {
+            "filename": "ketogenic-diet-dinner2-VDA8S57-1.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/ketogenic-diet-dinner2-VDA8S57-1.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                }
+            ],
+            "filesize": 214821,
+            "dimensions": [
+                700,
+                700
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-VDA8S57"
+        },
+        {
+            "filename": "shrimps-and-zucchini-warm-salad-delicious-health-PTPG97N.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/shrimps-and-zucchini-warm-salad-delicious-health-PTPG97N.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                }
+            ],
+            "filesize": 147331,
+            "dimensions": [
+                800,
+                1600
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-PTPG97N"
+        },
+        {
+            "filename": "woman-buying-fresh-vegetables-92RSVWK.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/woman-buying-fresh-vegetables-92RSVWK.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                }
+            ],
+            "filesize": 107477,
+            "dimensions": [
+                800,
+                1600
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-92RSVWK"
+        },
+        {
+            "filename": "icon_3.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/icon_3-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 25139,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "icon_4.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/icon_4-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 17049,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "icon_5.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/icon_5-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 20533,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "icon_6.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/icon_6-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 22112,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "icon_7.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/icon_7-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 28705,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "icon_8.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/icon_8-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 22184,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "grilled-salmon-fish-steak-with-vegetables-on-black-2021-08-27-14-59-55-utc.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/grilled-salmon-fish-steak-with-vegetables-on-black-2021-08-27-14-59-55-utc-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 244754,
+            "dimensions": [
+                1500,
+                1000
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-ZRADL39"
+        },
+        {
+            "filename": "overlay1.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/overlay1-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 20243,
+            "dimensions": [
+                2000,
+                2000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "overlay2.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/overlay2-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 20242,
+            "dimensions": [
+                2000,
+                2000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "apricot-juice-in-glass-healthy-drinks-UFL6K4P.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/apricot-juice-in-glass-healthy-drinks-UFL6K4P-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 166223,
+            "dimensions": [
+                1800,
+                1200
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-UFL6K4P"
+        },
+        {
+            "filename": "number-1.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-1-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 9953,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "number-2.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-2-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 36713,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "number-3.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-3-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 45362,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "number-4.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-4-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 21119,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "supermarket-paper-bag-full-of-healthy-food1-VT6NHDU.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/supermarket-paper-bag-full-of-healthy-food1-VT6NHDU-800x414.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/service-detail.json",
+                    "name": "Service Detail"
+                }
+            ],
+            "filesize": 173711,
+            "dimensions": [
+                2400,
+                1241
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-VT6NHDU"
+        },
+        {
+            "filename": "supermarket-paper-bag-full-of-healthy-food2-VT6NHDU.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/supermarket-paper-bag-full-of-healthy-food2-VT6NHDU-800x1666.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/service-detail.json",
+                    "name": "Service Detail"
+                }
+            ],
+            "filesize": 138276,
+            "dimensions": [
+                1000,
+                2082
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-VT6NHDU"
+        },
+        {
+            "filename": "paper-bag-and-different-food-isolated-on-white-back-PRMECYC.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/paper-bag-and-different-food-isolated-on-white-back-PRMECYC-800x589.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/service-detail.json",
+                    "name": "Service Detail"
+                }
+            ],
+            "filesize": 129904,
+            "dimensions": [
+                1453,
+                1070
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-PRMECYC"
+        },
+        {
+            "filename": "couple-eating-salad-from-fresh-vegetables-at-home-7VYQXAR.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/couple-eating-salad-from-fresh-vegetables-at-home-7VYQXAR-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 139222,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-7VYQXAR"
+        },
+        {
+            "filename": "cheerful-young-man-preparing-healthy-food-in-the-k-YFK2PCL.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/cheerful-young-man-preparing-healthy-food-in-the-k-YFK2PCL.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                },
+                {
+                    "source": "templates\/single-post.json",
+                    "name": "Single Post"
+                }
+            ],
+            "filesize": 91136,
+            "dimensions": [
+                800,
+                800
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-YFK2PCL"
+        },
+        {
+            "filename": "fit-caucasian-beautiful-woman-in-fitting-sport-we-BS4ED8V.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/fit-caucasian-beautiful-woman-in-fitting-sport-we-BS4ED8V.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 87927,
+            "dimensions": [
+                800,
+                800
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-BS4ED8V"
+        },
+        {
+            "filename": "millennial-indian-woman-in-sportswear-drinking-wat-W9MT49J.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/millennial-indian-woman-in-sportswear-drinking-wat-W9MT49J.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 79579,
+            "dimensions": [
+                800,
+                800
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-W9MT49J"
+        },
+        {
+            "filename": "healthy-food-is-healthy-life-8GHAC3S.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/healthy-food-is-healthy-life-8GHAC3S.jpg",
+            "templates": [
+                {
+                    "source": "templates\/home.json",
+                    "name": "Home"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 67309,
+            "dimensions": [
+                800,
+                800
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-8GHAC3S"
+        },
+        {
+            "filename": "healthy-slim-girl-adding-cucumber-to-the-blender-f-YF8M569.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/healthy-slim-girl-adding-cucumber-to-the-blender-f-YF8M569-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                }
+            ],
+            "filesize": 229467,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-YF8M569"
+        },
+        {
+            "filename": "number-1s.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-1s-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                }
+            ],
+            "filesize": 11526,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "number-2s.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-2s-800x800.png",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                }
+            ],
+            "filesize": 23886,
+            "dimensions": [
+                1000,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "making-healthy-juice-K73UMGV.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/making-healthy-juice-K73UMGV-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                }
+            ],
+            "filesize": 163705,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-K73UMGV"
+        },
+        {
+            "filename": "man-sniff-fresh-organic-vegetables-in-wooden-box-S66STKX.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/man-sniff-fresh-organic-vegetables-in-wooden-box-S66STKX-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                }
+            ],
+            "filesize": 112988,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-S66STKX"
+        },
+        {
+            "filename": "happy-senior-man-having-fun-cooking-at-home-elde-ZCTGZGS.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/happy-senior-man-having-fun-cooking-at-home-elde-ZCTGZGS.jpg",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/team.json",
+                    "name": "Team"
+                }
+            ],
+            "filesize": 98857,
+            "dimensions": [
+                800,
+                1000
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-ZCTGZGS"
+        },
+        {
+            "filename": "smiling-woman-cut-bell-pepper-for-salad-PHUR3FX.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/smiling-woman-cut-bell-pepper-for-salad-PHUR3FX.jpg",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/team.json",
+                    "name": "Team"
+                }
+            ],
+            "filesize": 86146,
+            "dimensions": [
+                800,
+                1000
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-PHUR3FX"
+        },
+        {
+            "filename": "cheerful-young-man-preparing-healthy-food-in-the-k-CWP7SB4.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/cheerful-young-man-preparing-healthy-food-in-the-k-CWP7SB4.jpg",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/team.json",
+                    "name": "Team"
+                }
+            ],
+            "filesize": 114163,
+            "dimensions": [
+                800,
+                1000
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-CWP7SB4"
+        },
+        {
+            "filename": "woman-with-healthy-vegetables-in-the-fridge-97PLXEX.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/woman-with-healthy-vegetables-in-the-fridge-97PLXEX-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/about.json",
+                    "name": "About"
+                },
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/service-detail.json",
+                    "name": "Service Detail"
+                },
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                },
+                {
+                    "source": "templates\/faqs.json",
+                    "name": "FAQs"
+                }
+            ],
+            "filesize": 128835,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-97PLXEX"
+        },
+        {
+            "filename": "toa-heftiba-EXY9vpK3pAs-unsplash.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/toa-heftiba-EXY9vpK3pAs-unsplash-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/services.json",
+                    "name": "Services"
+                },
+                {
+                    "source": "templates\/service-detail.json",
+                    "name": "Service Detail"
+                },
+                {
+                    "source": "templates\/blog.json",
+                    "name": "Blog"
+                },
+                {
+                    "source": "templates\/single-post.json",
+                    "name": "Single Post"
+                }
+            ],
+            "filesize": 107531,
+            "dimensions": [
+                2400,
+                1600
+            ],
+            "image_source": "cc0",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/unsplash.com\/photos\/EXY9vpK3pAs"
+        },
+        {
+            "filename": "ketogenic-diet-dinner-VDA8S57.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/ketogenic-diet-dinner-VDA8S57-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/service-detail.json",
+                    "name": "Service Detail"
+                }
+            ],
+            "filesize": 232212,
+            "dimensions": [
+                1800,
+                1200
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-VDA8S57"
+        },
+        {
+            "filename": "couple-eating-salad-from-fresh-vegetables-at-home-FYAZH23.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/couple-eating-salad-from-fresh-vegetables-at-home-FYAZH23-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/team.json",
+                    "name": "Team"
+                }
+            ],
+            "filesize": 128170,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-FYAZH23"
+        },
+        {
+            "filename": "happy-fitness-lady-in-sportswear-writing-daily-rat-SHL2DAE.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/happy-fitness-lady-in-sportswear-writing-daily-rat-SHL2DAE.jpg",
+            "templates": [
+                {
+                    "source": "templates\/team.json",
+                    "name": "Team"
+                }
+            ],
+            "filesize": 80648,
+            "dimensions": [
+                800,
+                1000
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-SHL2DAE"
+        },
+        {
+            "filename": "young-woman-cooking-in-the-kitchen-healthy-food-LG7BRG7.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/young-woman-cooking-in-the-kitchen-healthy-food-LG7BRG7.jpg",
+            "templates": [
+                {
+                    "source": "templates\/team.json",
+                    "name": "Team"
+                }
+            ],
+            "filesize": 106749,
+            "dimensions": [
+                800,
+                1000
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-LG7BRG7"
+        },
+        {
+            "filename": "young-beautiful-woman-cooking-healthy-food-in-the-CKWZURW.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/young-beautiful-woman-cooking-healthy-food-in-the-CKWZURW.jpg",
+            "templates": [
+                {
+                    "source": "templates\/team.json",
+                    "name": "Team"
+                }
+            ],
+            "filesize": 117618,
+            "dimensions": [
+                800,
+                1000
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-CKWZURW"
+        },
+        {
+            "filename": "young-happy-white-couple-cooking-salad-together-3YRW8TZ.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/young-happy-white-couple-cooking-salad-together-3YRW8TZ-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/team.json",
+                    "name": "Team"
+                }
+            ],
+            "filesize": 227924,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-3YRW8TZ"
+        },
+        {
+            "filename": "sports-woman-takes-supplements-or-vitamins-at-gym-B8F7RXP.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/sports-woman-takes-supplements-or-vitamins-at-gym-B8F7RXP-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                }
+            ],
+            "filesize": 111672,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-B8F7RXP"
+        },
+        {
+            "filename": "number-1_2.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-1_2.png",
+            "templates": [
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                }
+            ],
+            "filesize": 8698,
+            "dimensions": [
+                700,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "number-2_2.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-2_2.png",
+            "templates": [
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                }
+            ],
+            "filesize": 33146,
+            "dimensions": [
+                700,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "number-3_2.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/number-3_2.png",
+            "templates": [
+                {
+                    "source": "templates\/process.json",
+                    "name": "Process"
+                }
+            ],
+            "filesize": 41590,
+            "dimensions": [
+                700,
+                1000
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        },
+        {
+            "filename": "young-fit-girl-making-organic-vegan-smoothie-using-QC5C5G8.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/young-fit-girl-making-organic-vegan-smoothie-using-QC5C5G8-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/pricing.json",
+                    "name": "Pricing"
+                }
+            ],
+            "filesize": 218784,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-QC5C5G8"
+        },
+        {
+            "filename": "young-woman-in-white-shirt-hold-basket-with-green-HQYE6X7.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/young-woman-in-white-shirt-hold-basket-with-green-HQYE6X7-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/faqs.json",
+                    "name": "FAQs"
+                },
+                {
+                    "source": "templates\/single-post.json",
+                    "name": "Single Post"
+                }
+            ],
+            "filesize": 187947,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-HQYE6X7"
+        },
+        {
+            "filename": "young-woman-in-white-shirt-hold-basket-with-green-6TKMDEF.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/young-woman-in-white-shirt-hold-basket-with-green-6TKMDEF-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/contact.json",
+                    "name": "Contact"
+                }
+            ],
+            "filesize": 158530,
+            "dimensions": [
+                2100,
+                1400
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "yes",
+            "image_urls": "https:\/\/elements.envato.com\/image-6TKMDEF"
+        },
+        {
+            "filename": "fresh-mini-spinach-in-a-colander-on-the-old-concre-6SP2DZB.jpg",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/fresh-mini-spinach-in-a-colander-on-the-old-concre-6SP2DZB-800x533.jpg",
+            "templates": [
+                {
+                    "source": "templates\/blog.json",
+                    "name": "Blog"
+                },
+                {
+                    "source": "templates\/single-post.json",
+                    "name": "Single Post"
+                }
+            ],
+            "filesize": 234134,
+            "dimensions": [
+                1800,
+                1200
+            ],
+            "image_source": "envato_elements",
+            "person_or_place": "no",
+            "image_urls": "https:\/\/elements.envato.com\/image-6SP2DZB"
+        },
+        {
+            "filename": "404_Asset-1.png",
+            "thumbnail_url": "http:\/\/askproject.net\/freshco\/wp-content\/uploads\/sites\/98\/2022\/08\/404_Asset-1-800x358.png",
+            "templates": [
+                {
+                    "source": "templates\/404-page.json",
+                    "name": "404 Page"
+                }
+            ],
+            "filesize": 90858,
+            "dimensions": [
+                2286,
+                1023
+            ],
+            "image_source": "self_created",
+            "person_or_place": "no",
+            "image_urls": ""
+        }
+    ]
+}

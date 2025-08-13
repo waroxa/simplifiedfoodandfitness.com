@@ -1,0 +1,77 @@
+[
+  {
+    "category_name": "Helper",
+    "icons": [
+      {
+        "name": "Helper",
+        "path": "helper/helper.svg",
+        "keywords": [
+          "bot", "chat", "helper", "support"
+        ]
+      },
+      {
+        "name": "Call",
+        "path": "helper/call.svg",
+        "keywords": [
+          "call", "helper", "support"
+        ]
+      },
+      {
+        "name": "Close",
+        "path": "helper/close.svg",
+        "keywords": [
+          "close", "helper", "support"
+        ]
+      },
+      {
+        "name": "Commands",
+        "path": "helper/commands.svg",
+        "keywords": [
+          "commands", "helper", "support"
+        ]
+      },
+      {
+        "name": "Facebook",
+        "path": "helper/facebook.svg",
+        "keywords": [
+          "facebook", "helper", "support"
+        ]
+      },
+      {
+        "name": "Mail",
+        "path": "helper/mail.svg",
+        "keywords": [
+          "telegram", "helper", "support"
+        ]
+      },
+      {
+        "name": "Pause",
+        "path": "helper/pause.svg",
+        "keywords": [
+          "pause", "helper", "support"
+        ]
+      },
+      {
+        "name": "Recognition",
+        "path": "helper/recognition.svg",
+        "keywords": [
+          "recognition", "helper", "support", "voice", "sound", "audio"
+        ]
+      },
+      {
+        "name": "Telegram",
+        "path": "helper/telegram.svg",
+        "keywords": [
+          "telegram", "helper", "support"
+        ]
+      },
+      {
+        "name": "Voicing",
+        "path": "helper/voicing.svg",
+        "keywords": [
+          "voicing", "helper", "support"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,2455 @@
+# Copyright (C) 2017 Total Recipe Generator
+# This file is distributed under the same license as the Total Recipe Generator package.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Total Recipe Generator El 3.1.0\n"
+"POT-Creation-Date: 2024-01-29 12:24+0530\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Poedit-KeywordsList: __;_e;esc_html_e;esc_html_x:1,2c;esc_html__;esc_attr_e;esc_attr_x:1,2c;esc_attr__;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_x:1,2c;_n:1,2;_n_noop:1,2;__ngettext:1,2;__ngettext_noop:1,2;_c,_nc:4c,1,2\n"
+"X-Poedit-Basepath: .\n"
+"X-Generator: Poedit 2.0.4\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../includes/BFI_Thumb.php:145
+msgid "The server does not have ImageMagick or GD installed and/or enabled! Any of these libraries are required for WordPress to be able to resize images. Please contact your server administrator to enable this before continuing."
+msgstr ""
+
+#: ../includes/BFI_Thumb.php:273
+msgid "Image rotate failed."
+msgstr ""
+
+#: ../includes/BFI_Thumb.php:296
+msgid "Image opacity change failed."
+msgstr ""
+
+#: ../includes/BFI_Thumb.php:383
+msgid "Image color change failed."
+msgstr ""
+
+#: ../includes/BFI_Thumb.php:400
+msgid "Image grayscale failed."
+msgstr ""
+
+#: ../includes/BFI_Thumb.php:417
+msgid "Image negate failed."
+msgstr ""
+
+#: ../includes/class.settings-api.php:392
+msgid "Choose File"
+msgstr ""
+
+#: ../includes/helper-functions.php:44 ../includes/helper-functions.php:170
+#: ../includes/helper-functions.php:534
+#, php-format
+msgid "View all recipies tagged %s"
+msgstr ""
+
+#: ../includes/helper-functions.php:54 ../includes/helper-functions.php:64
+#: ../includes/helper-functions.php:180 ../includes/helper-functions.php:190
+#: ../includes/helper-functions.php:543
+#, php-format
+msgid "View all recipies in %s"
+msgstr ""
+
+#: ../includes/helper-functions.php:100 ../includes/widget-trg.php:739
+msgid "Diabetic"
+msgstr ""
+
+#: ../includes/helper-functions.php:101 ../includes/widget-trg.php:740
+msgid "Gluten Free"
+msgstr ""
+
+#: ../includes/helper-functions.php:102 ../includes/widget-trg.php:741
+msgid "Halal"
+msgstr ""
+
+#: ../includes/helper-functions.php:103 ../includes/widget-trg.php:742
+msgid "Hindu"
+msgstr ""
+
+#: ../includes/helper-functions.php:104 ../includes/widget-trg.php:743
+msgid "Kosher"
+msgstr ""
+
+#: ../includes/helper-functions.php:105 ../includes/widget-trg.php:744
+msgid "Low Calorie"
+msgstr ""
+
+#: ../includes/helper-functions.php:106 ../includes/widget-trg.php:745
+msgid "Low Fat"
+msgstr ""
+
+#: ../includes/helper-functions.php:107 ../includes/widget-trg.php:746
+msgid "Low Lactose"
+msgstr ""
+
+#: ../includes/helper-functions.php:108 ../includes/widget-trg.php:747
+#: ../includes/widget-trg.php:751
+msgid "Low Salt"
+msgstr ""
+
+#: ../includes/helper-functions.php:109 ../includes/widget-trg.php:748
+msgid "Vegan"
+msgstr ""
+
+#: ../includes/helper-functions.php:110 ../includes/widget-trg.php:749
+#: ../includes/widget-trg.php:751
+msgid "Vegetarian"
+msgstr ""
+
+#: ../includes/helper-functions.php:266
+#, php-format
+msgctxt "xx hours"
+msgid "%s hr"
+msgstr ""
+
+#: ../includes/helper-functions.php:271
+#, php-format
+msgctxt "xx minutes"
+msgid "%s min"
+msgstr ""
+
+#: ../includes/helper-functions.php:276
+#, php-format
+msgctxt "xx hour yy minutes"
+msgid "%1$s hr %2$s min"
+msgstr ""
+
+#: ../includes/helper-functions.php:358
+msgid "Share on X (twitter)"
+msgstr ""
+
+#: ../includes/helper-functions.php:362
+msgid "Share on facebook"
+msgstr ""
+
+#: ../includes/helper-functions.php:367
+msgid "Whatsapp"
+msgstr ""
+
+#: ../includes/helper-functions.php:372
+msgid "Share on LinkedIn"
+msgstr ""
+
+#: ../includes/helper-functions.php:380
+msgid "Pin it"
+msgstr ""
+
+#: ../includes/helper-functions.php:385
+msgid "Share via VK"
+msgstr ""
+
+#: ../includes/helper-functions.php:389
+msgid "Email this"
+msgstr ""
+
+#: ../includes/helper-functions.php:394 ../includes/settings.php:353
+msgid "Print"
+msgstr ""
+
+#: ../includes/helper-functions.php:398 ../includes/settings.php:354
+msgid "Reddit"
+msgstr ""
+
+#: ../includes/helper-functions.php:580
+msgid "Custom"
+msgstr ""
+
+#: ../includes/helper-functions.php:580
+msgid "Full"
+msgstr ""
+
+#: ../includes/settings.php:39
+msgid "Ad Spots"
+msgstr ""
+
+#: ../includes/settings.php:43
+msgid "Display"
+msgstr ""
+
+#: ../includes/settings.php:47
+msgid "Social"
+msgstr ""
+
+#: ../includes/settings.php:63
+msgid "Global ad spot 1"
+msgstr ""
+
+#: ../includes/settings.php:64
+msgid "Global ad spot to be shown above ingredients section. Individual recipe post can override this setting"
+msgstr ""
+
+#: ../includes/settings.php:71
+msgid "Global ad spot 2"
+msgstr ""
+
+#: ../includes/settings.php:72
+msgid "Global ad spot to be shown above methods section. Individual recipe post can override this setting"
+msgstr ""
+
+#: ../includes/settings.php:79
+msgid "Global ad spot 3"
+msgstr ""
+
+#: ../includes/settings.php:80
+msgid "Global ad spot to be shown after nutrition table. Individual recipe post can override this setting"
+msgstr ""
+
+#: ../includes/settings.php:89
+msgid "Prep Time Label"
+msgstr ""
+
+#: ../includes/settings.php:90
+msgid "Provide a label for preparation time"
+msgstr ""
+
+#: ../includes/settings.php:92 ../includes/trg-templates/recipe.php:185
+#: ../includes/trg-templates/recipe2.php:186
+#: ../includes/trg-templates/recipe3.php:186
+msgid "Prep Time"
+msgstr ""
+
+#: ../includes/settings.php:97
+msgid "Cook Time Label"
+msgstr ""
+
+#: ../includes/settings.php:98
+msgid "Provide a label for cooking time"
+msgstr ""
+
+#: ../includes/settings.php:100 ../includes/trg-templates/recipe.php:193
+#: ../includes/trg-templates/recipe2.php:194
+#: ../includes/trg-templates/recipe3.php:194
+msgid "Cook Time"
+msgstr ""
+
+#: ../includes/settings.php:105
+msgid "Perform Time Label"
+msgstr ""
+
+#: ../includes/settings.php:106
+msgid "Provide a label for perform time"
+msgstr ""
+
+#: ../includes/settings.php:108 ../includes/trg-templates/recipe.php:201
+#: ../includes/trg-templates/recipe2.php:202
+#: ../includes/trg-templates/recipe3.php:202
+msgid "Perform Time"
+msgstr ""
+
+#: ../includes/settings.php:113
+msgid "Total Time Label"
+msgstr ""
+
+#: ../includes/settings.php:114
+msgid "Provide a label for total time"
+msgstr ""
+
+#: ../includes/settings.php:116 ../includes/trg-templates/recipe.php:209
+#: ../includes/trg-templates/recipe2.php:210
+#: ../includes/trg-templates/recipe3.php:210
+msgid "Total Time"
+msgstr ""
+
+#: ../includes/settings.php:121
+msgid "Ready In Label"
+msgstr ""
+
+#: ../includes/settings.php:122
+msgid "Provide a label for ready in time"
+msgstr ""
+
+#: ../includes/settings.php:124 ../includes/widget-trg.php:512
+msgid "Ready in"
+msgstr ""
+
+#: ../includes/settings.php:129
+msgid "Recipe Yield Label"
+msgstr ""
+
+#: ../includes/settings.php:130
+msgid "Provide a label for recipe Yield"
+msgstr ""
+
+#: ../includes/settings.php:132
+msgid "Yield"
+msgstr ""
+
+#: ../includes/settings.php:137
+msgid "Serving Size Label"
+msgstr ""
+
+#: ../includes/settings.php:138
+msgid "Provide a label for serving size"
+msgstr ""
+
+#: ../includes/settings.php:140 ../includes/trg-templates/recipe.php:231
+#: ../includes/trg-templates/recipe.php:925
+#: ../includes/trg-templates/recipe2.php:232
+#: ../includes/trg-templates/recipe2.php:889
+#: ../includes/trg-templates/recipe3.php:232
+#: ../includes/trg-templates/recipe3.php:892 ../includes/widget-trg.php:535
+msgid "Serving Size"
+msgstr ""
+
+#: ../includes/settings.php:145
+msgid "Energy Label"
+msgstr ""
+
+#: ../includes/settings.php:146
+msgid "Provide a label for Energy"
+msgstr ""
+
+#: ../includes/settings.php:148
+msgid "Energy"
+msgstr ""
+
+#: ../includes/settings.php:153
+msgid "Total Cost Label"
+msgstr ""
+
+#: ../includes/settings.php:154
+msgid "Provide a label for Total Cost"
+msgstr ""
+
+#: ../includes/settings.php:156 ../includes/widget-trg.php:561
+msgid "Total Cost"
+msgstr ""
+
+#: ../includes/settings.php:161
+msgid "Cost per Serving Label"
+msgstr ""
+
+#: ../includes/settings.php:162
+msgid "Provide a label for Cost per Serving"
+msgstr ""
+
+#: ../includes/settings.php:164
+msgid "Cost per Serving"
+msgstr ""
+
+#: ../includes/settings.php:169 ../includes/settings.php:185
+msgid "Cuisine Label"
+msgstr ""
+
+#: ../includes/settings.php:170
+msgid "Provide a label for Cuisine"
+msgstr ""
+
+#: ../includes/settings.php:172 ../includes/trg-templates/recipe.php:296
+#: ../includes/trg-templates/recipe2.php:297
+#: ../includes/trg-templates/recipe3.php:297
+msgid "Cuisine"
+msgstr ""
+
+#: ../includes/settings.php:177
+msgid "Course Label"
+msgstr ""
+
+#: ../includes/settings.php:178
+msgid "Provide a label for Course"
+msgstr ""
+
+#: ../includes/settings.php:180 ../includes/trg-templates/recipe.php:303
+#: ../includes/trg-templates/recipe2.php:304
+#: ../includes/trg-templates/recipe3.php:304 ../includes/widget-trg.php:662
+msgid "Course"
+msgstr ""
+
+#: ../includes/settings.php:186
+msgid "Provide a label for Cooking Method"
+msgstr ""
+
+#: ../includes/settings.php:188 ../includes/trg-templates/recipe.php:310
+#: ../includes/trg-templates/recipe2.php:311
+#: ../includes/trg-templates/recipe3.php:311 ../includes/widget-trg.php:723
+msgid "Cooking Method"
+msgstr ""
+
+#: ../includes/settings.php:193
+msgid "Suitable for Diet Label"
+msgstr ""
+
+#: ../includes/settings.php:194
+msgid "Provide a label for Suitable for Diet"
+msgstr ""
+
+#: ../includes/settings.php:196 ../includes/trg-templates/recipe.php:317
+#: ../includes/trg-templates/recipe2.php:318
+#: ../includes/trg-templates/recipe3.php:318 ../includes/widget-trg.php:736
+msgid "Suitable for Diet"
+msgstr ""
+
+#: ../includes/settings.php:201
+msgid "Ingredients heading"
+msgstr ""
+
+#: ../includes/settings.php:202
+msgid "Provide a text for ingredients heading"
+msgstr ""
+
+#: ../includes/settings.php:204 ../includes/widget-trg.php:815
+#: ../includes/widget-trg.php:2331 ../includes/widget-trg.php:2984
+msgid "Ingredients"
+msgstr ""
+
+#: ../includes/settings.php:209
+msgid "Method heading"
+msgstr ""
+
+#: ../includes/settings.php:210
+msgid "Provide a text for method heading"
+msgstr ""
+
+#: ../includes/settings.php:212 ../includes/widget-trg.php:2601
+#: ../includes/widget-trg.php:2989
+msgid "Method"
+msgstr ""
+
+#: ../includes/settings.php:217
+msgid "Nutrition Facts heading"
+msgstr ""
+
+#: ../includes/settings.php:218
+msgid "Provide a text for Nutrition Facts heading"
+msgstr ""
+
+#: ../includes/settings.php:220 ../includes/widget-trg.php:1028
+#: ../includes/widget-trg.php:1036 ../includes/widget-trg.php:2922
+#: ../includes/widget-trg.php:3013
+msgid "Nutrition Facts"
+msgstr ""
+
+#: ../includes/settings.php:225
+msgid "Icons Color"
+msgstr ""
+
+#: ../includes/settings.php:226
+msgid "Choose a color for heading icons"
+msgstr ""
+
+#: ../includes/settings.php:232
+msgid "Heading Color"
+msgstr ""
+
+#: ../includes/settings.php:233
+msgid "Choose a color for headings"
+msgstr ""
+
+#: ../includes/settings.php:239 ../includes/widget-trg.php:2233
+msgid "Tag links background"
+msgstr ""
+
+#: ../includes/settings.php:240
+msgid "Choose a background color for tag links"
+msgstr ""
+
+#: ../includes/settings.php:246
+msgid "Tag links foreground"
+msgstr ""
+
+#: ../includes/settings.php:247
+msgid "Choose a foreground text color for tag links"
+msgstr ""
+
+#: ../includes/settings.php:253
+msgid "Tag links background hover"
+msgstr ""
+
+#: ../includes/settings.php:254 ../includes/widget-trg.php:2257
+msgid "Choose a hover background color for tag links"
+msgstr ""
+
+#: ../includes/settings.php:260 ../includes/widget-trg.php:2267
+msgid "Tag links hover color"
+msgstr ""
+
+#: ../includes/settings.php:261 ../includes/widget-trg.php:2269
+msgid "Choose a hover color for tag links"
+msgstr ""
+
+#: ../includes/settings.php:267
+msgid "Text labels color"
+msgstr ""
+
+#: ../includes/settings.php:268
+msgid "Choose a color for text labels in recipe meta"
+msgstr ""
+
+#: ../includes/settings.php:274
+msgid "Text highlights color"
+msgstr ""
+
+#: ../includes/settings.php:275
+msgid "Choose a highlight color for text in recipe meta"
+msgstr ""
+
+#: ../includes/settings.php:281 ../includes/widget-trg.php:2726
+msgid "Color for number count"
+msgstr ""
+
+#: ../includes/settings.php:282 ../includes/widget-trg.php:2728
+msgid "Choose a color for number count in recipe method"
+msgstr ""
+
+#: ../includes/settings.php:288
+msgid "Ingredients tick color"
+msgstr ""
+
+#: ../includes/settings.php:289
+msgid "Choose a color for tick icon in ingredients section"
+msgstr ""
+
+#: ../includes/settings.php:295
+msgid "Social links color"
+msgstr ""
+
+#: ../includes/settings.php:296
+msgid "Choose a foreground color for Social links"
+msgstr ""
+
+#: ../includes/settings.php:302
+msgid "Social links background"
+msgstr ""
+
+#: ../includes/settings.php:303
+msgid "Choose a background color for Social links"
+msgstr ""
+
+#: ../includes/settings.php:309
+msgid "Social links hover color"
+msgstr ""
+
+#: ../includes/settings.php:310
+msgid "Choose a hover color for Social links"
+msgstr ""
+
+#: ../includes/settings.php:316
+msgid "Social links background hover"
+msgstr ""
+
+#: ../includes/settings.php:317
+msgid "Choose a hover background color for Social links"
+msgstr ""
+
+#: ../includes/settings.php:323
+msgid "Taxonomy for meta links"
+msgstr ""
+
+#: ../includes/settings.php:324
+msgid "Provide a taxonomy for meta links. E.g. product_cat, or my_taxonomy. If provided, the tag recipe meta items will be linked to this custom taxonomy archive."
+msgstr ""
+
+#: ../includes/settings.php:333
+msgid "Social sharing heading"
+msgstr ""
+
+#: ../includes/settings.php:334
+msgid "Provide a heading for social sharing buttons"
+msgstr ""
+
+#: ../includes/settings.php:341
+msgid "Social Sharing buttons"
+msgstr ""
+
+#: ../includes/settings.php:342
+msgid "Select social share buttons to show at the end of recipe"
+msgstr ""
+
+#: ../includes/settings.php:346
+msgid "Twitter"
+msgstr ""
+
+#: ../includes/settings.php:347
+msgid "Facebook"
+msgstr ""
+
+#: ../includes/settings.php:348
+msgid "WhatsApp"
+msgstr ""
+
+#: ../includes/settings.php:349
+msgid "LinkedIn"
+msgstr ""
+
+#: ../includes/settings.php:350
+msgid "Pinterest"
+msgstr ""
+
+#: ../includes/settings.php:351
+msgid "VKOntakte"
+msgstr ""
+
+#: ../includes/settings.php:352
+msgid "Email"
+msgstr ""
+
+#: ../includes/settings.php:360
+msgid "Social Buttons Placement"
+msgstr ""
+
+#: ../includes/settings.php:361
+msgid "Choose placement area for social buttons."
+msgstr ""
+
+#: ../includes/settings.php:365
+msgid "Before Recipe Title"
+msgstr ""
+
+#: ../includes/settings.php:366
+msgid "Before Recipe Image"
+msgstr ""
+
+#: ../includes/settings.php:367
+msgid "After Recipe Image"
+msgstr ""
+
+#: ../includes/settings.php:368
+msgid "Before Nutrition Facts"
+msgstr ""
+
+#: ../includes/settings.php:369
+msgid "After Nutrition Facts"
+msgstr ""
+
+#: ../includes/settings.php:375
+msgid "Sticky Social Buttons"
+msgstr ""
+
+#: ../includes/settings.php:376
+msgid "Make social buttons sticky on mobile"
+msgstr ""
+
+#: ../includes/settings.php:382
+msgid "Print Header Text"
+msgstr ""
+
+#: ../includes/settings.php:383
+msgid "Provide a header text that shall appear on top of recipe pdf/print."
+msgstr ""
+
+#: ../includes/settings.php:390
+msgid "Print footer Text"
+msgstr ""
+
+#: ../includes/settings.php:391
+msgid "Provide a footer text that shall appear at bottom of recipe pdf/print."
+msgstr ""
+
+#: ../includes/settings.php:403
+msgid "Total Recipe Generator Settings"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:216
+#: ../includes/trg-templates/recipe2.php:217
+#: ../includes/trg-templates/recipe3.php:217
+msgctxt "Label for ready in time"
+msgid "Ready in"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:223
+#: ../includes/trg-templates/recipe2.php:224
+#: ../includes/trg-templates/recipe3.php:224
+msgctxt "Recipe yield or outcome"
+msgid "Yield"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:238
+#: ../includes/trg-templates/recipe2.php:239
+#: ../includes/trg-templates/recipe3.php:239
+msgctxt "Label for recipe calories"
+msgid "Energy"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:239
+#: ../includes/trg-templates/recipe2.php:240
+#: ../includes/trg-templates/recipe3.php:240
+#, php-format
+msgctxt "xx calories"
+msgid "%s cal"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:245
+#: ../includes/trg-templates/recipe2.php:246
+#: ../includes/trg-templates/recipe3.php:246
+msgctxt "Label for total cost"
+msgid "Total Cost"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:252
+#: ../includes/trg-templates/recipe2.php:253
+#: ../includes/trg-templates/recipe3.php:253
+msgctxt "Label for cost per serving"
+msgid "Cost per Serving"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:343
+#: ../includes/trg-templates/recipe2.php:344
+#: ../includes/trg-templates/recipe3.php:344
+msgid "Tags"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:531
+#: ../includes/trg-templates/recipe.php:941
+#: ../includes/trg-templates/recipe2.php:497
+#: ../includes/trg-templates/recipe2.php:904
+#: ../includes/trg-templates/recipe3.php:500
+#: ../includes/trg-templates/recipe3.php:907
+#, php-format
+msgid "%s calories"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:540
+#: ../includes/trg-templates/recipe2.php:505
+#: ../includes/trg-templates/recipe3.php:508 ../includes/widget-trg.php:1120
+msgid "Total Fat"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:545
+#: ../includes/trg-templates/recipe.php:554
+#: ../includes/trg-templates/recipe.php:563
+#: ../includes/trg-templates/recipe.php:572
+#: ../includes/trg-templates/recipe.php:581
+#: ../includes/trg-templates/recipe.php:608
+#: ../includes/trg-templates/recipe.php:617
+#: ../includes/trg-templates/recipe.php:626
+#: ../includes/trg-templates/recipe.php:635
+#: ../includes/trg-templates/recipe.php:644
+#: ../includes/trg-templates/recipe.php:653
+#: ../includes/trg-templates/recipe2.php:510
+#: ../includes/trg-templates/recipe2.php:519
+#: ../includes/trg-templates/recipe2.php:528
+#: ../includes/trg-templates/recipe2.php:537
+#: ../includes/trg-templates/recipe2.php:546
+#: ../includes/trg-templates/recipe2.php:573
+#: ../includes/trg-templates/recipe2.php:582
+#: ../includes/trg-templates/recipe2.php:591
+#: ../includes/trg-templates/recipe2.php:600
+#: ../includes/trg-templates/recipe2.php:609
+#: ../includes/trg-templates/recipe2.php:618
+#: ../includes/trg-templates/recipe3.php:513
+#: ../includes/trg-templates/recipe3.php:522
+#: ../includes/trg-templates/recipe3.php:531
+#: ../includes/trg-templates/recipe3.php:540
+#: ../includes/trg-templates/recipe3.php:549
+#: ../includes/trg-templates/recipe3.php:576
+#: ../includes/trg-templates/recipe3.php:585
+#: ../includes/trg-templates/recipe3.php:594
+#: ../includes/trg-templates/recipe3.php:603
+#: ../includes/trg-templates/recipe3.php:612
+#: ../includes/trg-templates/recipe3.php:621
+msgid "g"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:549
+#: ../includes/trg-templates/recipe2.php:514
+#: ../includes/trg-templates/recipe3.php:517 ../includes/widget-trg.php:1135
+msgid "Saturated Fat"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:558
+#: ../includes/trg-templates/recipe2.php:523
+#: ../includes/trg-templates/recipe3.php:526 ../includes/widget-trg.php:1150
+msgid "Trans Fat"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:567
+#: ../includes/trg-templates/recipe2.php:532
+#: ../includes/trg-templates/recipe3.php:535 ../includes/widget-trg.php:1165
+msgid "Polyunsaturated Fat"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:576
+#: ../includes/trg-templates/recipe2.php:541
+#: ../includes/trg-templates/recipe3.php:544 ../includes/widget-trg.php:1180
+msgid "Monounsaturated Fat"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:585
+#: ../includes/trg-templates/recipe2.php:550
+#: ../includes/trg-templates/recipe3.php:553 ../includes/widget-trg.php:1195
+msgid "Cholesterol"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:590
+#: ../includes/trg-templates/recipe.php:599
+#: ../includes/trg-templates/recipe.php:671
+#: ../includes/trg-templates/recipe.php:680
+#: ../includes/trg-templates/recipe.php:689
+#: ../includes/trg-templates/recipe.php:707
+#: ../includes/trg-templates/recipe.php:734
+#: ../includes/trg-templates/recipe.php:743
+#: ../includes/trg-templates/recipe.php:752
+#: ../includes/trg-templates/recipe.php:761
+#: ../includes/trg-templates/recipe.php:797
+#: ../includes/trg-templates/recipe.php:806
+#: ../includes/trg-templates/recipe.php:815
+#: ../includes/trg-templates/recipe.php:833
+#: ../includes/trg-templates/recipe.php:842
+#: ../includes/trg-templates/recipe.php:860
+#: ../includes/trg-templates/recipe.php:869
+#: ../includes/trg-templates/recipe.php:896
+#: ../includes/trg-templates/recipe2.php:555
+#: ../includes/trg-templates/recipe2.php:564
+#: ../includes/trg-templates/recipe2.php:636
+#: ../includes/trg-templates/recipe2.php:645
+#: ../includes/trg-templates/recipe2.php:654
+#: ../includes/trg-templates/recipe2.php:672
+#: ../includes/trg-templates/recipe2.php:699
+#: ../includes/trg-templates/recipe2.php:708
+#: ../includes/trg-templates/recipe2.php:717
+#: ../includes/trg-templates/recipe2.php:726
+#: ../includes/trg-templates/recipe2.php:762
+#: ../includes/trg-templates/recipe2.php:771
+#: ../includes/trg-templates/recipe2.php:780
+#: ../includes/trg-templates/recipe2.php:798
+#: ../includes/trg-templates/recipe2.php:807
+#: ../includes/trg-templates/recipe2.php:825
+#: ../includes/trg-templates/recipe2.php:834
+#: ../includes/trg-templates/recipe2.php:861
+#: ../includes/trg-templates/recipe3.php:558
+#: ../includes/trg-templates/recipe3.php:567
+#: ../includes/trg-templates/recipe3.php:639
+#: ../includes/trg-templates/recipe3.php:648
+#: ../includes/trg-templates/recipe3.php:657
+#: ../includes/trg-templates/recipe3.php:675
+#: ../includes/trg-templates/recipe3.php:702
+#: ../includes/trg-templates/recipe3.php:711
+#: ../includes/trg-templates/recipe3.php:720
+#: ../includes/trg-templates/recipe3.php:729
+#: ../includes/trg-templates/recipe3.php:765
+#: ../includes/trg-templates/recipe3.php:774
+#: ../includes/trg-templates/recipe3.php:783
+#: ../includes/trg-templates/recipe3.php:801
+#: ../includes/trg-templates/recipe3.php:810
+#: ../includes/trg-templates/recipe3.php:828
+#: ../includes/trg-templates/recipe3.php:837
+#: ../includes/trg-templates/recipe3.php:864
+msgid "mg"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:594
+#: ../includes/trg-templates/recipe2.php:559
+#: ../includes/trg-templates/recipe3.php:562 ../includes/widget-trg.php:1210
+msgid "Sodium"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:603
+#: ../includes/trg-templates/recipe2.php:568
+#: ../includes/trg-templates/recipe3.php:571 ../includes/widget-trg.php:1225
+msgid "Total Carbohydrate"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:612
+#: ../includes/trg-templates/recipe2.php:577
+#: ../includes/trg-templates/recipe3.php:580 ../includes/widget-trg.php:1240
+msgid "Dietary Fiber"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:621
+#: ../includes/trg-templates/recipe2.php:586
+#: ../includes/trg-templates/recipe3.php:589 ../includes/widget-trg.php:1255
+msgid "Total Sugars"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:630
+#: ../includes/trg-templates/recipe2.php:595
+#: ../includes/trg-templates/recipe3.php:598 ../includes/widget-trg.php:1270
+msgid "Added Sugars"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:639
+#: ../includes/trg-templates/recipe2.php:604
+#: ../includes/trg-templates/recipe3.php:607 ../includes/widget-trg.php:1285
+msgid "Sugar Alcohal"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:648
+#: ../includes/trg-templates/recipe2.php:613
+#: ../includes/trg-templates/recipe3.php:616 ../includes/widget-trg.php:1300
+msgid "Protein"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:657
+#: ../includes/trg-templates/recipe2.php:622
+#: ../includes/trg-templates/recipe3.php:625 ../includes/widget-trg.php:1315
+msgid "Vitamin D (Cholecalciferol)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:662
+#: ../includes/trg-templates/recipe.php:716
+#: ../includes/trg-templates/recipe2.php:627
+#: ../includes/trg-templates/recipe2.php:681
+#: ../includes/trg-templates/recipe3.php:630
+#: ../includes/trg-templates/recipe3.php:684
+msgid "IU"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:666
+#: ../includes/trg-templates/recipe2.php:631
+#: ../includes/trg-templates/recipe3.php:634 ../includes/widget-trg.php:1330
+msgid "Calcium"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:675
+#: ../includes/trg-templates/recipe2.php:640
+#: ../includes/trg-templates/recipe3.php:643 ../includes/widget-trg.php:1345
+msgid "Iron"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:684
+#: ../includes/trg-templates/recipe2.php:649
+#: ../includes/trg-templates/recipe3.php:652 ../includes/widget-trg.php:1360
+msgid "Potassium"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:693
+#: ../includes/trg-templates/recipe2.php:658
+#: ../includes/trg-templates/recipe3.php:661 ../includes/widget-trg.php:1375
+msgid "Vitamin A"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:698
+#: ../includes/trg-templates/recipe.php:725
+#: ../includes/trg-templates/recipe.php:770
+#: ../includes/trg-templates/recipe.php:779
+#: ../includes/trg-templates/recipe.php:788
+#: ../includes/trg-templates/recipe.php:824
+#: ../includes/trg-templates/recipe.php:851
+#: ../includes/trg-templates/recipe.php:878
+#: ../includes/trg-templates/recipe.php:887
+#: ../includes/trg-templates/recipe2.php:663
+#: ../includes/trg-templates/recipe2.php:690
+#: ../includes/trg-templates/recipe2.php:735
+#: ../includes/trg-templates/recipe2.php:744
+#: ../includes/trg-templates/recipe2.php:753
+#: ../includes/trg-templates/recipe2.php:789
+#: ../includes/trg-templates/recipe2.php:816
+#: ../includes/trg-templates/recipe2.php:843
+#: ../includes/trg-templates/recipe2.php:852
+#: ../includes/trg-templates/recipe3.php:666
+#: ../includes/trg-templates/recipe3.php:693
+#: ../includes/trg-templates/recipe3.php:738
+#: ../includes/trg-templates/recipe3.php:747
+#: ../includes/trg-templates/recipe3.php:756
+#: ../includes/trg-templates/recipe3.php:792
+#: ../includes/trg-templates/recipe3.php:819
+#: ../includes/trg-templates/recipe3.php:846
+#: ../includes/trg-templates/recipe3.php:855
+msgid "mcg"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:702
+#: ../includes/trg-templates/recipe2.php:667
+#: ../includes/trg-templates/recipe3.php:670 ../includes/widget-trg.php:1390
+msgid "Vitamin C (Ascorbic Acid)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:711
+#: ../includes/trg-templates/recipe2.php:676
+#: ../includes/trg-templates/recipe3.php:679 ../includes/widget-trg.php:1405
+msgid "Vitamin E (Tocopherol)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:720
+#: ../includes/trg-templates/recipe2.php:685
+#: ../includes/trg-templates/recipe3.php:688 ../includes/widget-trg.php:1420
+msgid "Vitamin K"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:729
+#: ../includes/trg-templates/recipe2.php:694
+#: ../includes/trg-templates/recipe3.php:697 ../includes/widget-trg.php:1435
+msgid "Vitamin B1 (Thiamin)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:738
+#: ../includes/trg-templates/recipe2.php:703
+#: ../includes/trg-templates/recipe3.php:706 ../includes/widget-trg.php:1450
+msgid "Vitamin B2 (Riboflavin)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:747
+#: ../includes/trg-templates/recipe2.php:712
+#: ../includes/trg-templates/recipe3.php:715 ../includes/widget-trg.php:1465
+msgid "Vitamin B3 (Niacin)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:756
+#: ../includes/trg-templates/recipe2.php:721
+#: ../includes/trg-templates/recipe3.php:724 ../includes/widget-trg.php:1480
+msgid "Vitamin B6 (Pyridoxine)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:765
+#: ../includes/trg-templates/recipe2.php:730
+#: ../includes/trg-templates/recipe3.php:733 ../includes/widget-trg.php:1495
+msgid "Folate"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:774
+#: ../includes/trg-templates/recipe2.php:739
+#: ../includes/trg-templates/recipe3.php:742 ../includes/widget-trg.php:1510
+msgid "Vitamin B12 (Cobalamine)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:783
+#: ../includes/trg-templates/recipe2.php:748
+#: ../includes/trg-templates/recipe3.php:751 ../includes/widget-trg.php:1525
+msgid "Biotin"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:792
+#: ../includes/trg-templates/recipe2.php:757
+#: ../includes/trg-templates/recipe3.php:760 ../includes/widget-trg.php:1540
+msgid "Choline"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:801
+#: ../includes/trg-templates/recipe2.php:766
+#: ../includes/trg-templates/recipe3.php:769 ../includes/widget-trg.php:1555
+msgid "Vitamin B5 (Pantothenic acid)"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:810
+#: ../includes/trg-templates/recipe2.php:775
+#: ../includes/trg-templates/recipe3.php:778 ../includes/widget-trg.php:1570
+msgid "Phosphorus"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:819
+#: ../includes/trg-templates/recipe2.php:784
+#: ../includes/trg-templates/recipe3.php:787 ../includes/widget-trg.php:1585
+msgid "Iodine"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:828
+#: ../includes/trg-templates/recipe2.php:793
+#: ../includes/trg-templates/recipe3.php:796 ../includes/widget-trg.php:1600
+msgid "Magnesium"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:837
+#: ../includes/trg-templates/recipe2.php:802
+#: ../includes/trg-templates/recipe3.php:805 ../includes/widget-trg.php:1615
+msgid "Zinc"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:846
+#: ../includes/trg-templates/recipe2.php:811
+#: ../includes/trg-templates/recipe3.php:814 ../includes/widget-trg.php:1630
+msgid "Selenium"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:855
+#: ../includes/trg-templates/recipe2.php:820
+#: ../includes/trg-templates/recipe3.php:823 ../includes/widget-trg.php:1645
+msgid "Copper"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:864
+#: ../includes/trg-templates/recipe2.php:829
+#: ../includes/trg-templates/recipe3.php:832 ../includes/widget-trg.php:1660
+msgid "Manganese"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:873
+#: ../includes/trg-templates/recipe2.php:838
+#: ../includes/trg-templates/recipe3.php:841 ../includes/widget-trg.php:1675
+msgid "Chromium"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:882
+#: ../includes/trg-templates/recipe2.php:847
+#: ../includes/trg-templates/recipe3.php:850 ../includes/widget-trg.php:1690
+msgid "Molybdenum"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:891
+#: ../includes/trg-templates/recipe2.php:856
+#: ../includes/trg-templates/recipe3.php:859 ../includes/widget-trg.php:1705
+msgid "Chloride"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:916
+#: ../includes/trg-templates/recipe2.php:880
+#: ../includes/trg-templates/recipe3.php:883
+#, php-format
+msgid "%s servings per container"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:933
+#: ../includes/trg-templates/recipe2.php:896
+#: ../includes/trg-templates/recipe3.php:899 ../includes/widget-trg.php:1754
+msgid "Amount per serving"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:938
+#: ../includes/trg-templates/recipe2.php:901
+#: ../includes/trg-templates/recipe3.php:904
+msgid "Calories"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:946
+#: ../includes/trg-templates/recipe.php:952
+#: ../includes/trg-templates/recipe2.php:909
+#: ../includes/trg-templates/recipe2.php:915
+#: ../includes/trg-templates/recipe3.php:912
+#: ../includes/trg-templates/recipe3.php:918
+msgid "% Daily Value*"
+msgstr ""
+
+#: ../includes/trg-templates/recipe.php:947
+#: ../includes/trg-templates/recipe2.php:910
+#: ../includes/trg-templates/recipe3.php:913
+msgid "Standard DV"
+msgstr ""
+
+#: ../includes/widget-trg.php:27
+msgid "Total Recipe Generator"
+msgstr ""
+
+#: ../includes/widget-trg.php:53
+msgid "General"
+msgstr ""
+
+#: ../includes/widget-trg.php:60
+msgid "Recipe Template"
+msgstr ""
+
+#: ../includes/widget-trg.php:63
+msgid "Standard (1 col)"
+msgstr ""
+
+#: ../includes/widget-trg.php:64
+msgid "Ingredients + Method (2 col)"
+msgstr ""
+
+#: ../includes/widget-trg.php:65
+msgid "Method + Ingredients (2 col)"
+msgstr ""
+
+#: ../includes/widget-trg.php:68
+msgid "Select a recipe template"
+msgstr ""
+
+#: ../includes/widget-trg.php:75
+msgid "Method section width"
+msgstr ""
+
+#: ../includes/widget-trg.php:93
+msgid "Select width for the method section."
+msgstr ""
+
+#: ../includes/widget-trg.php:101
+msgid "Method section gap"
+msgstr ""
+
+#: ../includes/widget-trg.php:128
+msgid "Select a gap width between methods section and ingredients section."
+msgstr ""
+
+#: ../includes/widget-trg.php:137
+msgid "Full width (Tablet)"
+msgstr ""
+
+#: ../includes/widget-trg.php:139 ../includes/widget-trg.php:153
+#: ../includes/widget-trg.php:196 ../includes/widget-trg.php:209
+#: ../includes/widget-trg.php:264 ../includes/widget-trg.php:427
+#: ../includes/widget-trg.php:700 ../includes/widget-trg.php:887
+#: ../includes/widget-trg.php:935 ../includes/widget-trg.php:948
+#: ../includes/widget-trg.php:1002 ../includes/widget-trg.php:1038
+#: ../includes/widget-trg.php:1051 ../includes/widget-trg.php:1082
+#: ../includes/widget-trg.php:1873 ../includes/widget-trg.php:1886
+msgid "On"
+msgstr ""
+
+#: ../includes/widget-trg.php:140 ../includes/widget-trg.php:154
+#: ../includes/widget-trg.php:197 ../includes/widget-trg.php:210
+#: ../includes/widget-trg.php:265 ../includes/widget-trg.php:428
+#: ../includes/widget-trg.php:701 ../includes/widget-trg.php:888
+#: ../includes/widget-trg.php:936 ../includes/widget-trg.php:949
+#: ../includes/widget-trg.php:1003 ../includes/widget-trg.php:1039
+#: ../includes/widget-trg.php:1052 ../includes/widget-trg.php:1083
+#: ../includes/widget-trg.php:1874 ../includes/widget-trg.php:1887
+msgid "Off"
+msgstr ""
+
+#: ../includes/widget-trg.php:143
+msgid "Force method and ingredients section full width on tablet."
+msgstr ""
+
+#: ../includes/widget-trg.php:151
+msgid "Full width (Mobile)"
+msgstr ""
+
+#: ../includes/widget-trg.php:157
+msgid "Force method and ingredients section full width on mobile."
+msgstr ""
+
+#: ../includes/widget-trg.php:164
+msgid "Recipe Name"
+msgstr ""
+
+#: ../includes/widget-trg.php:167
+msgid "Use Post Title"
+msgstr ""
+
+#: ../includes/widget-trg.php:168
+msgid "Custom Name"
+msgstr ""
+
+#: ../includes/widget-trg.php:169 ../includes/widget-trg.php:302
+msgid "Do not show"
+msgstr ""
+
+#: ../includes/widget-trg.php:172
+msgid "Choose a name source for Recipe"
+msgstr ""
+
+#: ../includes/widget-trg.php:179
+msgid "Custom Recipe Name"
+msgstr ""
+
+#: ../includes/widget-trg.php:185
+msgid "Provide a name for the recipe"
+msgstr ""
+
+#: ../includes/widget-trg.php:194
+msgid "Publish date"
+msgstr ""
+
+#: ../includes/widget-trg.php:199
+msgid "Show or hide recipe publish date."
+msgstr ""
+
+#: ../includes/widget-trg.php:207 ../includes/widget-trg.php:219
+msgid "Recipe Author"
+msgstr ""
+
+#: ../includes/widget-trg.php:212
+msgid "Show or hide recipe author name."
+msgstr ""
+
+#: ../includes/widget-trg.php:222
+msgid "Use Post Author"
+msgstr ""
+
+#: ../includes/widget-trg.php:223
+msgid "Custom Author Name"
+msgstr ""
+
+#: ../includes/widget-trg.php:226
+msgid "Select author name source for recipe"
+msgstr ""
+
+#: ../includes/widget-trg.php:234
+msgid "Custom Author name"
+msgstr ""
+
+#: ../includes/widget-trg.php:240
+msgid "Provide name of author"
+msgstr ""
+
+#: ../includes/widget-trg.php:248
+msgid "Author profile URL"
+msgstr ""
+
+#: ../includes/widget-trg.php:254
+msgid "The profile URL of recipe Author. Leave blank to use WordPress user URL."
+msgstr ""
+
+#: ../includes/widget-trg.php:262
+msgid "Recipe summary"
+msgstr ""
+
+#: ../includes/widget-trg.php:267
+msgid "Show or hide recipe summary text."
+msgstr ""
+
+#: ../includes/widget-trg.php:274 ../includes/widget-trg.php:2069
+msgid "Recipe Summary"
+msgstr ""
+
+#: ../includes/widget-trg.php:280
+msgid "Provide a short summary or description of your recipe"
+msgstr ""
+
+#: ../includes/widget-trg.php:290 ../includes/widget-trg.php:297
+msgid "Recipe Image"
+msgstr ""
+
+#: ../includes/widget-trg.php:300
+msgid "Use featured image"
+msgstr ""
+
+#: ../includes/widget-trg.php:301
+msgid "Select from media library"
+msgstr ""
+
+#: ../includes/widget-trg.php:305
+msgid "Select image source"
+msgstr ""
+
+#: ../includes/widget-trg.php:312
+msgid "Add recipe image"
+msgstr ""
+
+#: ../includes/widget-trg.php:319
+msgid "Add a recipe image"
+msgstr ""
+
+#: ../includes/widget-trg.php:327
+msgid "Image Align"
+msgstr ""
+
+#: ../includes/widget-trg.php:331
+msgid "Left"
+msgstr ""
+
+#: ../includes/widget-trg.php:335
+msgid "Center"
+msgstr ""
+
+#: ../includes/widget-trg.php:340
+msgid "Right"
+msgstr ""
+
+#: ../includes/widget-trg.php:345
+msgid "None"
+msgstr ""
+
+#: ../includes/widget-trg.php:359
+msgid "Image Margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:371
+msgid "Image Size"
+msgstr ""
+
+#: ../includes/widget-trg.php:375
+msgid "Select image size."
+msgstr ""
+
+#: ../includes/widget-trg.php:382
+msgid "Width"
+msgstr ""
+
+#: ../includes/widget-trg.php:388
+msgid "Provide image width (in px, without unit) for the recipe image."
+msgstr ""
+
+#: ../includes/widget-trg.php:396
+msgid "Height"
+msgstr ""
+
+#: ../includes/widget-trg.php:402
+msgid "Provide image height (in px, without unit) for the recipe image."
+msgstr ""
+
+#: ../includes/widget-trg.php:410
+msgid "Quality"
+msgstr ""
+
+#: ../includes/widget-trg.php:416
+msgid "Provide image quality (in %, without unit) for the thumbnail image. Range 0 - 100"
+msgstr ""
+
+#: ../includes/widget-trg.php:425
+msgid "Hard Crop"
+msgstr ""
+
+#: ../includes/widget-trg.php:430
+msgid "Enable hard cropping of thumbnail image."
+msgstr ""
+
+#: ../includes/widget-trg.php:441 ../includes/widget-trg.php:2204
+msgid "Recipe Meta"
+msgstr ""
+
+#: ../includes/widget-trg.php:448
+msgid "Preparation Time (Minutes)"
+msgstr ""
+
+#: ../includes/widget-trg.php:457
+msgid "Provide preparation time (in minutes). E.g. 10"
+msgstr ""
+
+#: ../includes/widget-trg.php:464
+msgid "Cooking Time (Minutes)"
+msgstr ""
+
+#: ../includes/widget-trg.php:473
+msgid "Provide cooking time (in minutes). E.g. 30"
+msgstr ""
+
+#: ../includes/widget-trg.php:480
+msgid "Perform Time (Minutes)"
+msgstr ""
+
+#: ../includes/widget-trg.php:489
+msgid "Provide perform time (in minutes). E.g. 30. This can be used to show resting time, or the time it takes in performing the recipe method."
+msgstr ""
+
+#: ../includes/widget-trg.php:496
+msgid "Total Time (Minutes)"
+msgstr ""
+
+#: ../includes/widget-trg.php:505
+msgid "Optional total recipe time (in minutes) if prep time, cook time and perform time are not provided. E.g. 20. Leave blank for auto calculation from prep time, cook time and perform time."
+msgstr ""
+
+#: ../includes/widget-trg.php:515
+msgid "**DEPRECATED: Use Perform Time option instead of this one."
+msgstr ""
+
+#: ../includes/widget-trg.php:522
+msgid "Recipe Yield"
+msgstr ""
+
+#: ../includes/widget-trg.php:528
+msgid "Provide a recipe yield. E.g. 1 Pizza, or 1 Bowl Rice"
+msgstr ""
+
+#: ../includes/widget-trg.php:541
+msgid "Provide a serving size per container. E.g. 1 Piece(20g), or 100g"
+msgstr ""
+
+#: ../includes/widget-trg.php:548
+msgid "Energy (Calories per serving)"
+msgstr ""
+
+#: ../includes/widget-trg.php:554
+msgid "Provide approximate calories (without unit) per serving. E.g. 240"
+msgstr ""
+
+#: ../includes/widget-trg.php:567
+msgid "Provide total cost of recipe."
+msgstr ""
+
+#: ../includes/widget-trg.php:574
+msgid "Cost per serving"
+msgstr ""
+
+#: ../includes/widget-trg.php:580
+msgid "Provide cost per serving."
+msgstr ""
+
+#: ../includes/widget-trg.php:587
+msgid "Custom Info Board Meta"
+msgstr ""
+
+#: ../includes/widget-trg.php:600 ../includes/widget-trg.php:605
+msgid "Meta Label"
+msgstr ""
+
+#: ../includes/widget-trg.php:606
+msgid "The label for custom meta item. E.g. Age Group"
+msgstr ""
+
+#: ../includes/widget-trg.php:611
+msgid "Meta Value"
+msgstr ""
+
+#: ../includes/widget-trg.php:616
+msgid "Label Value"
+msgstr ""
+
+#: ../includes/widget-trg.php:617
+msgid "The value for custom meta item. E.g. 30 Yr. to 60 Yr."
+msgstr ""
+
+#: ../includes/widget-trg.php:620
+msgid "Add custom meta for the recipe."
+msgstr ""
+
+#: ../includes/widget-trg.php:627
+msgid "Recipe Cuisine"
+msgstr ""
+
+#: ../includes/widget-trg.php:630 ../includes/widget-trg.php:640
+msgid "American"
+msgstr ""
+
+#: ../includes/widget-trg.php:631
+msgid "Chinese"
+msgstr ""
+
+#: ../includes/widget-trg.php:632 ../includes/widget-trg.php:640
+msgid "French"
+msgstr ""
+
+#: ../includes/widget-trg.php:633
+msgid "Indian"
+msgstr ""
+
+#: ../includes/widget-trg.php:634
+msgid "Italian"
+msgstr ""
+
+#: ../includes/widget-trg.php:635
+msgid "Japanese"
+msgstr ""
+
+#: ../includes/widget-trg.php:636
+msgid "Mediterranean"
+msgstr ""
+
+#: ../includes/widget-trg.php:637
+msgid "Mexican"
+msgstr ""
+
+#: ../includes/widget-trg.php:641
+msgid "Select recipe cuisine from above list or use custom field below"
+msgstr ""
+
+#: ../includes/widget-trg.php:649
+msgid "Other recipe cuisine"
+msgstr ""
+
+#: ../includes/widget-trg.php:655
+msgid "Provide comma separated cuisines if not in above list. E.g. Rajasthani, Gujarati"
+msgstr ""
+
+#: ../includes/widget-trg.php:665
+msgid "Appetizer"
+msgstr ""
+
+#: ../includes/widget-trg.php:666
+msgid "Breakfast"
+msgstr ""
+
+#: ../includes/widget-trg.php:667
+msgid "Dessert"
+msgstr ""
+
+#: ../includes/widget-trg.php:668
+msgid "Drinks"
+msgstr ""
+
+#: ../includes/widget-trg.php:669
+msgid "Main Course"
+msgstr ""
+
+#: ../includes/widget-trg.php:670
+msgid "Salad"
+msgstr ""
+
+#: ../includes/widget-trg.php:671
+msgid "Snack"
+msgstr ""
+
+#: ../includes/widget-trg.php:672
+msgid "Soup"
+msgstr ""
+
+#: ../includes/widget-trg.php:676
+msgid "Select recipe course/categories from above list or use custom field below"
+msgstr ""
+
+#: ../includes/widget-trg.php:684
+msgid "Other recipe course"
+msgstr ""
+
+#: ../includes/widget-trg.php:690
+msgid "Provide comma separated categories if not in above list. E.g. Lunch, Starter"
+msgstr ""
+
+#: ../includes/widget-trg.php:697
+msgid "Show Tags"
+msgstr ""
+
+#: ../includes/widget-trg.php:703
+msgid "Enabling this option will show post tags. You can add tags in the \"Tags\" panel of post edit screen."
+msgstr ""
+
+#: ../includes/widget-trg.php:710
+msgid "Recipe Keywords"
+msgstr ""
+
+#: ../includes/widget-trg.php:716
+msgid "Provide comma separated keywords relevant to your recipe. E.g. fast food, quick meal, vegetarian. These values will be used for Schema only."
+msgstr ""
+
+#: ../includes/widget-trg.php:729
+msgid "Provide a cooking method. E.g. Roasting, Steaming"
+msgstr ""
+
+#: ../includes/widget-trg.php:752
+msgid "Select diet for which this recipe is suitable. Remove selection using \"ctrl + select\" if not applicable."
+msgstr ""
+
+#: ../includes/widget-trg.php:760
+msgid "Other Suitable for Diet"
+msgstr ""
+
+#: ../includes/widget-trg.php:766
+msgid "Provide comma separated values for other suitable for diet. E.g. Organic, Jain"
+msgstr ""
+
+#: ../includes/widget-trg.php:773
+msgid "Custom Recipe Attributes"
+msgstr ""
+
+#: ../includes/widget-trg.php:786 ../includes/widget-trg.php:791
+msgid "Attribute Label"
+msgstr ""
+
+#: ../includes/widget-trg.php:792
+msgid "The label for custom recipe attribute. E.g. Colors"
+msgstr ""
+
+#: ../includes/widget-trg.php:797
+msgid "Attribute Value"
+msgstr ""
+
+#: ../includes/widget-trg.php:802
+msgid "Attibute Values"
+msgstr ""
+
+#: ../includes/widget-trg.php:803
+msgid "Attribute values, separated by comma. E.g. Green, Yellow, Brown"
+msgstr ""
+
+#: ../includes/widget-trg.php:806
+msgid "Add custom recipe attributes, used as tags or categories."
+msgstr ""
+
+#: ../includes/widget-trg.php:822
+msgid "Ingredients Title"
+msgstr ""
+
+#: ../includes/widget-trg.php:834
+msgid "Add ingredients"
+msgstr ""
+
+#: ../includes/widget-trg.php:846
+msgid "For the burger"
+msgstr ""
+
+#: ../includes/widget-trg.php:851
+msgid "For the curry"
+msgstr ""
+
+#: ../includes/widget-trg.php:859
+msgid "Ingredients group title"
+msgstr ""
+
+#: ../includes/widget-trg.php:864
+msgid "Provide optional group title if you want to separate ingredients in groups."
+msgstr ""
+
+#: ../includes/widget-trg.php:869
+msgid "Ingredients list"
+msgstr ""
+
+#: ../includes/widget-trg.php:875
+msgid "Enter ingredient items, each on new line using Shift + Enter. (Use line break, not paragraph break)."
+msgstr ""
+
+#: ../includes/widget-trg.php:884
+msgid "Use custom ingredients field"
+msgstr ""
+
+#: ../includes/widget-trg.php:890
+msgid "Enable this if you wish to provide ingredients text manually instead of a repeater control."
+msgstr ""
+
+#: ../includes/widget-trg.php:897
+msgid "Ingredients (Alternate)"
+msgstr ""
+
+#: ../includes/widget-trg.php:903
+msgid "Use this field if you wish to pull ingredients content dynamically from other sources. E.g. from a custom field. Separate each list item with a pipe symbol '|'."
+msgstr ""
+
+#: ../includes/widget-trg.php:913
+msgid "Recipe Method"
+msgstr ""
+
+#: ../includes/widget-trg.php:920
+msgid "Method Steps Title"
+msgstr ""
+
+#: ../includes/widget-trg.php:932
+msgid "Auto numbering"
+msgstr ""
+
+#: ../includes/widget-trg.php:938
+msgid "Enable auto numbering on method steps"
+msgstr ""
+
+#: ../includes/widget-trg.php:945
+msgid "Reset numbering"
+msgstr ""
+
+#: ../includes/widget-trg.php:951
+msgid "Reset numbering for each method group."
+msgstr ""
+
+#: ../includes/widget-trg.php:961
+msgid "Preparing the spices"
+msgstr ""
+
+#: ../includes/widget-trg.php:974
+msgid "Method step title"
+msgstr ""
+
+#: ../includes/widget-trg.php:979
+msgid "Provide optional title for the method step."
+msgstr ""
+
+#: ../includes/widget-trg.php:984
+msgid "Method instruction"
+msgstr ""
+
+#: ../includes/widget-trg.php:990
+msgid "Provide detailed method instruction. Use one step per field."
+msgstr ""
+
+#: ../includes/widget-trg.php:999
+msgid "Use custom method field"
+msgstr ""
+
+#: ../includes/widget-trg.php:1005
+msgid "Enable this if you wish to provide method text manually instead of a repeater control."
+msgstr ""
+
+#: ../includes/widget-trg.php:1012
+msgid "Method (Alternate)"
+msgstr ""
+
+#: ../includes/widget-trg.php:1018
+msgid "Use this field if you wish to pull method content dynamically from other sources. E.g. from a custom field. Separate each method with a pipe symbol '|'."
+msgstr ""
+
+#: ../includes/widget-trg.php:1041
+msgid "Show or hide Nutrition facts table."
+msgstr ""
+
+#: ../includes/widget-trg.php:1049
+msgid "Show only Nutrition Facts"
+msgstr ""
+
+#: ../includes/widget-trg.php:1054
+msgid "Use this option to show only the Nutrition Facts table."
+msgstr ""
+
+#: ../includes/widget-trg.php:1061
+msgid "Nutrition table style"
+msgstr ""
+
+#: ../includes/widget-trg.php:1064
+msgid "Standard"
+msgstr ""
+
+#: ../includes/widget-trg.php:1065
+msgid "Classic"
+msgstr ""
+
+#: ../includes/widget-trg.php:1066
+msgid "Classic Tabular"
+msgstr ""
+
+#: ../includes/widget-trg.php:1067
+msgid "Flat"
+msgstr ""
+
+#: ../includes/widget-trg.php:1068
+msgid "Flat Striped"
+msgstr ""
+
+#: ../includes/widget-trg.php:1069
+msgid "Lined"
+msgstr ""
+
+#: ../includes/widget-trg.php:1072
+msgid "Select a style for Nutrition table."
+msgstr ""
+
+#: ../includes/widget-trg.php:1080
+msgid "Show standard Daily Values"
+msgstr ""
+
+#: ../includes/widget-trg.php:1085
+msgid "Enabling this option will show standard Daily Values in the chart."
+msgstr ""
+
+#: ../includes/widget-trg.php:1092
+msgid "Nutrition label extra notes"
+msgstr ""
+
+#: ../includes/widget-trg.php:1098
+msgid "Provide extra notes for the Nutrition table. This will be displayed at the end of table."
+msgstr ""
+
+#: ../includes/widget-trg.php:1105
+msgid "Serving Per Container"
+msgstr ""
+
+#: ../includes/widget-trg.php:1113
+msgid "Provide serving per container. E.g. 30"
+msgstr ""
+
+#: ../includes/widget-trg.php:1128
+msgid "The amount of Total Fat (g), without unit. Standard daily value is 72 g"
+msgstr ""
+
+#: ../includes/widget-trg.php:1143
+msgid "The amount of Saturated Fat (g), without unit. Standard daily value is 20 g"
+msgstr ""
+
+#: ../includes/widget-trg.php:1158
+msgid "The amount of Trans Fat (g), without unit. "
+msgstr ""
+
+#: ../includes/widget-trg.php:1173
+msgid "The amount of Polyunsaturated Fat (g), without unit. "
+msgstr ""
+
+#: ../includes/widget-trg.php:1188
+msgid "The amount of Monounsaturated Fat (g), without unit. "
+msgstr ""
+
+#: ../includes/widget-trg.php:1203
+msgid "The amount of Cholesterol (mg), without unit. Standard daily value is 300 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1218
+msgid "The amount of Sodium (mg), without unit. Standard daily value is 2300 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1233
+msgid "The amount of Total Carbohydrate (g), without unit. Standard daily value is 275 g"
+msgstr ""
+
+#: ../includes/widget-trg.php:1248
+msgid "The amount of Dietary Fiber (g), without unit. Standard daily value is 28 g"
+msgstr ""
+
+#: ../includes/widget-trg.php:1263
+msgid "The amount of Total Sugars (g), without unit. "
+msgstr ""
+
+#: ../includes/widget-trg.php:1278
+msgid "The amount of Added Sugars (g), without unit. Standard daily value is 50 g"
+msgstr ""
+
+#: ../includes/widget-trg.php:1293
+msgid "The amount of Sugar Alcohal (g), without unit. "
+msgstr ""
+
+#: ../includes/widget-trg.php:1308
+msgid "The amount of Protein (g), without unit. Standard daily value is 50 g"
+msgstr ""
+
+#: ../includes/widget-trg.php:1323
+msgid "The amount of Vitamin D (Cholecalciferol) (IU), without unit. Standard daily value is 800 IU (International Units) or 20 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1338
+msgid "The amount of Calcium (mg), without unit. Standard daily value is 1300 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1353
+msgid "The amount of Iron (mg), without unit. Standard daily value is 18 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1368
+msgid "The amount of Potassium (mg), without unit. Standard daily value is 4700 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1383
+msgid "The amount of Vitamin A (International Units), without unit. Standard daily value is 900 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1398
+msgid "The amount of Vitamin C (Ascorbic Acid) (mg), without unit. Standard daily value is 90 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1413
+msgid "The amount of Vitamin E (Tocopherol) (IU), without unit. Standard daily value is 33 IU or 15 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1428
+msgid "The amount of Vitamin K (mcg), without unit. Standard daily value is 120 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1443
+msgid "The amount of Vitamin B1 (Thiamin) (mg), without unit. Standard daily value is 1.2 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1458
+msgid "The amount of Vitamin B2 (Riboflavin) (mg), without unit. Standard daily value is 1.3 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1473
+msgid "The amount of Vitamin B3 (Niacin) (mg), without unit. Standard daily value is 16 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1488
+msgid "The amount of Vitamin B6 (Pyridoxine) (mg), without unit. Standard daily value is 1.7 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1503
+msgid "The amount of Folate (mcg), without unit. Standard daily value is 400 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1518
+msgid "The amount of Vitamin B12 (Cobalamine) (mcg), without unit. Standard daily value is 2.4 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1533
+msgid "The amount of Biotin (mcg), without unit. Standard daily value is 30 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1548
+msgid "The amount of Choline (mg), without unit. Standard daily value is 550 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1563
+msgid "The amount of Vitamin B5 (Pantothenic acid) (mg), without unit. Standard daily value is 5 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1578
+msgid "The amount of Phosphorus (mg), without unit. Standard daily value is 1250 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1593
+msgid "The amount of Iodine (mcg), without unit. Standard daily value is 150 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1608
+msgid "The amount of Magnesium (mg), without unit. Standard daily value is 420 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1623
+msgid "The amount of Zinc (mg), without unit. Standard daily value is 11 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1638
+msgid "The amount of Selenium (mcg), without unit. Standard daily value is 55 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1653
+msgid "The amount of Copper (mg), without unit. Standard daily value is 0.9 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1668
+msgid "The amount of Manganese (mg), without unit. Standard daily value is 2.3 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1683
+msgid "The amount of Chromium (mcg), without unit. Standard daily value is 35 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1698
+msgid "The amount of Molybdenum (mcg), without unit. Standard daily value is 45 mcg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1713
+msgid "The amount of Chloride (mg), without unit. Standard daily value is 2300 mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1720
+msgid "Add custom nutrients"
+msgstr ""
+
+#: ../includes/widget-trg.php:1734
+msgid "Nutrient name"
+msgstr ""
+
+#: ../includes/widget-trg.php:1739
+msgid "Provide a nutrient name. E.g. Power Protein"
+msgstr ""
+
+#: ../includes/widget-trg.php:1744
+msgid "Nutrient Quantity Unit"
+msgstr ""
+
+#: ../includes/widget-trg.php:1749
+msgid "Provide a nutrient unit. E.g. mg"
+msgstr ""
+
+#: ../includes/widget-trg.php:1759
+msgid "Provide amount per serving (without unit). E.g. 20"
+msgstr ""
+
+#: ../includes/widget-trg.php:1764
+msgid "Standard daily value"
+msgstr ""
+
+#: ../includes/widget-trg.php:1769
+msgid "Provide standard daily value of Nutrient (without unit). E.g. 200"
+msgstr ""
+
+#: ../includes/widget-trg.php:1774
+msgid "Nutrient indent level"
+msgstr ""
+
+#: ../includes/widget-trg.php:1777
+msgid "Level 0"
+msgstr ""
+
+#: ../includes/widget-trg.php:1778
+msgid "Level 1"
+msgstr ""
+
+#: ../includes/widget-trg.php:1779
+msgid "Level 2"
+msgstr ""
+
+#: ../includes/widget-trg.php:1780
+msgid "Level 3"
+msgstr ""
+
+#: ../includes/widget-trg.php:1783
+msgid "Select indent level for Nutrient entry in table."
+msgstr ""
+
+#: ../includes/widget-trg.php:1788
+msgid "Nutrient text style"
+msgstr ""
+
+#: ../includes/widget-trg.php:1791
+msgid "Normal"
+msgstr ""
+
+#: ../includes/widget-trg.php:1792
+msgid "Bold"
+msgstr ""
+
+#: ../includes/widget-trg.php:1795
+msgid "Select text style for the nutrient entry."
+msgstr ""
+
+#: ../includes/widget-trg.php:1806
+msgid "Miscellaneous"
+msgstr ""
+
+#: ../includes/widget-trg.php:1813
+msgid "Other notes"
+msgstr ""
+
+#: ../includes/widget-trg.php:1819
+msgid "Provide extra notes to be shown at the end of recipe"
+msgstr ""
+
+#: ../includes/widget-trg.php:1827
+msgid "Ad Spot 1"
+msgstr ""
+
+#: ../includes/widget-trg.php:1833
+msgid "Advertisement spot before ingredients section. You can use custom HTML or ad script in this field."
+msgstr ""
+
+#: ../includes/widget-trg.php:1841
+msgid "Ad Spot 2"
+msgstr ""
+
+#: ../includes/widget-trg.php:1847
+msgid "Advertisement spot before method steps section. You can use custom HTML or ad script in this field."
+msgstr ""
+
+#: ../includes/widget-trg.php:1855
+msgid "Ad Spot 3"
+msgstr ""
+
+#: ../includes/widget-trg.php:1861
+msgid "Advertisement spot after nutrition facts section. You can use custom HTML or ad script in this field."
+msgstr ""
+
+#: ../includes/widget-trg.php:1870
+msgid "JSON LD Schema"
+msgstr ""
+
+#: ../includes/widget-trg.php:1876
+msgid "Enabling this option will add json ld schema data in recipe container."
+msgstr ""
+
+#: ../includes/widget-trg.php:1883
+msgid "Website Schema"
+msgstr ""
+
+#: ../includes/widget-trg.php:1889
+msgid "Add website schema. This should be off if your theme already includes website schema, or you are using an SEO plugin like Yoast for website schema."
+msgstr ""
+
+#: ../includes/widget-trg.php:1896
+msgid "Rating Schema"
+msgstr ""
+
+#: ../includes/widget-trg.php:1905
+msgid "Include Rating Schema from"
+msgstr ""
+
+#: ../includes/widget-trg.php:1908
+msgid "WP Review Plugin"
+msgstr ""
+
+#: ../includes/widget-trg.php:1909
+msgid "Rate My Post Plugin"
+msgstr ""
+
+#: ../includes/widget-trg.php:1912
+msgid "Rating schema value can be included from visitor rating of <a href=\"https://wordpress.org/plugins/wp-review/\" target=\"_blank\">WP Review</a> or <a href=\"https://wordpress.org/plugins/rate-my-post/\" target=\"_blank\">Rate my Post</a> plugin. Choose which one you are using."
+msgstr ""
+
+#: ../includes/widget-trg.php:1919
+msgid "Video Schema"
+msgstr ""
+
+#: ../includes/widget-trg.php:1928
+msgid "Video Name"
+msgstr ""
+
+#: ../includes/widget-trg.php:1940
+msgid "Video URL"
+msgstr ""
+
+#: ../includes/widget-trg.php:1946
+msgid "Provide a URL of recipe video. E.g. https://www.youtube.com/watch?v=RTleJqGUJKE"
+msgstr ""
+
+#: ../includes/widget-trg.php:1953
+msgid "Video Thumbnail"
+msgstr ""
+
+#: ../includes/widget-trg.php:1960
+msgid "Add a video thumbnail image."
+msgstr ""
+
+#: ../includes/widget-trg.php:1967
+msgid "Video Description"
+msgstr ""
+
+#: ../includes/widget-trg.php:1973
+msgid "Provide video description to be used in schema."
+msgstr ""
+
+#: ../includes/widget-trg.php:1980
+msgid "Video upload date"
+msgstr ""
+
+#: ../includes/widget-trg.php:1986
+msgid "Provide date of uploading the video."
+msgstr ""
+
+#: ../includes/widget-trg.php:1993
+msgid "Video duration"
+msgstr ""
+
+#: ../includes/widget-trg.php:1999
+msgid "Provide video duration in ISO 8601 format. E.g. PT8M33S (for 8min 33 sec duration)"
+msgstr ""
+
+#: ../includes/widget-trg.php:2008
+msgid "Recipe Title"
+msgstr ""
+
+#: ../includes/widget-trg.php:2017
+msgid "Recipe Title Tag"
+msgstr ""
+
+#: ../includes/widget-trg.php:2020
+msgid "h1"
+msgstr ""
+
+#: ../includes/widget-trg.php:2021
+msgid "h2"
+msgstr ""
+
+#: ../includes/widget-trg.php:2022
+msgid "h3"
+msgstr ""
+
+#: ../includes/widget-trg.php:2023
+msgid "h4"
+msgstr ""
+
+#: ../includes/widget-trg.php:2024
+msgid "h5"
+msgstr ""
+
+#: ../includes/widget-trg.php:2025
+msgid "p"
+msgstr ""
+
+#: ../includes/widget-trg.php:2026
+msgid "span"
+msgstr ""
+
+#: ../includes/widget-trg.php:2035
+msgid "Title color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2046
+msgid "Title Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2055
+msgid "Title Margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2078 ../includes/widget-trg.php:2869
+msgid "Text color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2089
+msgid "Summary Text Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2098
+msgid "Summary Margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2112
+msgid "Info Board"
+msgstr ""
+
+#: ../includes/widget-trg.php:2121
+msgid "Labels color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2132
+msgid "Labels Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2141
+msgid "Highlights color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2152
+msgid "Highlights Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2161
+msgid "Info Board margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2173
+msgid "Info Board padding"
+msgstr ""
+
+#: ../includes/widget-trg.php:2185
+msgid "Info Board background"
+msgstr ""
+
+#: ../includes/widget-trg.php:2213
+msgid "Meta Labels color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2224
+msgid "Meta Labels Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2244
+msgid "Tag links color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2255
+msgid "Tag links background hover color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2279
+msgid "Tag links Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2288
+msgid "Meta section margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2300
+msgid "Meta section padding"
+msgstr ""
+
+#: ../includes/widget-trg.php:2312
+msgid "Meta section background"
+msgstr ""
+
+#: ../includes/widget-trg.php:2340
+msgid "Ingredients Heading Icon"
+msgstr ""
+
+#: ../includes/widget-trg.php:2344
+msgid "Choose an icon for ingredients heading."
+msgstr ""
+
+#: ../includes/widget-trg.php:2351 ../includes/widget-trg.php:2467
+msgid "Space between"
+msgstr ""
+
+#: ../includes/widget-trg.php:2374 ../includes/widget-trg.php:2644
+msgid "Select a gap between icon and heading."
+msgstr ""
+
+#: ../includes/widget-trg.php:2381 ../includes/widget-trg.php:2651
+msgid "Icon color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2392 ../includes/widget-trg.php:2662
+msgid "Heading color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2403 ../includes/widget-trg.php:2673
+msgid "Heading Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2412 ../includes/widget-trg.php:2682
+msgid "Heading margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2424 ../includes/widget-trg.php:2694
+msgid "Sub Heading color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2435 ../includes/widget-trg.php:2705
+msgid "Sub Heading Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2444 ../includes/widget-trg.php:2714
+msgid "Subheading margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2456
+msgid "Ingredient List Icon"
+msgstr ""
+
+#: ../includes/widget-trg.php:2460
+msgid "Choose an icon for ingredient list."
+msgstr ""
+
+#: ../includes/widget-trg.php:2490
+msgid "Select a gap between icon and list text."
+msgstr ""
+
+#: ../includes/widget-trg.php:2497
+msgid "List Icon color"
+msgstr ""
+
+#: ../includes/widget-trg.php:2508
+msgid "Ingredient List Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2517
+msgid "List items gap"
+msgstr ""
+
+#: ../includes/widget-trg.php:2539
+msgid "Select a gap between ingredient list items."
+msgstr ""
+
+#: ../includes/widget-trg.php:2546
+msgid "Ingredients list margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2558
+msgid "Ingredients section margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2570
+msgid "Ingredients section padding"
+msgstr ""
+
+#: ../includes/widget-trg.php:2582
+msgid "Ingredients section background"
+msgstr ""
+
+#: ../includes/widget-trg.php:2610
+msgid "Method Heading Icon"
+msgstr ""
+
+#: ../includes/widget-trg.php:2614
+msgid "Choose an icon for method heading."
+msgstr ""
+
+#: ../includes/widget-trg.php:2621
+msgid "Icon spacing"
+msgstr ""
+
+#: ../includes/widget-trg.php:2736
+msgid "Counter Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2745
+msgid "Counter Width"
+msgstr ""
+
+#: ../includes/widget-trg.php:2768
+msgid "Select a width for number counter."
+msgstr ""
+
+#: ../includes/widget-trg.php:2775
+msgid "Recipe Method Typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2784
+msgid "Method Step margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2796
+msgid "Method Step padding"
+msgstr ""
+
+#: ../includes/widget-trg.php:2808
+msgid "Method section margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2820
+msgid "Method section padding"
+msgstr ""
+
+#: ../includes/widget-trg.php:2832
+msgid "Method section background"
+msgstr ""
+
+#: ../includes/widget-trg.php:2851
+msgid "Other Notes"
+msgstr ""
+
+#: ../includes/widget-trg.php:2860
+msgid "Other notes typography"
+msgstr ""
+
+#: ../includes/widget-trg.php:2871
+msgid "Choose a color for other notes text"
+msgstr ""
+
+#: ../includes/widget-trg.php:2879
+msgid "Other notes margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:2891
+msgid "Other notes padding"
+msgstr ""
+
+#: ../includes/widget-trg.php:2903
+msgid "Other notes background"
+msgstr ""
+
+#: ../includes/widget-trg.php:2931
+msgid "Nutrition Facts margin"
+msgstr ""
+
+#: ../includes/widget-trg.php:3014
+msgid "*Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs."
+msgstr ""
+
+#: ../total-recipe-generator-el.php:56
+msgid "Not allowed."
+msgstr ""
+
+#: ../total-recipe-generator-el.php:65
+msgid "Unserializing forbidden."
+msgstr ""
+
+#: ../total-recipe-generator-el.php:275
+msgid "Total Recipe Generator plugin requires Elementor Page Builder. Kindly install and activate Elementor plugin."
+msgstr ""

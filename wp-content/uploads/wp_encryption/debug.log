@@ -1,0 +1,21 @@
+<b>7.6.0  SINGLE DOMAIN SSL SG 1 - https://simplifiedfoodandfitness.com - ROOT</b>
+Domain covered:
+["simplifiedfoodandfitness.com","www.simplifiedfoodandfitness.com"]
+
+[24-10-2024 12:13:30] :
+No account found, attempting to create account.
+
+[24-10-2024 12:13:31] :
+LEClient finished constructing
+
+[24-10-2024 12:13:31] :
+No order found for 'simplifiedfoodandfitness.com'. Creating new order.
+
+[24-10-2024 12:13:32] :
+Created order for 'simplifiedfoodandfitness.com'.
+
+Offering manual verification procedure. 
+
+Syncing debug log
+HTTP challenge file (simplifiedfoodandfitness.com/.well-known/acme-challenge/WT1bnuICZfw9R_Qy6ZBHKPOGvBcq6g9ZBVB9bxwHbJk) checked locally - found invalid ()
+Syncing debug log
