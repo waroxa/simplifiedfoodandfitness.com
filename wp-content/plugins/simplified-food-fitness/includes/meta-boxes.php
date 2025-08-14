@@ -23,7 +23,7 @@ function sff_add_meal_plan_meta_boxes() {
     add_meta_box(
     'sff_meal_plan_details',
     __('Meal Plan Details'),
-    'sff_render_meal_plan_meta_box',
+    'sff_mp_render_meta_box',
     'meal_plan',
     'normal',  // ✅ Correct position
     'high'
@@ -62,46 +62,47 @@ add_action('add_meta_boxes', 'sff_add_meal_plan_meta_boxes');
 // }
 
 
+if ( ! function_exists( 'sff_mp_render_meta_box' ) ) {
+    function sff_mp_render_meta_box($post) {
+        wp_nonce_field('sff_save_meal_plan_details', 'sff_meal_plan_nonce');
+        $schedule_json = get_post_meta($post->ID, '_sff_meal_data', true);
+        $schedule      = json_decode($schedule_json, true);
+        if (!is_array($schedule)) {
+            $schedule = [];
+        }
 
-function sff_render_meal_plan_meta_box($post) {
-    wp_nonce_field('sff_save_meal_plan_details', 'sff_meal_plan_nonce');
-    $schedule_json = get_post_meta($post->ID, '_sff_meal_data', true);
-    $schedule      = json_decode($schedule_json, true);
-    if (!is_array($schedule)) {
-        $schedule = [];
-    }
+        wp_enqueue_script('sortablejs', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js', [], '1.15.0', true);
+        wp_enqueue_script('sff-meal-plan-calendar', SFF_PLUGIN_URL . 'assets/js/meal-plan-calendar.js', ['sortablejs'], '1.0', true);
 
-    wp_enqueue_script('sortablejs', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js', [], '1.15.0', true);
-    wp_enqueue_script('sff-meal-plan-calendar', SFF_PLUGIN_URL . 'assets/js/meal-plan-calendar.js', ['sortablejs'], '1.0', true);
+        $recipes       = get_posts(['post_type' => 'recipe', 'numberposts' => -1]);
+        $recipes_data  = [];
+        $recipe_macros = [];
+        foreach ($recipes as $recipe) {
+            $recipes_data[]            = ['id' => $recipe->ID, 'title' => $recipe->post_title];
+            $recipe_macros[$recipe->ID] = sff_get_recipe_macros($recipe->ID);
+        }
 
-    $recipes       = get_posts(['post_type' => 'recipe', 'numberposts' => -1]);
-    $recipes_data  = [];
-    $recipe_macros = [];
-    foreach ($recipes as $recipe) {
-        $recipes_data[]            = ['id' => $recipe->ID, 'title' => $recipe->post_title];
-        $recipe_macros[$recipe->ID] = sff_get_recipe_macros($recipe->ID);
-    }
+        wp_localize_script('sff-meal-plan-calendar', 'sffMealPlan', [
+            'recipes'  => $recipes_data,
+            'schedule' => $schedule,
+            'macros'   => $recipe_macros,
+        ]);
+        ?>
 
-    wp_localize_script('sff-meal-plan-calendar', 'sffMealPlan', [
-        'recipes'  => $recipes_data,
-        'schedule' => $schedule,
-        'macros'   => $recipe_macros,
-    ]);
-    ?>
-
-    <div id="sff-meal-plan-container" style="display:flex; gap:20px;">
-        <div style="flex:1;">
-            <h3><?php esc_html_e('Recipes'); ?></h3>
-            <div id="sff-recipe-list" style="border:1px solid #ccc; padding:10px; min-height:200px;"></div>
+        <div id="sff-meal-plan-container" style="display:flex; gap:20px;">
+            <div style="flex:1;">
+                <h3><?php esc_html_e('Recipes'); ?></h3>
+                <div id="sff-recipe-list" style="border:1px solid #ccc; padding:10px; min-height:200px;"></div>
+            </div>
+            <div style="flex:2;">
+                <h3><?php esc_html_e('Weekly Meal Plan'); ?></h3>
+                <div id="sff-meal-calendar" style="display:grid; grid-template-columns:repeat(7,1fr); gap:10px;"></div>
+            </div>
         </div>
-        <div style="flex:2;">
-            <h3><?php esc_html_e('Weekly Meal Plan'); ?></h3>
-            <div id="sff-meal-calendar" style="display:grid; grid-template-columns:repeat(7,1fr); gap:10px;"></div>
-        </div>
-    </div>
-    <input type="hidden" name="sff_meal_data" id="sff_meal_data" value="<?php echo esc_attr($schedule_json); ?>">
-    <div id="sff-macro-totals" style="margin-top:20px;"></div>
-    <?php
+        <input type="hidden" name="sff_meal_data" id="sff_meal_data" value="<?php echo esc_attr($schedule_json); ?>">
+        <div id="sff-macro-totals" style="margin-top:20px;"></div>
+        <?php
+    }
 }
 
 
