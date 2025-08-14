@@ -760,3 +760,63 @@ function sff_load_profile() {
     echo do_shortcode('[sff_client_profile]');
     wp_die();
 }
+
+function sff_search_ingredients() {
+    if (!isset($_GET['security']) || !wp_verify_nonce($_GET['security'], 'sff_scan_nonce')) {
+        wp_send_json_error('Nonce verification failed.');
+    }
+
+    $term = isset($_GET['q']) ? sanitize_text_field(wp_unslash($_GET['q'])) : '';
+    $query = new WP_Query([
+        'post_type' => 'ingredient',
+        'posts_per_page' => 10,
+        's' => $term,
+    ]);
+
+    $results = [];
+    foreach ($query->posts as $post) {
+        $macros = get_post_meta($post->ID, '_sff_macros', true);
+        $unit_cost = get_post_meta($post->ID, '_sff_unit_cost', true);
+        $results[] = [
+            'id' => $post->ID,
+            'name' => $post->post_title,
+            'macros' => [
+                'calories' => floatval($macros['calories'] ?? 0),
+                'carbs'    => floatval($macros['carbs'] ?? 0),
+                'protein'  => floatval($macros['protein'] ?? 0),
+                'fat'      => floatval($macros['fat'] ?? 0),
+            ],
+            'unit_cost' => floatval($unit_cost),
+        ];
+    }
+
+    wp_send_json_success($results);
+}
+add_action('wp_ajax_sff_search_ingredients', 'sff_search_ingredients');
+
+function sff_create_recipe() {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'sff_scan_nonce')) {
+        wp_send_json_error('Nonce verification failed.');
+    }
+
+    $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
+    $ingredients = isset($_POST['ingredients']) ? array_map('intval', (array) $_POST['ingredients']) : [];
+    if (empty($name) || empty($ingredients)) {
+        wp_send_json_error('Missing data.');
+    }
+
+    if (!function_exists('sff_create_recipe_from_modal')) {
+        require_once SFF_PLUGIN_DIR . 'includes/helpers.php';
+    }
+
+    $recipe_id = sff_create_recipe_from_modal($name, $ingredients);
+    if (is_wp_error($recipe_id)) {
+        wp_send_json_error($recipe_id->get_error_message());
+    }
+
+    wp_send_json_success([
+        'recipe_id' => $recipe_id,
+        'title'     => get_the_title($recipe_id),
+    ]);
+}
+add_action('wp_ajax_sff_create_recipe', 'sff_create_recipe');

@@ -64,31 +64,103 @@ add_action('add_meta_boxes', 'sff_add_meal_plan_meta_boxes');
 
 
 function sff_render_meal_plan_meta_box($post) {
+    // Nonce
     wp_nonce_field('sff_save_meal_plan_details', 'sff_meal_plan_nonce');
-    $schedule_json = get_post_meta($post->ID, '_sff_meal_data', true);
-    $schedule      = json_decode($schedule_json, true);
-    if (!is_array($schedule)) {
+
+    // Read whatever is currently stored
+    $raw = get_post_meta($post->ID, '_sff_meal_data', true);
+
+    // Normalize to JSON string + PHP array schedule
+    if (is_string($raw) && $raw !== '') {
+        $schedule_json = $raw;
+        $decoded = json_decode($raw, true);
+        $schedule = is_array($decoded) ? $decoded : [];
+        $meal_data = []; // optional “quick meal” seed; JS can map from schedule
+    } elseif (is_array($raw)) {
+        // Legacy array storage (old codex branch) – keep it visible in the quick-meal fields
+        $meal_data = $raw;
+        $schedule = []; // start empty; JS can choose to translate legacy fields into schedule
+        $schedule_json = json_encode($schedule);
+    } else {
+        $meal_data = [];
         $schedule = [];
+        $schedule_json = json_encode($schedule);
     }
 
+    // Enqueue scripts
     wp_enqueue_script('sortablejs', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js', [], '1.15.0', true);
     wp_enqueue_script('sff-meal-plan-calendar', SFF_PLUGIN_URL . 'assets/js/meal-plan-calendar.js', ['sortablejs'], '1.0', true);
 
+    // Build recipe data + macros
     $recipes       = get_posts(['post_type' => 'recipe', 'numberposts' => -1]);
     $recipes_data  = [];
     $recipe_macros = [];
     foreach ($recipes as $recipe) {
-        $recipes_data[]            = ['id' => $recipe->ID, 'title' => $recipe->post_title];
-        $recipe_macros[$recipe->ID] = sff_get_recipe_macros($recipe->ID);
+        $recipes_data[]              = ['id' => $recipe->ID, 'title' => $recipe->post_title];
+        $recipe_macros[$recipe->ID]  = sff_get_recipe_macros($recipe->ID);
     }
 
+    // Pass data to JS
     wp_localize_script('sff-meal-plan-calendar', 'sffMealPlan', [
         'recipes'  => $recipes_data,
         'schedule' => $schedule,
         'macros'   => $recipe_macros,
+        'ajaxUrl'  => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('sff_meal_plan_js'),
     ]);
     ?>
 
+    <!-- Top: Quick Meal editor (UI only) -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; max-width:1000px; margin-bottom:16px;">
+        <div>
+            <label><strong>Meal Time:</strong></label>
+            <input type="text" name="sff_meal_meta[time]" value="<?php echo esc_attr($meal_data['time'] ?? ''); ?>" style="width:100%; padding:8px;">
+        </div>
+
+        <div>
+            <label><strong>Calories:</strong></label>
+            <input type="number" name="sff_meal_meta[calories]" value="<?php echo esc_attr($meal_data['calories'] ?? ''); ?>" style="width:100%; padding:8px;">
+        </div>
+
+        <div style="grid-column: span 2;">
+            <label><strong>Meal Title:</strong></label>
+            <input type="text" name="sff_meal_meta[title]" value="<?php echo esc_attr($meal_data['title'] ?? ''); ?>" style="width:100%; padding:8px;">
+        </div>
+
+        <div style="grid-column: span 2;">
+            <label><strong>Description:</strong></label>
+            <textarea name="sff_meal_meta[description]" style="width:100%; height:80px; padding:8px;"><?php echo esc_textarea($meal_data['description'] ?? ''); ?></textarea>
+        </div>
+
+        <div style="grid-column: span 2;">
+            <label><strong>Recipe:</strong></label>
+            <select name="sff_meal_meta[recipe_id]" style="width:100%; padding:8px;">
+                <option value="">-- Select Recipe --</option>
+                <?php foreach ($recipes as $recipe) : 
+                    $selected = ((int)($meal_data['recipe_id'] ?? 0) === $recipe->ID) ? 'selected' : '';
+                ?>
+                    <option value="<?php echo esc_attr($recipe->ID); ?>" <?php echo $selected; ?>>
+                        <?php echo esc_html($recipe->post_title); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <button type="button" id="sff-open-recipe-modal" class="button" style="margin-top:8px;">
+                <?php esc_html_e('Add New Recipe'); ?>
+            </button>
+        </div>
+
+        <div>
+            <label><strong>Servings:</strong></label>
+            <input type="number" name="sff_meal_meta[servings]" value="<?php echo esc_attr($meal_data['servings'] ?? ''); ?>" style="width:100%; padding:8px;">
+        </div>
+
+        <div>
+            <label><strong>Serving Size (g):</strong></label>
+            <input type="number" name="sff_meal_meta[serving_size]" value="<?php echo esc_attr($meal_data['serving_size'] ?? ''); ?>" style="width:100%; padding:8px;">
+        </div>
+    </div>
+
+    <!-- Middle: Recipes list + Weekly calendar -->
     <div id="sff-meal-plan-container" style="display:flex; gap:20px;">
         <div style="flex:1;">
             <h3><?php esc_html_e('Recipes'); ?></h3>
@@ -99,10 +171,40 @@ function sff_render_meal_plan_meta_box($post) {
             <div id="sff-meal-calendar" style="display:grid; grid-template-columns:repeat(7,1fr); gap:10px;"></div>
         </div>
     </div>
+
+    <!-- Hidden JSON the saver expects -->
     <input type="hidden" name="sff_meal_data" id="sff_meal_data" value="<?php echo esc_attr($schedule_json); ?>">
     <div id="sff-macro-totals" style="margin-top:20px;"></div>
+
+    <!-- Modal: Create Recipe -->
+    <div id="sff-recipe-modal" style="display:none;">
+        <div class="sff-modal-content" style="background:#fff; padding:16px; max-width:700px; box-shadow:0 10px 30px rgba(0,0,0,.2);">
+            <button type="button" id="sff-recipe-modal-close" class="button" style="float:right;">&times;</button>
+            <h3><?php esc_html_e('Create Recipe'); ?></h3>
+
+            <input type="text" id="sff-recipe-name" placeholder="<?php esc_attr_e('Recipe Name'); ?>" style="width:100%; margin-bottom:8px;">
+            <input type="text" id="sff-ingredient-search" placeholder="<?php esc_attr_e('Search ingredients'); ?>" style="width:100%; margin-bottom:8px;">
+
+            <ul id="sff-ingredient-results" style="max-height:200px; overflow:auto; border:1px solid #eee; padding:8px; margin-bottom:8px;"></ul>
+
+            <h4><?php esc_html_e('Selected Ingredients'); ?></h4>
+            <ul id="sff-selected-ingredients" style="max-height:200px; overflow:auto; border:1px solid #eee; padding:8px; margin-bottom:8px;"></ul>
+
+            <p><?php esc_html_e('Calories:'); ?> <span id="sff-total-calories">0</span></p>
+            <p><?php esc_html_e('Carbs:'); ?> <span id="sff-total-carbs">0</span></p>
+            <p><?php esc_html_e('Protein:'); ?> <span id="sff-total-protein">0</span></p>
+            <p><?php esc_html_e('Fat:'); ?> <span id="sff-total-fat">0</span></p>
+            <p><?php esc_html_e('Cost: $'); ?><span id="sff-total-cost">0</span></p>
+
+            <button type="button" id="sff-save-recipe" class="button button-primary">
+                <?php esc_html_e('Save Recipe'); ?>
+            </button>
+        </div>
+    </div>
+
     <?php
 }
+
 
 
 function sff_save_meal_plan_details($post_id) {

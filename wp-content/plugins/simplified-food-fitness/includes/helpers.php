@@ -258,6 +258,32 @@ function sff_custom_login_form() {
     return ob_get_clean();
 }
 
+function sff_create_recipe_from_modal($name, $ingredient_ids) {
+    $recipe_id = wp_insert_post([
+        'post_type'   => 'recipe',
+        'post_title'  => sanitize_text_field($name),
+        'post_status' => 'publish',
+    ]);
+
+    if (is_wp_error($recipe_id)) {
+        return $recipe_id;
+    }
+
+    $ingredient_ids = array_map('intval', (array) $ingredient_ids);
+    update_post_meta($recipe_id, '_sff_recipe_ingredients', $ingredient_ids);
+
+    $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
+    update_post_meta($recipe_id, '_sff_recipe_macros', $totals);
+
+    $cost = 0;
+    foreach ($ingredient_ids as $id) {
+        $cost += floatval(get_post_meta($id, '_sff_unit_cost', true));
+    }
+    update_post_meta($recipe_id, '_sff_recipe_cost', $cost);
+
+    return $recipe_id;
+}
+
 function sff_get_recipe_macros_from_ids($ingredient_ids) {
     $totals = ['calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0];
     if (!is_array($ingredient_ids) || empty($ingredient_ids)) {
