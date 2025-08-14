@@ -1,3 +1,4 @@
+(function ($) {
 let animObjects = [];
 let deScrollOptions = [];
 
@@ -448,3 +449,5 @@ function de_scroll_init_responsive() {
     }
   }
 }
+
+})(jQuery);
