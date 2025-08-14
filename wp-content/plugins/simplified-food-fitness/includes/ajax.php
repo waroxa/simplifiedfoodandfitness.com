@@ -689,3 +689,20 @@ function sff_convert_to_client() {
         'post_id' => $lead_id
     ]);
 }
+
+// Load client profile via AJAX
+add_action('wp_ajax_sff_load_profile', 'sff_load_profile');
+add_action('wp_ajax_nopriv_sff_load_profile', 'sff_load_profile');
+
+function sff_load_profile() {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'sff_scan_nonce')) {
+        wp_die('Security check failed', 403);
+    }
+
+    if (!is_user_logged_in()) {
+        wp_die('Unauthorized', 403);
+    }
+
+    echo do_shortcode('[sff_client_profile]');
+    wp_die();
+}
