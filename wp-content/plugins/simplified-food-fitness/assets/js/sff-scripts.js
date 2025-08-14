@@ -288,8 +288,9 @@ jQuery(document).ready(function($) {
   });
 
   // Hamburger menu toggle
-  $('#sff-menu-toggle').on('click', function () {
-    $('#sff-menu').toggle();
+  $(document).on('click', '#sff-menu-toggle', function (e) {
+    e.preventDefault();
+    $('#sff-menu').toggleClass('is-visible');
   });
 });
 

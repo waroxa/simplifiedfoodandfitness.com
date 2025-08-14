@@ -247,6 +247,10 @@
     z-index: 1000;
 }
 
+.sff-menu-items.is-visible {
+    display: flex;
+}
+
 .sff-menu-items a {
     padding: 10px 15px;
     color: #1f1f1f;
