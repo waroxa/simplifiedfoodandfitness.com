@@ -210,3 +210,50 @@
     color: #1f1f1f;
 }
 
+/* Dashboard Hamburger Menu */
+.sff-hamburger {
+    cursor: pointer;
+    width: 30px;
+    height: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sff-hamburger span {
+    display: block;
+    height: 3px;
+    background: #333;
+    border-radius: 2px;
+}
+
+.sff-offcanvas-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background: #fff;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.sff-offcanvas-menu.sff-menu-open {
+    transform: translateX(0);
+}
+
+@media (min-width: 768px) {
+    .sff-offcanvas-menu {
+        width: 300px;
+    }
+}
+
+@media (max-width: 767px) {
+    .sff-offcanvas-menu {
+        width: 80%;
+    }
+}
+

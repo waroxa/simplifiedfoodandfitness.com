@@ -154,10 +154,20 @@ function sff_frontend_dashboard_pretty() {
     ob_start(); ?>
     
     <div class="dashboard-container" style="max-width:1200px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
+        <!-- Off-canvas Menu Container -->
+        <div id="sff-offcanvas-menu" class="sff-offcanvas-menu"></div>
+
         <?php echo do_shortcode('[sff_client_profile]'); ?>
-        
+
         <!-- Header Section -->
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:15px; flex-wrap:wrap; text-align:left; margin-bottom:30px;">
+        <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap; text-align:left; margin-bottom:30px;">
+            <!-- Hamburger Icon -->
+            <div id="sff-menu-toggle" class="sff-hamburger" style="flex-shrink:0;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
             <!-- Left Logo -->
             <div style="flex-shrink:0;">
                 <img src="<?php echo esc_url($logo_url); ?>" alt="Logo" style="height:70px; width:auto; max-width:200px;">

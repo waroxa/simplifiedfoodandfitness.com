@@ -16,6 +16,14 @@ function sff_enqueue_assets() {
         true
     );
 
+    wp_enqueue_script(
+        'sff-dashboard-menu',
+        SFF_PLUGIN_URL . 'assets/js/dashboard-menu.js',
+        [],
+        '1.0.0',
+        true
+    );
+
     // ✅ Localize AJAX object
     wp_localize_script('sff-scripts', 'sff_ajax_obj', [
         'ajax_url' => admin_url('admin-ajax.php'),
