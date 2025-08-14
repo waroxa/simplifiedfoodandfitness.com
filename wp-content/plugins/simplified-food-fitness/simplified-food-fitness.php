@@ -50,3 +50,18 @@ function sff_client_leads_logo_header() {
     echo '</div>';
 }
 // add_action('wp_head', 'sff_client_leads_logo_header');
+
+// Create profile page with client profile shortcode on activation
+function sff_create_profile_page() {
+    $slug = 'my-profile';
+    if (!get_page_by_path($slug)) {
+        wp_insert_post([
+            'post_title'   => 'My Profile',
+            'post_name'    => $slug,
+            'post_status'  => 'publish',
+            'post_type'    => 'page',
+            'post_content' => '[sff_client_profile]'
+        ]);
+    }
+}
+register_activation_hook(__FILE__, 'sff_create_profile_page');
