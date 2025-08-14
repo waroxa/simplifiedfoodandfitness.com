@@ -69,23 +69,115 @@ function sff_client_profile_shortcode() {
     }
 
     $client_id = $client_posts[0]->ID;
-    $custom_fields = get_post_meta($client_id);
 
-    ob_start();
-    ?>
-    <div class="sff-profile-card">
-        <h2><?php echo esc_html(get_the_title($client_id)); ?></h2>
-        <?php foreach ($custom_fields as $key => $value) :
-            if (empty($value[0]) || '_' === $key[0]) {
-                continue;
-            }
-            $label = ucwords(str_replace('_', ' ', preg_replace('/^sff_/', '', $key)));
-        ?>
-            <div class="sff-profile-field">
-                <label><?php echo esc_html($label); ?>:</label>
-                <span><?php echo esc_html($value[0]); ?></span>
+    $user      = wp_get_current_user();
+    $username  = $user->display_name;
+    $day_type  = 'Rest Day';
+    $logo_url  = 'https://simplifiedfoodandfitness.com/wp-content/uploads/2024/10/3.png';
+
+    // Ordered sections of intake-form fields
+    $sections = [
+        'Personal Info' => [
+            'sff_first_name' => 'First Name',
+            'sff_last_name'  => 'Last Name',
+            'sff_email'      => 'Email',
+            'sff_phone'      => 'Phone',
+            'sff_dob'        => 'Date of Birth',
+            'sff_gender'     => 'Gender',
+            'sff_cbw'        => 'Current Body Weight',
+            'sff_cbw_unit'   => 'Weight Unit',
+            'sff_dbw'        => 'Desired Body Weight',
+            'sff_dbw_unit'   => 'Desired Weight Unit',
+            'sff_height'     => 'Height',
+            'sff_height_unit'=> 'Height Unit',
+        ],
+        'Health' => [
+            'sff_bpmh'                => 'BPMH',
+            'sff_medications'         => 'Medications',
+            'sff_medication_allergies'=> 'Medication Allergies',
+            'sff_food_allergies'      => 'Food Allergies',
+            'sff_food_intolerances'   => 'Food Intolerances',
+        ],
+        'Lifestyle & Goals' => [
+            'sff_goal'                    => 'Goal',
+            'sff_goal_other'              => 'Goal (Other)',
+            'sff_current_activity_days'   => 'Current Activity Days',
+            'sff_current_activity_minutes'=> 'Current Activity Minutes',
+            'sff_current_activity_type'   => 'Current Activity Type',
+            'sff_current_activity_type_other' => 'Current Activity Type (Other)',
+            'sff_has_trainer'             => 'Has Trainer',
+            'sff_trainer_name'            => 'Trainer Name',
+            'sff_trainer_contact'         => 'Trainer Contact',
+            'sff_goal_activity_days'      => 'Goal Activity Days',
+            'sff_goal_activity_minutes'   => 'Goal Activity Minutes',
+            'sff_goal_activity_type'      => 'Goal Activity Type',
+            'sff_goal_activity_type_other'=> 'Goal Activity Type (Other)',
+            'sff_smart_watch'             => 'Smart Watch',
+            'sff_smart_watch_other'       => 'Smart Watch (Other)',
+        ],
+        'Preferences' => [
+            'sff_cooking_frequency'        => 'Cooking Frequency',
+            'sff_meals_per_day'            => 'Meals Per Day',
+            'sff_snacks'                   => 'Snacks',
+            'sff_favorite_snacks'          => 'Favorite Snacks',
+            'sff_coffee'                   => 'Coffee',
+            'sff_coffee_frequency'         => 'Coffee Frequency',
+            'sff_diet_preference'          => 'Diet Preference',
+            'sff_diet_preference_other'    => 'Diet Preference (Other)',
+            'sff_favorite_meals'           => 'Favorite Meals',
+            'sff_favorite_fruits'          => 'Favorite Fruits',
+            'sff_disliked_fruits'          => 'Disliked Fruits',
+            'sff_favorite_vegetables'      => 'Favorite Vegetables',
+            'sff_disliked_vegetables'      => 'Disliked Vegetables',
+            'sff_leftovers'                => 'Leftovers',
+            'sff_leftovers_other'          => 'Leftovers (Other)',
+            'sff_repeating_meals'          => 'Repeating Meals',
+            'sff_grocery_store'            => 'Grocery Store',
+            'sff_grocery_store_other'      => 'Grocery Store (Other)',
+            'sff_grocery_delivery'         => 'Grocery Delivery',
+            'sff_grocery_delivery_service' => 'Grocery Delivery Service',
+            'sff_organic_preference'       => 'Organic Preference',
+            'sff_email_consent'            => 'Email Consent',
+            'sff_how_found'                => 'How Found',
+            'sff_how_found_other'          => 'How Found (Other)',
+        ],
+    ];
+
+    ob_start(); ?>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="dashboard-logo">
+                <img src="<?php echo esc_url($logo_url); ?>" alt="Logo">
             </div>
-        <?php endforeach; ?>
+            <div class="dashboard-greeting">
+                <div>
+                    <h1>Hello, <?php echo esc_html($username); ?> <span class="sff-emoji">👋</span></h1>
+                    <p><?php echo esc_html($day_type); ?></p>
+                </div>
+            </div>
+            <div class="sff-hamburger-wrapper" style="position:relative;">
+                <button id="sff-menu-toggle" class="sff-hamburger">&#9776;</button>
+                <div id="sff-menu" class="sff-menu-items">
+                    <a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="sff-profile-card">
+            <h2><?php echo esc_html(get_the_title($client_id)); ?></h2>
+            <?php foreach ($sections as $section => $fields) : ?>
+                <h3><?php echo esc_html($section); ?></h3>
+                <?php foreach ($fields as $meta_key => $label) :
+                    $value = get_post_meta($client_id, $meta_key, true);
+                    if (empty($value)) { continue; }
+                ?>
+                    <div class="sff-profile-field">
+                        <label><?php echo esc_html($label); ?>:</label>
+                        <span><?php echo esc_html($value); ?></span>
+                    </div>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
     <?php
     return ob_get_clean();
