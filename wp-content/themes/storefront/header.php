@@ -45,10 +45,41 @@
 		 * @hooked storefront_header_cart                      - 60
 		 * @hooked storefront_primary_navigation_wrapper_close - 68
 		 */
-		do_action( 'storefront_header' );
-		?>
+                do_action( 'storefront_header' );
+                ?>
 
-	</header><!-- #masthead -->
+               <div class="sff-app-menu">
+                       <button id="sff-menu-toggle" class="sff-menu-toggle" aria-expanded="false" aria-controls="sff-menu">
+                               <span class="bar"></span>
+                               <span class="bar"></span>
+                               <span class="bar"></span>
+                       </button>
+                       <nav id="sff-menu" class="sff-menu" aria-labelledby="sff-menu-toggle">
+                               <ul>
+                                       <?php if ( is_user_logged_in() ) : ?>
+                                               <li><a href="<?php echo esc_url( admin_url( 'profile.php' ) ); ?>"><?php esc_html_e( 'Profile', 'storefront' ); ?></a></li>
+                                       <?php else : ?>
+                                               <li><a href="<?php echo esc_url( wp_login_url() ); ?>"><?php esc_html_e( 'Log in', 'storefront' ); ?></a></li>
+                                       <?php endif; ?>
+                               </ul>
+                       </nav>
+               </div>
+               <style>
+                       #masthead{position:relative;}
+                       .sff-app-menu{position:absolute;top:1rem;right:1rem;}
+                       .sff-menu-toggle{background:none;border:0;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;width:24px;height:18px;padding:0;}
+                       .sff-menu-toggle .bar{display:block;width:100%;height:3px;background:#333;}
+                       .sff-menu{display:none;position:absolute;top:100%;right:0;background:#fff;border:1px solid #ccc;border-radius:4px;padding:.5rem 1rem;}
+                       .sff-menu.open{display:block;}
+                       .sff-menu ul{list-style:none;margin:0;padding:0;}
+                       .sff-menu li{margin:0;}
+                       .sff-menu a{display:block;padding:.5rem 0;color:#333;text-decoration:none;}
+               </style>
+               <script>
+               document.addEventListener('DOMContentLoaded',function(){var t=document.getElementById('sff-menu-toggle');var m=document.getElementById('sff-menu');if(t&&m){t.addEventListener('click',function(){var e=t.getAttribute('aria-expanded')==='true';t.setAttribute('aria-expanded',(!e).toString());m.classList.toggle('open');});}});
+               </script>
+
+        </header><!-- #masthead -->
 
 	<?php
 	/**
