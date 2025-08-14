@@ -154,8 +154,6 @@ function sff_frontend_dashboard_pretty() {
     ob_start(); ?>
     
     <div class="dashboard-container" style="max-width:1200px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
-        <?php echo do_shortcode('[sff_client_profile]'); ?>
-        
         <!-- Header Section -->
         <div style="display:flex; align-items:center; justify-content:space-between; gap:15px; flex-wrap:wrap; text-align:left; margin-bottom:30px;">
             <!-- Left Logo -->
@@ -172,6 +170,14 @@ function sff_frontend_dashboard_pretty() {
                     <p style="font-size:16px; color:#777; margin:0;">
                         <?php echo esc_html($day_type); ?>
                     </p>
+                </div>
+            </div>
+
+            <!-- Hamburger Menu -->
+            <div class="sff-hamburger-wrapper" style="position:relative;">
+                <button id="sff-menu-toggle" class="sff-hamburger">&#9776;</button>
+                <div id="sff-menu" class="sff-menu-items">
+                    <a href="#" id="sff-profile-link">Profile</a>
                 </div>
             </div>
         </div>
@@ -252,6 +258,15 @@ function sff_frontend_dashboard_pretty() {
             </div>
         </div>
     </div>
+
+    <!-- Profile Modal -->
+    <div id="sff-profile-modal" class="sff-modal" style="display:none;">
+        <div class="sff-modal-content">
+            <button class="sff-modal-close" aria-label="Close">&times;</button>
+            <div id="sff-profile-content"></div>
+        </div>
+    </div>
+
     <?php
     return ob_get_clean();
 }
