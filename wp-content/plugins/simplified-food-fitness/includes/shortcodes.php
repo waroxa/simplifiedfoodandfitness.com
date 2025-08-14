@@ -51,6 +51,43 @@ function sff_frontend_ingredient_page() {
 }
 add_shortcode('sff_add_ingredient', 'sff_frontend_ingredient_page');
 
+function sff_render_header($username, $day_type) {
+    $logo_url = 'https://simplifiedfoodandfitness.com/wp-content/uploads/2024/10/3.png';
+    ob_start(); ?>
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:15px; flex-wrap:wrap; text-align:left; margin-bottom:30px;">
+        <!-- Left Logo -->
+        <div style="flex-shrink:0;">
+            <img src="<?php echo esc_url($logo_url); ?>" alt="Logo" style="height:70px; width:auto; max-width:200px;">
+        </div>
+
+        <!-- Greeting and Rest Day Container -->
+        <div style="display:flex; flex-direction:column; flex:1; min-width:200px;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <h1 style="font-size:24px; color:#333; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    Hello, <?php echo esc_html( $username ); ?> <span class="sff-emoji">👋</span>
+                </h1>
+                <p style="font-size:16px; color:#777; margin:0;">
+                    <?php echo esc_html($day_type); ?>
+                </p>
+            </div>
+        </div>
+
+        <!-- Hamburger Menu -->
+        <div class="sff-hamburger-wrapper" style="position:relative;">
+            <button id="sff-menu-toggle" class="sff-hamburger">&#9776;</button>
+            <nav id="sff-menu" class="sff-menu-items" aria-label="Mobile Menu">
+                <ul>
+                    <li><a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>">Dashboard</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a></li>
+                    <li><a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
 function sff_client_profile_shortcode() {
     if (!is_user_logged_in()) {
         return '<p>Please log in to view your profile.</p>';
@@ -73,7 +110,6 @@ function sff_client_profile_shortcode() {
     $user      = wp_get_current_user();
     $username  = $user->display_name;
     $day_type  = 'Rest Day';
-    $logo_url  = 'https://simplifiedfoodandfitness.com/wp-content/uploads/2024/10/3.png';
 
     // Ordered sections of intake-form fields
     $sections = [
@@ -145,23 +181,7 @@ function sff_client_profile_shortcode() {
 
     ob_start(); ?>
     <div class="dashboard-container">
-        <div class="dashboard-header">
-            <div class="dashboard-logo">
-                <img src="<?php echo esc_url($logo_url); ?>" alt="Logo">
-            </div>
-            <div class="dashboard-greeting">
-                <div>
-                    <h1>Hello, <?php echo esc_html($username); ?> <span class="sff-emoji">👋</span></h1>
-                    <p><?php echo esc_html($day_type); ?></p>
-                </div>
-            </div>
-            <div class="sff-hamburger-wrapper" style="position:relative;">
-                <button id="sff-menu-toggle" class="sff-hamburger">&#9776;</button>
-                <div id="sff-menu" class="sff-menu-items">
-                    <a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a>
-                </div>
-            </div>
-        </div>
+        <?php echo sff_render_header($username, $day_type); ?>
 
         <div class="sff-profile-card">
             <h2><?php echo esc_html(get_the_title($client_id)); ?></h2>
@@ -195,7 +215,6 @@ function sff_frontend_dashboard_pretty() {
     $username = $user->display_name;
     $client_id = get_current_user_id();
     $day_type = "Rest Day"; // You can dynamically set this if needed
-    $logo_url = "https://simplifiedfoodandfitness.com/wp-content/uploads/2024/10/3.png";
 
     // 🔥 Fetch this client's Macro Target post
     $args = array(
@@ -246,37 +265,7 @@ function sff_frontend_dashboard_pretty() {
     ob_start(); ?>
     
     <div class="dashboard-container" style="max-width:1200px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
-        <!-- Header Section -->
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:15px; flex-wrap:wrap; text-align:left; margin-bottom:30px;">
-            <!-- Left Logo -->
-            <div style="flex-shrink:0;">
-                <img src="<?php echo esc_url($logo_url); ?>" alt="Logo" style="height:70px; width:auto; max-width:200px;">
-            </div>
-
-            <!-- Greeting and Rest Day Container -->
-            <div style="display:flex; flex-direction:column; flex:1; min-width:200px;">
-                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                    <h1 style="font-size:24px; color:#333; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                        Hello, <?php echo esc_html( $username ); ?> <span class="sff-emoji">👋</span>
-                    </h1>
-                    <p style="font-size:16px; color:#777; margin:0;">
-                        <?php echo esc_html($day_type); ?>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Hamburger Menu -->
-            <div class="sff-hamburger-wrapper" style="position:relative;">
-                <button id="sff-menu-toggle" class="sff-hamburger">&#9776;</button>
-                <nav id="sff-menu" class="sff-menu-items" aria-label="Mobile Menu">
-                    <ul>
-                        <li><a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>">Dashboard</a></li>
-                        <li><a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a></li>
-                        <li><a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>">Logout</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
+        <?php echo sff_render_header($username, $day_type); ?>
 
         <!-- Weekly Progress Card -->
         <div style="background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); padding:20px; margin-bottom:30px;">
