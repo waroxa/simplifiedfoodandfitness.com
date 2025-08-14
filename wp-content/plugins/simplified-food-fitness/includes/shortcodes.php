@@ -124,7 +124,7 @@ function sff_frontend_dashboard_pretty() {
             <div style="display:flex; flex-direction:column; flex:1; min-width:200px;">
                 <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                     <h1 style="font-size:24px; color:#333; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                        Hello, <?php echo esc_html($username); ?> <span class="sff-emoji">👋</span>
+                        Hello, <?php echo esc_html( $username ); ?> <span class="sff-emoji">👋</span>
                     </h1>
                     <p style="font-size:16px; color:#777; margin:0;">
                         <?php echo esc_html($day_type); ?>
