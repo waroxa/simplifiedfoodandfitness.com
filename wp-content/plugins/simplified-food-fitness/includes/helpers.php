@@ -241,6 +241,29 @@ function sff_custom_login_form() {
     return ob_get_clean();
 }
 
+function sff_get_recipe_macros_from_ids($ingredient_ids) {
+    $totals = ['calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0];
+    if (!is_array($ingredient_ids)) {
+        return $totals;
+    }
+    foreach ($ingredient_ids as $ingredient_id) {
+        $macros = get_post_meta($ingredient_id, '_sff_macros', true);
+        if (!is_array($macros)) {
+            continue;
+        }
+        $totals['calories'] += floatval($macros['calories'] ?? 0);
+        $totals['carbs'] += floatval($macros['carbs'] ?? 0);
+        $totals['protein'] += floatval($macros['protein'] ?? 0);
+        $totals['fat'] += floatval($macros['fat'] ?? 0);
+    }
+    return $totals;
+}
+
+function sff_get_recipe_macros($recipe_id) {
+    $ingredient_ids = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
+    return sff_get_recipe_macros_from_ids($ingredient_ids);
+}
+
 function sff_admin_notice() {
     if (isset($_GET['ingredient_saved']) && $_GET['ingredient_saved'] == 'true') {
         echo '<div class="updated notice is-dismissible"><p>✅ Ingredient has been saved successfully!</p></div>';

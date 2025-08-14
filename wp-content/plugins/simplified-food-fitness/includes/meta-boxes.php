@@ -96,6 +96,20 @@ function sff_render_meal_plan_meta_box($post) {
             <textarea name="sff_meal_data[description]" style="width:100%; height:80px; padding:8px;"><?php echo esc_textarea($meal_data['description'] ?? ''); ?></textarea>
         </div>
 
+        <div style="grid-column: span 2;">
+            <label><strong>Recipe:</strong></label>
+            <select name="sff_meal_data[recipe_id]" style="width:100%; padding:8px;">
+                <option value="">-- Select Recipe --</option>
+                <?php
+                $recipes = get_posts(['post_type' => 'recipe', 'numberposts' => -1]);
+                foreach ($recipes as $recipe) {
+                    $selected = ((int)($meal_data['recipe_id'] ?? 0) === $recipe->ID) ? 'selected' : '';
+                    echo '<option value="' . esc_attr($recipe->ID) . '" ' . $selected . '>' . esc_html($recipe->post_title) . '</option>';
+                }
+                ?>
+            </select>
+        </div>
+
         <div>
             <label><strong>Servings:</strong></label>
             <input type="number" name="sff_meal_data[servings]" value="<?php echo esc_attr($meal_data['servings'] ?? ''); ?>" style="width:100%; padding:8px;">
@@ -144,7 +158,15 @@ function sff_save_meal_plan_details($post_id) {
     if (!current_user_can('edit_post', $post_id)) return;
 
     if (isset($_POST['sff_meal_data'])) {
-        update_post_meta($post_id, '_sff_meal_data', $_POST['sff_meal_data']);
+        $meal_data = $_POST['sff_meal_data'];
+        if (!empty($meal_data['recipe_id'])) {
+            $macros = sff_get_recipe_macros((int) $meal_data['recipe_id']);
+            $meal_data['calories'] = $macros['calories'];
+            $meal_data['carbs'] = $macros['carbs'];
+            $meal_data['protein'] = $macros['protein'];
+            $meal_data['fat'] = $macros['fat'];
+        }
+        update_post_meta($post_id, '_sff_meal_data', $meal_data);
     }
 }
 add_action('save_post', 'sff_save_meal_plan_details');
@@ -326,6 +348,53 @@ function sff_save_admin_ingredient_details($post_id) {
     if (isset($_POST['sff_macros'])) update_post_meta($post_id, '_sff_macros', array_map('sanitize_text_field', $_POST['sff_macros']));
 }
 add_action('save_post', 'sff_save_admin_ingredient_details');
+
+
+function sff_add_recipe_meta_boxes() {
+    add_meta_box(
+        'sff_recipe_details',
+        __('Recipe Details'),
+        'sff_render_recipe_meta_box',
+        'recipe',
+        'normal',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'sff_add_recipe_meta_boxes');
+
+function sff_render_recipe_meta_box($post) {
+    $saved = get_post_meta($post->ID, '_sff_recipe_ingredients', true);
+    if (!is_array($saved)) {
+        $saved = [];
+    }
+    $ingredients = get_posts(['post_type' => 'ingredient', 'numberposts' => -1]);
+    echo '<label><strong>Ingredients:</strong></label>';
+    echo '<select name="sff_recipe_ingredients[]" multiple style="width:100%; height:150px;">';
+    foreach ($ingredients as $ingredient) {
+        $selected = in_array($ingredient->ID, $saved) ? 'selected' : '';
+        echo '<option value="' . esc_attr($ingredient->ID) . '" ' . $selected . '>' . esc_html($ingredient->post_title) . '</option>';
+    }
+    echo '</select>';
+    $macros = get_post_meta($post->ID, '_sff_recipe_macros', true);
+    if (is_array($macros)) {
+        echo '<p><strong>Calories:</strong> ' . esc_html($macros['calories'] ?? 0) . '</p>';
+        echo '<p><strong>Carbs:</strong> ' . esc_html($macros['carbs'] ?? 0) . 'g</p>';
+        echo '<p><strong>Protein:</strong> ' . esc_html($macros['protein'] ?? 0) . 'g</p>';
+        echo '<p><strong>Fat:</strong> ' . esc_html($macros['fat'] ?? 0) . 'g</p>';
+    }
+}
+
+function sff_save_recipe_details($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if (!current_user_can('edit_post', $post_id)) return;
+    if (isset($_POST['sff_recipe_ingredients'])) {
+        $ingredient_ids = array_map('intval', (array) $_POST['sff_recipe_ingredients']);
+        update_post_meta($post_id, '_sff_recipe_ingredients', $ingredient_ids);
+        $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
+        update_post_meta($post_id, '_sff_recipe_macros', $totals);
+    }
+}
+add_action('save_post', 'sff_save_recipe_details');
 
 
 
