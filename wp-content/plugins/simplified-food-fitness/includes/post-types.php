@@ -38,6 +38,17 @@ function sff_register_custom_post_types() {
         'menu_icon' => 'dashicons-carrot'
     ]);
 
+    register_post_type('recipe', [
+        'labels' => [
+            'name' => __('Recipes'),
+            'singular_name' => __('Recipe')
+        ],
+        'public' => false,
+        'show_ui' => true,
+        'supports' => ['title', 'editor', 'thumbnail', 'custom-fields'],
+        'menu_icon' => 'dashicons-book-alt'
+    ]);
+
     register_post_type('client_leads', [
     'labels' => [
         'name' => __('Leads'),
