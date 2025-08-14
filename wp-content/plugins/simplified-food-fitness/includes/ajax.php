@@ -379,71 +379,94 @@ function sff_save_client_intake() {
         wp_send_json_error(['message' => 'Failed to save intake data.']);
     }
 
-    // Meta fields to save to the post
-    $fields_to_save = [
-        'first_name',
-        'last_name',
-        'email',
-        'phone',
-        'dob',
-        'gender',
-        'cbw',
-        'cbw_unit',
-        'lbs',
-        'dbw',
-        'dbw_unit',
-        'height',           // Added
-        'height_unit',      // Added
-        'bpmh',
-        'medications',
-        'medication_allergies',
-        'food_allergies',
-        'food_intolerances',
-        'goal',
-        'goal_other',
-        'current_activity_days',
-        'current_activity_minutes',
-        'current_activity_type',
-        'current_activity_type_other',
-        'has_trainer',
-        'trainer_name',
-        'trainer_contact',
-        'goal_activity_days',
-        'goal_activity_minutes',
-        'goal_activity_type',
-        'goal_activity_type_other',
-        'smart_watch',
-        'smart_watch_other',
-        'cooking_frequency',
-        'meals_per_day',
-        'snacks',
-        'favorite_snacks',
-        'coffee',
-        'coffee_frequency',
-        'diet_preference',
-        'diet_preference_other',
-        'favorite_meals',
-        'favorite_fruits',
-        'disliked_fruits',
-        'favorite_vegetables',
-        'disliked_vegetables',
-        'leftovers',
-        'leftovers_other',
-        'repeating_meals',
-        'grocery_store',
-        'grocery_store_other',
-        'grocery_delivery',
-        'grocery_delivery_service',
-        'organic_preference',
-        'email_consent',
-        'how_found',
-        'how_found_other',
+    // Meta fields with sanitization callbacks
+    $field_map = [
+        'first_name'                  => 'sanitize_text_field',
+        'last_name'                   => 'sanitize_text_field',
+        'email'                       => 'sanitize_email',
+        'phone'                       => 'sanitize_text_field',
+        'dob'                         => 'sanitize_text_field',
+        'gender'                      => 'sanitize_text_field',
+        'gender_other'                => 'sanitize_text_field',
+        'cbw'                         => 'sanitize_text_field',
+        'cbw_unit'                    => 'sanitize_text_field',
+        'lbs'                         => 'sanitize_text_field',
+        'dbw'                         => 'sanitize_text_field',
+        'dbw_unit'                    => 'sanitize_text_field',
+        'height'                      => 'sanitize_text_field',
+        'height_unit'                 => 'sanitize_text_field',
+        'bpmh'                        => 'sanitize_textarea_field',
+        'past_medical_conditions'     => 'array',
+        'past_medical_conditions_other' => 'sanitize_text_field',
+        'medications'                 => 'sanitize_textarea_field',
+        'medication_allergies'        => 'sanitize_textarea_field',
+        'food_allergies'              => 'array',
+        'food_allergies_other'        => 'sanitize_text_field',
+        'food_intolerances'           => 'array',
+        'food_intolerances_other'     => 'sanitize_text_field',
+        'goal'                        => 'sanitize_text_field',
+        'goal_other'                  => 'sanitize_text_field',
+        'current_activity_days'       => 'sanitize_text_field',
+        'current_activity_minutes'    => 'sanitize_text_field',
+        'current_activity_type'       => 'sanitize_text_field',
+        'current_activity_type_other' => 'sanitize_text_field',
+        'has_trainer'                 => 'sanitize_text_field',
+        'trainer_name'                => 'sanitize_text_field',
+        'trainer_contact'             => 'sanitize_text_field',
+        'goal_activity_days'          => 'sanitize_text_field',
+        'goal_activity_minutes'       => 'sanitize_text_field',
+        'goal_activity_type'          => 'sanitize_text_field',
+        'goal_activity_type_other'    => 'sanitize_text_field',
+        'smart_watch'                 => 'sanitize_text_field',
+        'smart_watch_other'           => 'sanitize_text_field',
+        'cooking_frequency'           => 'sanitize_text_field',
+        'meals_per_day'               => 'sanitize_text_field',
+        'meals_per_day_other'         => 'sanitize_text_field',
+        'snacks'                      => 'sanitize_text_field',
+        'favorite_snacks'             => 'sanitize_textarea_field',
+        'coffee'                      => 'sanitize_text_field',
+        'coffee_how'                  => 'sanitize_text_field',
+        'coffee_frequency'            => 'sanitize_text_field',
+        'coffee_per_day'              => 'sanitize_text_field',
+        'diet_preference'             => 'sanitize_text_field',
+        'diet_preference_other'       => 'sanitize_text_field',
+        'favorite_meals'              => 'sanitize_textarea_field',
+        'favorite_fruits'             => 'array',
+        'favorite_fruits_other'       => 'sanitize_text_field',
+        'disliked_fruits'             => 'array',
+        'disliked_fruits_other'       => 'sanitize_text_field',
+        'favorite_vegetables'         => 'array',
+        'favorite_vegetables_other'   => 'sanitize_text_field',
+        'disliked_vegetables'         => 'array',
+        'disliked_vegetables_other'   => 'sanitize_text_field',
+        'leftovers'                   => 'sanitize_text_field',
+        'leftovers_other'             => 'sanitize_text_field',
+        'repeating_meals'             => 'sanitize_text_field',
+        'grocery_store'               => 'array',
+        'grocery_store_other'         => 'sanitize_text_field',
+        'grocery_delivery'            => 'sanitize_text_field',
+        'grocery_delivery_service'    => 'array',
+        'grocery_delivery_service_other' => 'sanitize_text_field',
+        'organic_preference'          => 'sanitize_text_field',
+        'email_consent'               => 'sanitize_text_field',
+        'how_found'                   => 'sanitize_text_field',
+        'how_found_other'             => 'sanitize_text_field',
     ];
 
-    foreach ($fields_to_save as $field) {
-        if (isset($form_data[$field])) {
-            update_post_meta($post_id, 'sff_' . $field, sanitize_text_field($form_data[$field]));
+    foreach ($field_map as $field => $sanitize) {
+        if (!isset($form_data[$field])) {
+            continue;
         }
+
+        $value = $form_data[$field];
+
+        if ($sanitize === 'array') {
+            $value = implode(', ', array_map('sanitize_text_field', (array) $value));
+        } elseif (is_callable($sanitize)) {
+            $value = call_user_func($sanitize, $value);
+        }
+
+        update_post_meta($post_id, 'sff_' . $field, $value);
     }
 
     wp_send_json_success(['message' => 'Client intake saved successfully!']);

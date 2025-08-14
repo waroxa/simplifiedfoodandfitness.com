@@ -574,75 +574,93 @@ function sff_client_intake_form() {
         ]);
 
         if (!is_wp_error($lead_id)) {
-            // Save additional fields as post meta
-            update_post_meta($lead_id, 'first_name', $first_name);
-            update_post_meta($lead_id, 'last_name', $last_name);
-            update_post_meta($lead_id, 'email', $email);
-            update_post_meta($lead_id, 'phone', $phone);
-            update_post_meta($lead_id, 'dob', isset($_POST['dob']) ? sanitize_text_field($_POST['dob']) : '');
-            update_post_meta($lead_id, 'gender', isset($_POST['gender']) ? sanitize_text_field($_POST['gender']) : '');
-            update_post_meta($lead_id, 'gender_other', isset($_POST['gender_other']) ? sanitize_text_field($_POST['gender_other']) : '');
-            update_post_meta($lead_id, 'cbw', isset($_POST['cbw']) ? sanitize_text_field($_POST['cbw']) : '');
-            update_post_meta($lead_id, 'cbw_unit', isset($_POST['cbw_unit']) ? sanitize_text_field($_POST['cbw_unit']) : '');
-            update_post_meta($lead_id, 'dbw', isset($_POST['dbw']) ? sanitize_text_field($_POST['dbw']) : '');
-            update_post_meta($lead_id, 'dbw_unit', isset($_POST['dbw_unit']) ? sanitize_text_field($_POST['dbw_unit']) : '');
-            update_post_meta($lead_id, 'height', isset($_POST['height']) ? sanitize_text_field($_POST['height']) : '');
-            update_post_meta($lead_id, 'height_unit', isset($_POST['height_unit']) ? sanitize_text_field($_POST['height_unit']) : '');
-            update_post_meta($lead_id, 'past_medical_conditions', isset($_POST['past_medical_conditions']) ? implode(', ', array_map('sanitize_text_field', $_POST['past_medical_conditions'])) : '');
-            update_post_meta($lead_id, 'past_medical_conditions_other', isset($_POST['past_medical_conditions_other']) ? sanitize_text_field($_POST['past_medical_conditions_other']) : '');
-            update_post_meta($lead_id, 'medications', isset($_POST['medications']) ? sanitize_textarea_field($_POST['medications']) : '');
-            update_post_meta($lead_id, 'medication_allergies', isset($_POST['medication_allergies']) ? sanitize_textarea_field($_POST['medication_allergies']) : '');
-            update_post_meta($lead_id, 'food_allergies', isset($_POST['food_allergies']) ? implode(', ', array_map('sanitize_text_field', $_POST['food_allergies'])) : '');
-            update_post_meta($lead_id, 'food_allergies_other', isset($_POST['food_allergies_other']) ? sanitize_text_field($_POST['food_allergies_other']) : '');
-            update_post_meta($lead_id, 'food_intolerances', isset($_POST['food_intolerances']) ? implode(', ', array_map('sanitize_text_field', $_POST['food_intolerances'])) : '');
-            update_post_meta($lead_id, 'food_intolerances_other', isset($_POST['food_intolerances_other']) ? sanitize_text_field($_POST['food_intolerances_other']) : '');
-            update_post_meta($lead_id, 'goal', isset($_POST['goal']) ? sanitize_text_field($_POST['goal']) : '');
-            update_post_meta($lead_id, 'goal_other', isset($_POST['goal_other']) ? sanitize_text_field($_POST['goal_other']) : '');
-            update_post_meta($lead_id, 'current_activity_frequency', isset($_POST['current_activity_frequency']) ? sanitize_text_field($_POST['current_activity_frequency']) : '');
-            update_post_meta($lead_id, 'current_activity_types', isset($_POST['current_activity_types']) ? implode(', ', array_map('sanitize_text_field', $_POST['current_activity_types'])) : '');
-            update_post_meta($lead_id, 'cardio_type', isset($_POST['cardio_type']) ? sanitize_text_field($_POST['cardio_type']) : '');
-            update_post_meta($lead_id, 'crossfit_gym', isset($_POST['crossfit_gym']) ? sanitize_text_field($_POST['crossfit_gym']) : '');
-            update_post_meta($lead_id, 'current_activity_type_other', isset($_POST['current_activity_type_other']) ? sanitize_text_field($_POST['current_activity_type_other']) : '');
-            update_post_meta($lead_id, 'has_trainer', isset($_POST['has_trainer']) ? sanitize_text_field($_POST['has_trainer']) : '');
-            update_post_meta($lead_id, 'trainer_name', isset($_POST['trainer_name']) ? sanitize_text_field($_POST['trainer_name']) : '');
-            update_post_meta($lead_id, 'trainer_contact', isset($_POST['trainer_contact']) ? sanitize_text_field($_POST['trainer_contact']) : '');
-            update_post_meta($lead_id, 'goal_activity_days', isset($_POST['goal_activity_days']) ? sanitize_text_field($_POST['goal_activity_days']) : '');
-            update_post_meta($lead_id, 'goal_activity_minutes', isset($_POST['goal_activity_minutes']) ? sanitize_text_field($_POST['goal_activity_minutes']) : '');
-            update_post_meta($lead_id, 'goal_activity_type', isset($_POST['goal_activity_type']) ? sanitize_text_field($_POST['goal_activity_type']) : '');
-            update_post_meta($lead_id, 'goal_activity_type_other', isset($_POST['goal_activity_type_other']) ? sanitize_text_field($_POST['goal_activity_type_other']) : '');
-            update_post_meta($lead_id, 'smart_watch', isset($_POST['smart_watch']) ? sanitize_text_field($_POST['smart_watch']) : '');
-            update_post_meta($lead_id, 'smart_watch_other', isset($_POST['smart_watch_other']) ? sanitize_text_field($_POST['smart_watch_other']) : '');
-            update_post_meta($lead_id, 'cooking_frequency', isset($_POST['cooking_frequency']) ? sanitize_text_field($_POST['cooking_frequency']) : '');
-            update_post_meta($lead_id, 'meals_per_day', isset($_POST['meals_per_day']) ? sanitize_text_field($_POST['meals_per_day']) : '');
-            update_post_meta($lead_id, 'meals_per_day_other', isset($_POST['meals_per_day_other']) ? sanitize_text_field($_POST['meals_per_day_other']) : '');
-            update_post_meta($lead_id, 'snacks', isset($_POST['snacks']) ? sanitize_text_field($_POST['snacks']) : '');
-            update_post_meta($lead_id, 'favorite_snacks', isset($_POST['favorite_snacks']) ? sanitize_textarea_field($_POST['favorite_snacks']) : '');
-            update_post_meta($lead_id, 'coffee_how', isset($_POST['coffee_how']) ? sanitize_text_field($_POST['coffee_how']) : '');
-            update_post_meta($lead_id, 'coffee_frequency', isset($_POST['coffee_frequency']) ? sanitize_text_field($_POST['coffee_frequency']) : '');
-            update_post_meta($lead_id, 'coffee_per_day', isset($_POST['coffee_per_day']) ? sanitize_text_field($_POST['coffee_per_day']) : '');
-            update_post_meta($lead_id, 'diet_preference', isset($_POST['diet_preference']) ? sanitize_text_field($_POST['diet_preference']) : '');
-            update_post_meta($lead_id, 'diet_preference_other', isset($_POST['diet_preference_other']) ? sanitize_text_field($_POST['diet_preference_other']) : '');
-            update_post_meta($lead_id, 'favorite_meals', isset($_POST['favorite_meals']) ? sanitize_textarea_field($_POST['favorite_meals']) : '');
-            update_post_meta($lead_id, 'favorite_fruits', isset($_POST['favorite_fruits']) ? implode(', ', array_map('sanitize_text_field', $_POST['favorite_fruits'])) : '');
-            update_post_meta($lead_id, 'favorite_fruits_other', isset($_POST['favorite_fruits_other']) ? sanitize_text_field($_POST['favorite_fruits_other']) : ''); // New field
-            update_post_meta($lead_id, 'disliked_fruits', isset($_POST['disliked_fruits']) ? implode(', ', array_map('sanitize_text_field', $_POST['disliked_fruits'])) : '');
-            update_post_meta($lead_id, 'disliked_fruits_other', isset($_POST['disliked_fruits_other']) ? sanitize_text_field($_POST['disliked_fruits_other']) : ''); // New field
-            update_post_meta($lead_id, 'favorite_vegetables', isset($_POST['favorite_vegetables']) ? implode(', ', array_map('sanitize_text_field', $_POST['favorite_vegetables'])) : '');
-            update_post_meta($lead_id, 'favorite_vegetables_other', isset($_POST['favorite_vegetables_other']) ? sanitize_text_field($_POST['favorite_vegetables_other']) : ''); // New field
-            update_post_meta($lead_id, 'disliked_vegetables', isset($_POST['disliked_vegetables']) ? implode(', ', array_map('sanitize_text_field', $_POST['disliked_vegetables'])) : '');
-            update_post_meta($lead_id, 'disliked_vegetables_other', isset($_POST['disliked_vegetables_other']) ? sanitize_text_field($_POST['disliked_vegetables_other']) : ''); // New field
-            update_post_meta($lead_id, 'leftovers', isset($_POST['leftovers']) ? sanitize_text_field($_POST['leftovers']) : '');
-            update_post_meta($lead_id, 'leftovers_other', isset($_POST['leftovers_other']) ? sanitize_text_field($_POST['leftovers_other']) : '');
-            update_post_meta($lead_id, 'repeating_meals', isset($_POST['repeating_meals']) ? sanitize_text_field($_POST['repeating_meals']) : '');
-            update_post_meta($lead_id, 'grocery_store', isset($_POST['grocery_store']) ? implode(', ', array_map('sanitize_text_field', $_POST['grocery_store'])) : '');
-            update_post_meta($lead_id, 'grocery_store_other', isset($_POST['grocery_store_other']) ? sanitize_text_field($_POST['grocery_store_other']) : '');
-            update_post_meta($lead_id, 'grocery_delivery', isset($_POST['grocery_delivery']) ? sanitize_text_field($_POST['grocery_delivery']) : '');
-            update_post_meta($lead_id, 'grocery_delivery_services', isset($_POST['grocery_delivery_services']) ? implode(', ', array_map('sanitize_text_field', $_POST['grocery_delivery_services'])) : '');
-            update_post_meta($lead_id, 'grocery_delivery_service_other', isset($_POST['grocery_delivery_service_other']) ? sanitize_text_field($_POST['grocery_delivery_service_other']) : '');
-            update_post_meta($lead_id, 'organic_preference', isset($_POST['organic_preference']) ? sanitize_text_field($_POST['organic_preference']) : '');
-            update_post_meta($lead_id, 'email_consent', isset($_POST['email_consent']) ? sanitize_text_field($_POST['email_consent']) : '');
-            update_post_meta($lead_id, 'how_found', isset($_POST['how_found']) ? sanitize_text_field($_POST['how_found']) : '');
-            update_post_meta($lead_id, 'how_found_other', isset($_POST['how_found_other']) ? sanitize_text_field($_POST['how_found_other']) : '');
+            $field_map = [
+                'first_name'                  => 'sanitize_text_field',
+                'last_name'                   => 'sanitize_text_field',
+                'email'                       => 'sanitize_email',
+                'phone'                       => 'sanitize_text_field',
+                'dob'                         => 'sanitize_text_field',
+                'gender'                      => 'sanitize_text_field',
+                'gender_other'                => 'sanitize_text_field',
+                'cbw'                         => 'sanitize_text_field',
+                'cbw_unit'                    => 'sanitize_text_field',
+                'dbw'                         => 'sanitize_text_field',
+                'dbw_unit'                    => 'sanitize_text_field',
+                'height'                      => 'sanitize_text_field',
+                'height_unit'                 => 'sanitize_text_field',
+                'past_medical_conditions'     => 'array',
+                'past_medical_conditions_other' => 'sanitize_text_field',
+                'medications'                 => 'sanitize_textarea_field',
+                'medication_allergies'        => 'sanitize_textarea_field',
+                'food_allergies'              => 'array',
+                'food_allergies_other'        => 'sanitize_text_field',
+                'food_intolerances'           => 'array',
+                'food_intolerances_other'     => 'sanitize_text_field',
+                'goal'                        => 'sanitize_text_field',
+                'goal_other'                  => 'sanitize_text_field',
+                'current_activity_frequency'  => 'sanitize_text_field',
+                'current_activity_types'      => 'array',
+                'cardio_type'                 => 'sanitize_text_field',
+                'crossfit_gym'                => 'sanitize_text_field',
+                'current_activity_type_other' => 'sanitize_text_field',
+                'has_trainer'                 => 'sanitize_text_field',
+                'trainer_name'                => 'sanitize_text_field',
+                'trainer_contact'             => 'sanitize_text_field',
+                'goal_activity_days'          => 'sanitize_text_field',
+                'goal_activity_minutes'       => 'sanitize_text_field',
+                'goal_activity_type'          => 'sanitize_text_field',
+                'goal_activity_type_other'    => 'sanitize_text_field',
+                'smart_watch'                 => 'sanitize_text_field',
+                'smart_watch_other'           => 'sanitize_text_field',
+                'cooking_frequency'           => 'sanitize_text_field',
+                'meals_per_day'               => 'sanitize_text_field',
+                'meals_per_day_other'         => 'sanitize_text_field',
+                'snacks'                      => 'sanitize_text_field',
+                'favorite_snacks'             => 'sanitize_textarea_field',
+                'coffee'                      => 'sanitize_text_field',
+                'coffee_how'                  => 'sanitize_text_field',
+                'coffee_frequency'            => 'sanitize_text_field',
+                'coffee_per_day'              => 'sanitize_text_field',
+                'diet_preference'             => 'sanitize_text_field',
+                'diet_preference_other'       => 'sanitize_text_field',
+                'favorite_meals'              => 'sanitize_textarea_field',
+                'favorite_fruits'             => 'array',
+                'favorite_fruits_other'       => 'sanitize_text_field',
+                'disliked_fruits'             => 'array',
+                'disliked_fruits_other'       => 'sanitize_text_field',
+                'favorite_vegetables'         => 'array',
+                'favorite_vegetables_other'   => 'sanitize_text_field',
+                'disliked_vegetables'         => 'array',
+                'disliked_vegetables_other'   => 'sanitize_text_field',
+                'leftovers'                   => 'sanitize_text_field',
+                'leftovers_other'             => 'sanitize_text_field',
+                'repeating_meals'             => 'sanitize_text_field',
+                'grocery_store'               => 'array',
+                'grocery_store_other'         => 'sanitize_text_field',
+                'grocery_delivery'            => 'sanitize_text_field',
+                'grocery_delivery_service'    => 'array',
+                'grocery_delivery_service_other' => 'sanitize_text_field',
+                'organic_preference'          => 'sanitize_text_field',
+                'email_consent'               => 'sanitize_text_field',
+                'how_found'                   => 'sanitize_text_field',
+                'how_found_other'             => 'sanitize_text_field',
+            ];
+
+            foreach ($field_map as $field => $sanitize) {
+                if (!isset($_POST[$field])) {
+                    continue;
+                }
+
+                $value = $_POST[$field];
+
+                if ($sanitize === 'array') {
+                    $value = implode(', ', array_map('sanitize_text_field', (array) $value));
+                } elseif (is_callable($sanitize)) {
+                    $value = call_user_func($sanitize, $value);
+                }
+
+                update_post_meta($lead_id, 'sff_' . $field, $value);
+            }
 
             // Display a success message
             echo '<div style="color:green; margin-bottom:20px;">Lead saved successfully!</div>';
@@ -1187,17 +1205,17 @@ function sff_client_intake_form() {
                     <input type="radio" name="grocery_delivery" value="Yes" style="margin-right:5px;" required> Yes
                     <input type="radio" name="grocery_delivery" value="No" style="margin-left:10px; margin-right:5px;"> No
                     <input type="radio" name="grocery_delivery" value="Need one" style="margin-left:10px; margin-right:5px;"> Need one
-                    <div style="margin-top:10px; column-count:2; display:none;" class="conditional-field checkbox-group" data-condition="grocery_delivery" data-value="Yes" data-name="grocery_delivery_services[]">
-                        <label><input type="checkbox" name="grocery_delivery_services[]" value="Instacart"> Instacart</label><br>
-                        <label><input type="checkbox" name="grocery_delivery_services[]" value="Shipt"> Shipt</label><br>
-                        <label><input type="checkbox" name="grocery_delivery_services[]" value="Door Dash"> Door Dash</label><br>
-                        <label><input type="checkbox" name="grocery_delivery_services[]" value="Kroger"> Kroger</label><br>
-                        <label><input type="checkbox" name="grocery_delivery_services[]" value="Uber Eats"> Uber Eats</label><br>
-                        <label><input type="checkbox" name="grocery_delivery_services[]" value="Thrive Market"> Thrive Market</label><br>
-                        <label><input type="checkbox" name="grocery_delivery_services[]" value="Amazon Fresh"> Amazon Fresh</label><br>
-                        <label><input type="checkbox" name="grocery_delivery_services[]" value="Other"> Other (Please specify)</label>
+                    <div style="margin-top:10px; column-count:2; display:none;" class="conditional-field checkbox-group" data-condition="grocery_delivery" data-value="Yes" data-name="grocery_delivery_service[]">
+                        <label><input type="checkbox" name="grocery_delivery_service[]" value="Instacart"> Instacart</label><br>
+                        <label><input type="checkbox" name="grocery_delivery_service[]" value="Shipt"> Shipt</label><br>
+                        <label><input type="checkbox" name="grocery_delivery_service[]" value="Door Dash"> Door Dash</label><br>
+                        <label><input type="checkbox" name="grocery_delivery_service[]" value="Kroger"> Kroger</label><br>
+                        <label><input type="checkbox" name="grocery_delivery_service[]" value="Uber Eats"> Uber Eats</label><br>
+                        <label><input type="checkbox" name="grocery_delivery_service[]" value="Thrive Market"> Thrive Market</label><br>
+                        <label><input type="checkbox" name="grocery_delivery_service[]" value="Amazon Fresh"> Amazon Fresh</label><br>
+                        <label><input type="checkbox" name="grocery_delivery_service[]" value="Other"> Other (Please specify)</label>
                     </div>
-                    <input type="text" name="grocery_delivery_service_other" placeholder="e.g., Local Service" style="width:100%; padding:10px; margin-top:10px; border:1px solid #ccc; border-radius:5px; display:none;" class="conditional-field" data-condition="grocery_delivery_services[]">
+                    <input type="text" name="grocery_delivery_service_other" placeholder="e.g., Local Service" style="width:100%; padding:10px; margin-top:10px; border:1px solid #ccc; border-radius:5px; display:none;" class="conditional-field" data-condition="grocery_delivery_service[]">
                 </div>
 
                 <label style="font-weight:bold; margin-bottom:5px;">🌿 Do you prefer organic products?</label>
