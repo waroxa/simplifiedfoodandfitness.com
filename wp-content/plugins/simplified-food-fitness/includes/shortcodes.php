@@ -177,7 +177,7 @@ function sff_frontend_dashboard_pretty() {
             <div class="sff-hamburger-wrapper" style="position:relative;">
                 <button id="sff-menu-toggle" class="sff-hamburger">&#9776;</button>
                 <div id="sff-menu" class="sff-menu-items">
-                    <a href="#" id="sff-profile-link">Profile</a>
+                    <a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a>
                 </div>
             </div>
         </div>
@@ -256,14 +256,6 @@ function sff_frontend_dashboard_pretty() {
                     Add Meal +
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Profile Modal -->
-    <div id="sff-profile-modal" class="sff-modal" style="display:none;">
-        <div class="sff-modal-content">
-            <button class="sff-modal-close" aria-label="Close">&times;</button>
-            <div id="sff-profile-content"></div>
         </div>
     </div>
 

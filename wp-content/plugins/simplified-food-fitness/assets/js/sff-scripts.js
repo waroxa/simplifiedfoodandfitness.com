@@ -291,34 +291,6 @@ jQuery(document).ready(function($) {
   $('#sff-menu-toggle').on('click', function () {
     $('#sff-menu').toggle();
   });
-
-  // Load profile via AJAX when menu item is clicked
-  $('#sff-profile-link').on('click', function (e) {
-    e.preventDefault();
-    $('#sff-menu').hide();
-    $('#sff-profile-modal').fadeIn();
-    $('#sff-profile-content').html('<p>Loading...</p>');
-    $.post(
-      sff_ajax_obj.ajax_url,
-      { action: 'sff_load_profile', security: sff_ajax_obj.nonce },
-      function (response) {
-        $('#sff-profile-content').html(response);
-      }
-    );
-  });
-
-  function closeProfileModal() {
-    $('#sff-profile-modal').fadeOut();
-    $('#sff-profile-content').empty();
-  }
-
-  $('.sff-modal-close').on('click', closeProfileModal);
-
-  $('#sff-profile-modal').on('click', function (e) {
-    if (e.target.id === 'sff-profile-modal') {
-      closeProfileModal();
-    }
-  });
 });
 
 
