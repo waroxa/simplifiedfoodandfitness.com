@@ -199,7 +199,24 @@ function sff_save_ingredient_details($post_id) {
     }
 
     if (isset($_POST['sff_macros'])) {
-        update_post_meta($post_id, '_sff_macros', array_map('sanitize_text_field', $_POST['sff_macros']));
+        $macros = array_map('sanitize_text_field', $_POST['sff_macros']);
+        update_post_meta($post_id, '_sff_macros', $macros);
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'sff_ingredient_nutrition';
+        $data = array_merge(['ingredient_id' => $post_id], array_fill_keys(SFF_MACRO_FIELDS, 0));
+        foreach (SFF_MACRO_FIELDS as $field) {
+            $data[$field] = isset($macros[$field]) ? floatval($macros[$field]) : 0;
+        }
+        $data['cost'] = isset($_POST['sff_cost']) ? floatval($_POST['sff_cost']) : 0;
+
+        $formats = array_merge(['%d'], array_fill(0, count(SFF_MACRO_FIELDS), '%f'), ['%f']);
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT ingredient_id FROM $table WHERE ingredient_id = %d", $post_id));
+        if ($exists) {
+            $wpdb->update($table, $data, ['ingredient_id' => $post_id], $formats, ['%d']);
+        } else {
+            $wpdb->insert($table, $data, $formats);
+        }
     }
 }
 add_action('save_post', 'sff_save_ingredient_details');
@@ -269,19 +286,23 @@ function sff_create_recipe_from_modal($name, $ingredient_ids) {
 
 function sff_get_recipe_macros_from_ids($ingredient_ids) {
     $totals = ['calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0];
-    if (!is_array($ingredient_ids)) {
+    if (!is_array($ingredient_ids) || empty($ingredient_ids)) {
         return $totals;
     }
-    foreach ($ingredient_ids as $ingredient_id) {
-        $macros = get_post_meta($ingredient_id, '_sff_macros', true);
-        if (!is_array($macros)) {
-            continue;
-        }
-        $totals['calories'] += floatval($macros['calories'] ?? 0);
-        $totals['carbs'] += floatval($macros['carbs'] ?? 0);
-        $totals['protein'] += floatval($macros['protein'] ?? 0);
-        $totals['fat'] += floatval($macros['fat'] ?? 0);
+
+    global $wpdb;
+    $table = $wpdb->prefix . 'sff_ingredient_nutrition';
+    $placeholders = implode(',', array_fill(0, count($ingredient_ids), '%d'));
+    $query = $wpdb->prepare("SELECT calories, carbs, protein, fat FROM $table WHERE ingredient_id IN ($placeholders)", $ingredient_ids);
+    $results = $wpdb->get_results($query, ARRAY_A);
+
+    foreach ($results as $row) {
+        $totals['calories'] += floatval($row['calories']);
+        $totals['carbs'] += floatval($row['carbs']);
+        $totals['protein'] += floatval($row['protein']);
+        $totals['fat'] += floatval($row['fat']);
     }
+
     return $totals;
 }
 

@@ -713,6 +713,37 @@ function sff_convert_to_client() {
     ]);
 }
 
+// Save meal completion progress
+function sff_update_meal_progress() {
+    check_ajax_referer('sff_dashboard_nonce', 'nonce');
+
+    if (!is_user_logged_in()) {
+        wp_send_json_error('not_logged_in');
+    }
+
+    $meal_id  = isset($_POST['meal_id']) ? (int) $_POST['meal_id'] : 0;
+    $complete = isset($_POST['completed']) && '1' === $_POST['completed'];
+
+    $user_id = get_current_user_id();
+    $progress = get_user_meta($user_id, 'sff_meal_progress', true);
+    if (!is_array($progress)) {
+        $progress = [];
+    }
+
+    if ($complete) {
+        if (!in_array($meal_id, $progress)) {
+            $progress[] = $meal_id;
+        }
+    } else {
+        $progress = array_diff($progress, [$meal_id]);
+    }
+
+    update_user_meta($user_id, 'sff_meal_progress', $progress);
+
+    wp_send_json_success(['progress' => $progress]);
+}
+add_action('wp_ajax_sff_update_meal_progress', 'sff_update_meal_progress');
+
 // Load client profile via AJAX
 add_action('wp_ajax_sff_load_profile', 'sff_load_profile');
 add_action('wp_ajax_nopriv_sff_load_profile', 'sff_load_profile');
