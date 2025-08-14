@@ -171,3 +171,42 @@
     display: inline-block;
 }
 
+
+/* Client Profile Card */
+.sff-profile-card {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: "Inter", sans-serif;
+}
+
+.sff-profile-card h2 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #1D2939;
+}
+
+.sff-profile-field {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sff-profile-field:last-child {
+    border-bottom: none;
+}
+
+.sff-profile-field label {
+    font-weight: 600;
+    color: #3b3f5c;
+}
+
+.sff-profile-field span {
+    color: #1f1f1f;
+}
+

@@ -51,6 +51,48 @@ function sff_frontend_ingredient_page() {
 }
 add_shortcode('sff_add_ingredient', 'sff_frontend_ingredient_page');
 
+function sff_client_profile_shortcode() {
+    if (!is_user_logged_in()) {
+        return '<p>Please log in to view your profile.</p>';
+    }
+
+    $user_id = get_current_user_id();
+    $client_posts = get_posts([
+        'post_type'      => 'clients',
+        'meta_key'       => 'linked_user_id',
+        'meta_value'     => $user_id,
+        'posts_per_page' => 1,
+    ]);
+
+    if (!$client_posts) {
+        return '<p>No profile found.</p>';
+    }
+
+    $client_id = $client_posts[0]->ID;
+    $custom_fields = get_post_meta($client_id);
+
+    ob_start();
+    ?>
+    <div class="sff-profile-card">
+        <h2><?php echo esc_html(get_the_title($client_id)); ?></h2>
+        <?php foreach ($custom_fields as $key => $value) :
+            if (empty($value[0]) || '_' === $key[0]) {
+                continue;
+            }
+            $label = ucwords(str_replace('_', ' ', preg_replace('/^sff_/', '', $key)));
+        ?>
+            <div class="sff-profile-field">
+                <label><?php echo esc_html($label); ?>:</label>
+                <span><?php echo esc_html($value[0]); ?></span>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('sff_client_profile', 'sff_client_profile_shortcode');
+
+
 
 function sff_frontend_dashboard_pretty() {
     if (!is_user_logged_in()) {
@@ -112,6 +154,7 @@ function sff_frontend_dashboard_pretty() {
     ob_start(); ?>
     
     <div class="dashboard-container" style="max-width:1200px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
+        <?php echo do_shortcode('[sff_client_profile]'); ?>
         
         <!-- Header Section -->
         <div style="display:flex; align-items:center; justify-content:space-between; gap:15px; flex-wrap:wrap; text-align:left; margin-bottom:30px;">
