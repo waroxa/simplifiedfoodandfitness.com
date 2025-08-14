@@ -165,3 +165,25 @@
     }
 }
 
+/* Client profile card styling */
+.sff-profile-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+    font-family: "Inter", sans-serif;
+}
+
+.sff-profile-card h2 {
+    font-size: 20px;
+    color: #333;
+    margin: 0 0 15px;
+}
+
+.sff-profile-card p {
+    font-size: 14px;
+    color: #555;
+    margin: 0 0 10px;
+}
+

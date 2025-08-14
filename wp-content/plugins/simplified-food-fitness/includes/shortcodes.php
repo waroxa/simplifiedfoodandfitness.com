@@ -52,6 +52,50 @@ function sff_frontend_ingredient_page() {
 add_shortcode('sff_add_ingredient', 'sff_frontend_ingredient_page');
 
 
+function sff_client_profile_shortcode() {
+    if (!is_user_logged_in()) {
+        return '';
+    }
+
+    $user_id = get_current_user_id();
+
+    $query = new WP_Query([
+        'post_type'      => 'clients',
+        'posts_per_page' => 1,
+        'meta_key'       => 'linked_user_id',
+        'meta_value'     => $user_id,
+    ]);
+
+    if (!$query->have_posts()) {
+        return '<p>No client profile found.</p>';
+    }
+
+    $client     = $query->posts[0];
+    $client_id  = $client->ID;
+
+    $first_name = get_post_meta($client_id, 'first_name', true);
+    $last_name  = get_post_meta($client_id, 'last_name', true);
+    $email      = get_post_meta($client_id, 'email', true);
+    $phone      = get_post_meta($client_id, 'phone', true);
+    $goal       = get_post_meta($client_id, 'goal', true);
+
+    $output  = '<div class="sff-profile-card">';
+    $output .= '<h2>' . esc_html(trim($first_name . ' ' . $last_name)) . '</h2>';
+    $output .= '<p><strong>Email:</strong> ' . esc_html($email) . '</p>';
+    if ($phone) {
+        $output .= '<p><strong>Phone:</strong> ' . esc_html($phone) . '</p>';
+    }
+    if ($goal) {
+        $output .= '<p><strong>Goal:</strong> ' . esc_html($goal) . '</p>';
+    }
+    $output .= '</div>';
+
+    wp_reset_postdata();
+    return $output;
+}
+add_shortcode('sff_client_profile', 'sff_client_profile_shortcode');
+
+
 function sff_frontend_dashboard_pretty() {
     if (!is_user_logged_in()) {
         return sff_custom_login_form(); // Show styled login form
@@ -132,6 +176,8 @@ function sff_frontend_dashboard_pretty() {
                 </div>
             </div>
         </div>
+
+        <?php echo do_shortcode('[sff_client_profile]'); ?>
 
         <!-- Weekly Progress Card -->
         <div style="background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); padding:20px; margin-bottom:30px;">
