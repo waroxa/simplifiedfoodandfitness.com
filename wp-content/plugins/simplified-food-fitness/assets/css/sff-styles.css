@@ -206,6 +206,28 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
+/* Recipe Modal */
+#sff-recipe-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 100000;
+}
+#sff-recipe-modal .sff-modal-content {
+    background: #fff;
+    width: 400px;
+    padding: 20px;
+    margin: 10% auto;
+}
+#sff-ingredient-results,
+#sff-selected-ingredients {
+    list-style: disc;
+    margin-left: 20px;
+}
+
 .sff-profile-field:last-child {
     margin-bottom: 0;
 }

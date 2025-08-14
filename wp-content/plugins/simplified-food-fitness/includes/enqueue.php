@@ -27,8 +27,7 @@ function sff_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'sff_enqueue_assets');
 
-// ❌ REMOVE this if you’re not using the script in wp-admin:
-// add_action('admin_enqueue_scripts', 'sff_enqueue_assets');
+add_action('admin_enqueue_scripts', 'sff_enqueue_assets');
 
 // ❌ Remove this duplication (you already enqueued it above):
 // function sff_enqueue_global_styles() {...}

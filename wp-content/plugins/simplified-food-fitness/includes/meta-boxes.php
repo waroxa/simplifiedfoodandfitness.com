@@ -108,6 +108,7 @@ function sff_render_meal_plan_meta_box($post) {
                 }
                 ?>
             </select>
+            <button type="button" id="sff-open-recipe-modal" class="button" style="margin-top:8px;">Add New Recipe</button>
         </div>
 
         <div>
@@ -145,6 +146,23 @@ function sff_render_meal_plan_meta_box($post) {
             <textarea name="sff_meal_data[directions]" style="width:100%; height:80px; padding:8px;"><?php echo esc_textarea($meal_data['directions'] ?? ''); ?></textarea>
         </div>
 
+    </div>
+    <div id="sff-recipe-modal" style="display:none;">
+        <div class="sff-modal-content">
+            <button type="button" id="sff-recipe-modal-close" class="button" style="float:right;">&times;</button>
+            <h3>Create Recipe</h3>
+            <input type="text" id="sff-recipe-name" placeholder="Recipe Name" style="width:100%; margin-bottom:8px;">
+            <input type="text" id="sff-ingredient-search" placeholder="Search ingredients" style="width:100%; margin-bottom:8px;">
+            <ul id="sff-ingredient-results"></ul>
+            <h4>Selected Ingredients</h4>
+            <ul id="sff-selected-ingredients"></ul>
+            <p>Calories: <span id="sff-total-calories">0</span></p>
+            <p>Carbs: <span id="sff-total-carbs">0</span></p>
+            <p>Protein: <span id="sff-total-protein">0</span></p>
+            <p>Fat: <span id="sff-total-fat">0</span></p>
+            <p>Cost: $<span id="sff-total-cost">0</span></p>
+            <button type="button" id="sff-save-recipe" class="button button-primary">Save Recipe</button>
+        </div>
     </div>
     <?php
 }

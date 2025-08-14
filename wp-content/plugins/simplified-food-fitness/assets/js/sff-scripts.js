@@ -297,6 +297,76 @@ jQuery(document).ready(function($) {
   $(document).on('click', '#sff-menu a', function () {
     $('body').removeClass('sff-menu-open');
   });
+
+  // Recipe modal logic
+  $(document).on('click', '#sff-open-recipe-modal', function() {
+    $('#sff-recipe-modal').show();
+  });
+  $(document).on('click', '#sff-recipe-modal-close', function() {
+    $('#sff-recipe-modal').hide();
+  });
+
+  var sffSelectedIngredients = [];
+  function sffUpdateTotals() {
+    var totals = {calories:0, carbs:0, protein:0, fat:0, cost:0};
+    sffSelectedIngredients.forEach(function(item){
+      totals.calories += item.macros.calories;
+      totals.carbs += item.macros.carbs;
+      totals.protein += item.macros.protein;
+      totals.fat += item.macros.fat;
+      totals.cost += item.unit_cost;
+    });
+    $('#sff-total-calories').text(totals.calories.toFixed(2));
+    $('#sff-total-carbs').text(totals.carbs.toFixed(2));
+    $('#sff-total-protein').text(totals.protein.toFixed(2));
+    $('#sff-total-fat').text(totals.fat.toFixed(2));
+    $('#sff-total-cost').text(totals.cost.toFixed(2));
+  }
+
+  $('#sff-ingredient-search').on('keyup', function(){
+    var q = $(this).val();
+    if (q.length < 2) { $('#sff-ingredient-results').empty(); return; }
+    $.get(sff_ajax_obj.ajax_url, {action:'sff_search_ingredients', security:sff_ajax_obj.nonce, q:q}, function(res){
+      if(res.success){
+        var list = $('#sff-ingredient-results').empty();
+        res.data.forEach(function(item){
+          var li = $('<li>').text(item.name + ' ($'+item.unit_cost+')').data('item', item);
+          list.append(li);
+        });
+      }
+    });
+  });
+
+  $(document).on('click', '#sff-ingredient-results li', function(){
+    var item = $(this).data('item');
+    sffSelectedIngredients.push(item);
+    $('#sff-selected-ingredients').append($('<li>').text(item.name));
+    sffUpdateTotals();
+  });
+
+  $('#sff-save-recipe').on('click', function(){
+    var name = $('#sff-recipe-name').val();
+    if(!name || !sffSelectedIngredients.length){
+      alert('Please enter a name and select ingredients');
+      return;
+    }
+    var ids = sffSelectedIngredients.map(function(i){return i.id;});
+    $.post(sff_ajax_obj.ajax_url, {action:'sff_create_recipe', security:sff_ajax_obj.nonce, name:name, ingredients:ids}, function(res){
+      if(res.success){
+        var select = $('select[name="sff_meal_data[recipe_id]"]');
+        select.append($('<option>').val(res.data.recipe_id).text(res.data.title));
+        select.val(res.data.recipe_id).trigger('change');
+        $('#sff-recipe-modal').hide();
+        sffSelectedIngredients = [];
+        $('#sff-selected-ingredients').empty();
+        $('#sff-ingredient-results').empty();
+        $('#sff-recipe-name').val('');
+        sffUpdateTotals();
+      } else {
+        alert('Error creating recipe');
+      }
+    });
+  });
 });
 
 
