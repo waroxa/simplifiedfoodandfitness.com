@@ -40,12 +40,6 @@ add_meta_box(
 }
 add_action('add_meta_boxes', 'sff_add_meal_plan_meta_boxes');
 
-function sff_save_meal_plan_meta_box($post_id) {
-    if (isset($_POST['assigned_user'])) {
-        update_post_meta($post_id, '_assigned_user', sanitize_text_field($_POST['assigned_user']));
-    }
-}
-add_action('save_post_meal_plan', 'sff_save_meal_plan_meta_box');
 
 // function sff_meal_plan_assign_callback($post) {
 //     $assigned_user = get_post_meta($post->ID, '_assigned_user', true);
@@ -71,81 +65,42 @@ add_action('save_post_meal_plan', 'sff_save_meal_plan_meta_box');
 
 function sff_render_meal_plan_meta_box($post) {
     wp_nonce_field('sff_save_meal_plan_details', 'sff_meal_plan_nonce');
-    $meal_data = get_post_meta($post->ID, '_sff_meal_data', true);
+    $schedule_json = get_post_meta($post->ID, '_sff_meal_data', true);
+    $schedule      = json_decode($schedule_json, true);
+    if (!is_array($schedule)) {
+        $schedule = [];
+    }
+
+    wp_enqueue_script('sortablejs', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js', [], '1.15.0', true);
+    wp_enqueue_script('sff-meal-plan-calendar', SFF_PLUGIN_URL . 'assets/js/meal-plan-calendar.js', ['sortablejs'], '1.0', true);
+
+    $recipes       = get_posts(['post_type' => 'recipe', 'numberposts' => -1]);
+    $recipes_data  = [];
+    $recipe_macros = [];
+    foreach ($recipes as $recipe) {
+        $recipes_data[]            = ['id' => $recipe->ID, 'title' => $recipe->post_title];
+        $recipe_macros[$recipe->ID] = sff_get_recipe_macros($recipe->ID);
+    }
+
+    wp_localize_script('sff-meal-plan-calendar', 'sffMealPlan', [
+        'recipes'  => $recipes_data,
+        'schedule' => $schedule,
+        'macros'   => $recipe_macros,
+    ]);
     ?>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; max-width:800px;">
-
-        <div>
-            <label><strong>Meal Time:</strong></label>
-            <input type="text" name="sff_meal_data[time]" value="<?php echo esc_attr($meal_data['time'] ?? ''); ?>" style="width:100%; padding:8px;">
+    <div id="sff-meal-plan-container" style="display:flex; gap:20px;">
+        <div style="flex:1;">
+            <h3><?php esc_html_e('Recipes'); ?></h3>
+            <div id="sff-recipe-list" style="border:1px solid #ccc; padding:10px; min-height:200px;"></div>
         </div>
-
-        <div>
-            <label><strong>Calories:</strong></label>
-            <input type="number" name="sff_meal_data[calories]" value="<?php echo esc_attr($meal_data['calories'] ?? ''); ?>" style="width:100%; padding:8px;">
+        <div style="flex:2;">
+            <h3><?php esc_html_e('Weekly Meal Plan'); ?></h3>
+            <div id="sff-meal-calendar" style="display:grid; grid-template-columns:repeat(7,1fr); gap:10px;"></div>
         </div>
-
-        <div style="grid-column: span 2;">
-            <label><strong>Meal Title:</strong></label>
-            <input type="text" name="sff_meal_data[title]" value="<?php echo esc_attr($meal_data['title'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-
-        <div style="grid-column: span 2;">
-            <label><strong>Description:</strong></label>
-            <textarea name="sff_meal_data[description]" style="width:100%; height:80px; padding:8px;"><?php echo esc_textarea($meal_data['description'] ?? ''); ?></textarea>
-        </div>
-
-        <div style="grid-column: span 2;">
-            <label><strong>Recipe:</strong></label>
-            <select name="sff_meal_data[recipe_id]" style="width:100%; padding:8px;">
-                <option value="">-- Select Recipe --</option>
-                <?php
-                $recipes = get_posts(['post_type' => 'recipe', 'numberposts' => -1]);
-                foreach ($recipes as $recipe) {
-                    $selected = ((int)($meal_data['recipe_id'] ?? 0) === $recipe->ID) ? 'selected' : '';
-                    echo '<option value="' . esc_attr($recipe->ID) . '" ' . $selected . '>' . esc_html($recipe->post_title) . '</option>';
-                }
-                ?>
-            </select>
-        </div>
-
-        <div>
-            <label><strong>Servings:</strong></label>
-            <input type="number" name="sff_meal_data[servings]" value="<?php echo esc_attr($meal_data['servings'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-
-        <div>
-            <label><strong>Serving Size (g):</strong></label>
-            <input type="number" name="sff_meal_data[serving_size]" value="<?php echo esc_attr($meal_data['serving_size'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-
-        <div>
-            <label><strong>Carbs (g):</strong></label>
-            <input type="number" name="sff_meal_data[carbs]" value="<?php echo esc_attr($meal_data['carbs'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-
-        <div>
-            <label><strong>Protein (g):</strong></label>
-            <input type="number" name="sff_meal_data[protein]" value="<?php echo esc_attr($meal_data['protein'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-
-        <div>
-            <label><strong>Fat (g):</strong></label>
-            <input type="number" name="sff_meal_data[fat]" value="<?php echo esc_attr($meal_data['fat'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-
-        <div style="grid-column: span 2;">
-            <label><strong>Ingredients (comma-separated):</strong></label>
-            <textarea name="sff_meal_data[ingredients]" style="width:100%; height:50px; padding:8px;"><?php echo esc_textarea($meal_data['ingredients'] ?? ''); ?></textarea>
-        </div>
-
-        <div style="grid-column: span 2;">
-            <label><strong>Directions:</strong></label>
-            <textarea name="sff_meal_data[directions]" style="width:100%; height:80px; padding:8px;"><?php echo esc_textarea($meal_data['directions'] ?? ''); ?></textarea>
-        </div>
-
     </div>
+    <input type="hidden" name="sff_meal_data" id="sff_meal_data" value="<?php echo esc_attr($schedule_json); ?>">
+    <div id="sff-macro-totals" style="margin-top:20px;"></div>
     <?php
 }
 
@@ -158,15 +113,8 @@ function sff_save_meal_plan_details($post_id) {
     if (!current_user_can('edit_post', $post_id)) return;
 
     if (isset($_POST['sff_meal_data'])) {
-        $meal_data = $_POST['sff_meal_data'];
-        if (!empty($meal_data['recipe_id'])) {
-            $macros = sff_get_recipe_macros((int) $meal_data['recipe_id']);
-            $meal_data['calories'] = $macros['calories'];
-            $meal_data['carbs'] = $macros['carbs'];
-            $meal_data['protein'] = $macros['protein'];
-            $meal_data['fat'] = $macros['fat'];
-        }
-        update_post_meta($post_id, '_sff_meal_data', $meal_data);
+        $schedule_json = wp_unslash($_POST['sff_meal_data']);
+        update_post_meta($post_id, '_sff_meal_data', $schedule_json);
     }
 }
 add_action('save_post', 'sff_save_meal_plan_details');
@@ -199,35 +147,16 @@ add_action('save_post', 'sff_save_meal_plan_details');
 // }
 
 function sff_meal_plan_assign_users_callback($post) {
-    $assigned_user = get_post_meta($post->ID, '_assigned_user', true);
+    wp_nonce_field('sff_save_user_assignment_nonce_action', 'sff_user_assignment_nonce');
     $assigned_users = get_post_meta($post->ID, '_sff_assigned_users', true);
     if (!is_array($assigned_users)) {
         $assigned_users = [];
     }
 
-    $users = get_users(); // Fetch ALL users, not just subscribers
+    $users = get_users(['role' => 'subscriber']);
 
-    echo '<div style="display:grid; gap:15px;">';
-
-    // Assign Single Client (Dropdown)
-    echo '<div>';
-    echo '<label for="assigned_user"><strong>Assign Meal Plan to:</strong></label>';
-    echo '<select name="assigned_user" id="assigned_user" style="padding:10px; width:100%; border-radius:6px; border:1px solid #ccc; background:#fff; font-size:16px;">';
-    echo '<option value="">-- Select a Client --</option>';
-
-    foreach ($users as $user) {
-        $selected = ($assigned_user == $user->ID) ? 'selected' : '';
-        echo '<option value="' . esc_attr($user->ID) . '" ' . $selected . '>';
-        echo esc_html($user->display_name);
-        echo '</option>';
-    }
-    echo '</select>';
-    echo '</div>';
-
-    // Assign Multiple Users (Multi-Select)
-    echo '<div>';
-    echo '<label for="sff_assigned_users"><strong>Assign to Multiple Users:</strong></label>';
-    echo '<select name="sff_assigned_users[]" multiple style="padding:10px; width:100%; height:100px; border-radius:6px; border:1px solid #ccc; background:#fff; font-size:16px;">';
+    echo '<label for="sff_assigned_users"><strong>Select Subscribers:</strong></label>';
+    echo '<select name="sff_assigned_users[]" multiple style="padding:10px; width:100%; height:150px; border-radius:6px; border:1px solid #ccc; background:#fff; font-size:16px;">';
 
     foreach ($users as $user) {
         $selected = in_array($user->ID, $assigned_users) ? 'selected' : '';
@@ -237,9 +166,6 @@ function sff_meal_plan_assign_users_callback($post) {
     }
 
     echo '</select>';
-    echo '</div>';
-
-    echo '</div>';
 }
 
 
