@@ -124,7 +124,7 @@ function sff_frontend_dashboard_pretty() {
             <div style="display:flex; flex-direction:column; flex:1; min-width:200px;">
                 <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                     <h1 style="font-size:24px; color:#333; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                        Hello, <?php echo esc_html($username); ?> 👋
+                        Hello, <?php echo esc_html($username); ?> <span class="sff-emoji">👋</span>
                     </h1>
                     <p style="font-size:16px; color:#777; margin:0;">
                         <?php echo esc_html($day_type); ?>
@@ -145,7 +145,7 @@ function sff_frontend_dashboard_pretty() {
                 </div>
                 <p style="font-size:18px; color:#023441; font-weight:bold;">87%</p>
             </div>
-            <p style="font-size:14px; color:#777; margin-top:10px;">5-Day Streak 🔥</p>
+            <p style="font-size:14px; color:#777; margin-top:10px;">5-Day Streak <span class="sff-emoji">🔥</span></p>
         </div>
 
         <!-- Nutrition Progress Section -->
@@ -156,7 +156,7 @@ function sff_frontend_dashboard_pretty() {
                 <!-- Carbs -->
                 <div style="display:flex; flex-direction:column;">
                     <div style="display:flex; justify-content:space-between;">
-                        <p style="font-size:14px; color:#777;">🍞 Carbs (<?php echo $carb_percent; ?>%)</p>
+                        <p style="font-size:14px; color:#777;"><span class="sff-emoji">🍞</span> Carbs (<?php echo $carb_percent; ?>%)</p>
                         <p style="font-size:14px; color:#333; font-weight:bold;">
                             <?php echo intval($carbs_current_g); ?>g / <?php echo intval($carbs_goal_g); ?>g
                         </p>
@@ -169,7 +169,7 @@ function sff_frontend_dashboard_pretty() {
                 <!-- Protein -->
                 <div style="display:flex; flex-direction:column;">
                     <div style="display:flex; justify-content:space-between;">
-                        <p style="font-size:14px; color:#777;">🥩 Protein (<?php echo $protein_percent; ?>%)</p>
+                        <p style="font-size:14px; color:#777;"><span class="sff-emoji">🥩</span> Protein (<?php echo $protein_percent; ?>%)</p>
                         <p style="font-size:14px; color:#333; font-weight:bold;">
                             <?php echo intval($protein_current_g); ?>g / <?php echo intval($protein_goal_g); ?>g
                         </p>
@@ -182,7 +182,7 @@ function sff_frontend_dashboard_pretty() {
                 <!-- Fats -->
                 <div style="display:flex; flex-direction:column;">
                     <div style="display:flex; justify-content:space-between;">
-                        <p style="font-size:14px; color:#777;">🥑 Fats (<?php echo $fat_percent; ?>%)</p>
+                        <p style="font-size:14px; color:#777;"><span class="sff-emoji">🥑</span> Fats (<?php echo $fat_percent; ?>%)</p>
                         <p style="font-size:14px; color:#333; font-weight:bold;">
                             <?php echo intval($fat_current_g); ?>g / <?php echo intval($fat_goal_g); ?>g
                         </p>
@@ -268,16 +268,16 @@ function sff_frontend_macro_micro_targets() {
                     <h3 style="font-size:18px; color:#222; margin-bottom:12px; text-align:center; font-weight:600;">Macro Targets</h3>
                     <ul style="list-style:none; padding:0; font-size:16px; color:#444; margin:0;">
                         <li style="display:flex; align-items:center; justify-content:space-between; padding:6px 0;">
-                            <span>🔥 Calories:</span> <strong><?php echo esc_html($macros['calories'] ?? 'N/A'); ?></strong>
+                            <span><span class="sff-emoji">🔥</span> Calories:</span> <strong><?php echo esc_html($macros['calories'] ?? 'N/A'); ?></strong>
                         </li>
                         <li style="display:flex; align-items:center; justify-content:space-between; padding:6px 0;">
-                            <span>🥩 Protein:</span> <strong><?php echo esc_html($macros['protein'] ?? 'N/A'); ?>g</strong>
+                            <span><span class="sff-emoji">🥩</span> Protein:</span> <strong><?php echo esc_html($macros['protein'] ?? 'N/A'); ?>g</strong>
                         </li>
                         <li style="display:flex; align-items:center; justify-content:space-between; padding:6px 0;">
-                            <span>🍞 Carbs:</span> <strong><?php echo esc_html($macros['carbs'] ?? 'N/A'); ?>g</strong>
+                            <span><span class="sff-emoji">🍞</span> Carbs:</span> <strong><?php echo esc_html($macros['carbs'] ?? 'N/A'); ?>g</strong>
                         </li>
                         <li style="display:flex; align-items:center; justify-content:space-between; padding:6px 0;">
-                            <span>🥑 Fats:</span> <strong><?php echo esc_html($macros['fats'] ?? 'N/A'); ?>g</strong>
+                            <span><span class="sff-emoji">🥑</span> Fats:</span> <strong><?php echo esc_html($macros['fats'] ?? 'N/A'); ?>g</strong>
                         </li>
                     </ul>
                 </div>
@@ -287,13 +287,13 @@ function sff_frontend_macro_micro_targets() {
                     <h3 style="font-size:18px; color:#222; margin-bottom:12px; text-align:center; font-weight:600;">Micro Targets</h3>
                     <ul style="list-style:none; padding:0; font-size:16px; color:#444; margin:0;">
                         <li style="display:flex; align-items:center; justify-content:space-between; padding:6px 0;">
-                            <span>🍊 Vitamin C:</span> <strong><?php echo esc_html($micros['vitamin_c'] ?? 'N/A'); ?>mg</strong>
+                            <span><span class="sff-emoji">🍊</span> Vitamin C:</span> <strong><?php echo esc_html($micros['vitamin_c'] ?? 'N/A'); ?>mg</strong>
                         </li>
                         <li style="display:flex; align-items:center; justify-content:space-between; padding:6px 0;">
-                            <span>💪 Iron:</span> <strong><?php echo esc_html($micros['iron'] ?? 'N/A'); ?>mg</strong>
+                            <span><span class="sff-emoji">💪</span> Iron:</span> <strong><?php echo esc_html($micros['iron'] ?? 'N/A'); ?>mg</strong>
                         </li>
                         <li style="display:flex; align-items:center; justify-content:space-between; padding:6px 0;">
-                            <span>🌾 Fiber:</span> <strong><?php echo esc_html($micros['fiber'] ?? 'N/A'); ?>g</strong>
+                            <span><span class="sff-emoji">🌾</span> Fiber:</span> <strong><?php echo esc_html($micros['fiber'] ?? 'N/A'); ?>g</strong>
                         </li>
                     </ul>
                 </div>
@@ -353,10 +353,10 @@ function sff_frontend_meal_planner() {
                 <div style="background:#f9f9f9; border-radius:10px; padding:15px; flex:1; min-width:300px; max-width:500px;">
                     <h3 style="font-size:18px; color:#333; margin-bottom:10px; text-align:center;">Macro Targets</h3>
                     <ul style="list-style:none; padding:0; font-size:16px; color:#444;">
-                        <li>🔥 Calories: <strong><?php echo esc_html($macro_targets['calories'] ?? 'N/A'); ?></strong></li>
-                        <li>🥩 Protein: <strong><?php echo esc_html($macro_targets['protein'] ?? 'N/A'); ?>g</strong></li>
-                        <li>🍞 Carbs: <strong><?php echo esc_html($macro_targets['carbs'] ?? 'N/A'); ?>g</strong></li>
-                        <li>🥑 Fats: <strong><?php echo esc_html($macro_targets['fats'] ?? 'N/A'); ?>g</strong></li>
+                        <li><span class="sff-emoji">🔥</span> Calories: <strong><?php echo esc_html($macro_targets['calories'] ?? 'N/A'); ?></strong></li>
+                        <li><span class="sff-emoji">🥩</span> Protein: <strong><?php echo esc_html($macro_targets['protein'] ?? 'N/A'); ?>g</strong></li>
+                        <li><span class="sff-emoji">🍞</span> Carbs: <strong><?php echo esc_html($macro_targets['carbs'] ?? 'N/A'); ?>g</strong></li>
+                        <li><span class="sff-emoji">🥑</span> Fats: <strong><?php echo esc_html($macro_targets['fats'] ?? 'N/A'); ?>g</strong></li>
                     </ul>
                 </div>
 
@@ -364,9 +364,9 @@ function sff_frontend_meal_planner() {
                 <div style="background:#f9f9f9; border-radius:10px; padding:15px; flex:1; min-width:300px; max-width:500px;">
                     <h3 style="font-size:18px; color:#333; margin-bottom:10px; text-align:center;">Micro Targets</h3>
                     <ul style="list-style:none; padding:0; font-size:16px; color:#444;">
-                        <li>🍊 Vitamin C: <strong><?php echo esc_html($micro_targets['vitamin_c'] ?? 'N/A'); ?>mg</strong></li>
-                        <li>💪 Iron: <strong><?php echo esc_html($micro_targets['iron'] ?? 'N/A'); ?>mg</strong></li>
-                        <li>🌾 Fiber: <strong><?php echo esc_html($micro_targets['fiber'] ?? 'N/A'); ?>g</strong></li>
+                        <li><span class="sff-emoji">🍊</span> Vitamin C: <strong><?php echo esc_html($micro_targets['vitamin_c'] ?? 'N/A'); ?>mg</strong></li>
+                        <li><span class="sff-emoji">💪</span> Iron: <strong><?php echo esc_html($micro_targets['iron'] ?? 'N/A'); ?>mg</strong></li>
+                        <li><span class="sff-emoji">🌾</span> Fiber: <strong><?php echo esc_html($micro_targets['fiber'] ?? 'N/A'); ?>g</strong></li>
                     </ul>
                 </div>
             </div>
@@ -377,7 +377,7 @@ function sff_frontend_meal_planner() {
             <div style="background:#fff; border-radius:16px; box-shadow:0 6px 15px rgba(0,0,0,0.1); padding:25px; text-align:center; transition: all 0.3s ease-in-out;">
                 <h2 style="font-size:22px; color:#333; font-weight:700;">No Meal Plans Assigned</h2>
                 <p style="font-size:16px; color:#777;">Your dietitian hasn't assigned a meal plan yet. Once they do, you'll see it here!</p>
-                <p style="font-size:50px; margin-top:10px;">🍽️</p>
+                <p style="font-size:2rem; margin-top:10px;"><span class="sff-emoji">🍽️</span></p>
             </div>
         <?php else: ?>
 
@@ -395,10 +395,10 @@ function sff_frontend_meal_planner() {
                     <input type="text" value="<?php echo esc_attr($meal_title); ?>" name="meal_name[<?php echo esc_attr($meal->ID); ?>]" style="font-size:18px; font-weight:bold; color:#333; border:none; background:transparent;">
                 </div>
                 <div style="display:flex; gap:15px; font-size:14px;">
-                    <span>🔥 kcal</span>
-                    <span>🥩 g</span>
-                    <span>🍞 g</span>
-                    <span>🥑 g</span>
+                    <span><span class="sff-emoji">🔥</span> kcal</span>
+                    <span><span class="sff-emoji">🥩</span> g</span>
+                    <span><span class="sff-emoji">🍞</span> g</span>
+                    <span><span class="sff-emoji">🥑</span> g</span>
                 </div>
             </div>
 
@@ -406,7 +406,7 @@ function sff_frontend_meal_planner() {
 
             <!-- Add Meal Button -->
             <button style="display:block; width:100%; background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; font-weight:bold; text-align:center; transition:all 0.3s;">
-                ➕ Add Meal
+                <span class="sff-emoji">➕</span> Add Meal
             </button>
 
         </div>
