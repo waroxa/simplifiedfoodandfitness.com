@@ -176,9 +176,13 @@ function sff_frontend_dashboard_pretty() {
             <!-- Hamburger Menu -->
             <div class="sff-hamburger-wrapper" style="position:relative;">
                 <button id="sff-menu-toggle" class="sff-hamburger">&#9776;</button>
-                <div id="sff-menu" class="sff-menu-items">
-                    <a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a>
-                </div>
+                <nav id="sff-menu" class="sff-menu-items" aria-label="Mobile Menu">
+                    <ul>
+                        <li><a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>">Dashboard</a></li>
+                        <li><a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a></li>
+                        <li><a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>">Logout</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
 

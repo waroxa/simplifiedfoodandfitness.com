@@ -290,7 +290,12 @@ jQuery(document).ready(function($) {
   // Hamburger menu toggle
   $(document).on('click', '#sff-menu-toggle', function (e) {
     e.preventDefault();
-    $('#sff-menu').toggleClass('is-visible');
+    $('body').toggleClass('sff-menu-open');
+  });
+
+  // Close menu when a link is clicked
+  $(document).on('click', '#sff-menu a', function () {
+    $('body').removeClass('sff-menu-open');
   });
 });
 
