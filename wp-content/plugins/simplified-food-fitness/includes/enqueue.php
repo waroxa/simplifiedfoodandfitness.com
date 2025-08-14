@@ -22,6 +22,20 @@ function sff_enqueue_assets() {
         'nonce'    => wp_create_nonce('sff_scan_nonce')
     ]);
 
+    // Dashboard interactions
+    wp_enqueue_script(
+        'sff-dashboard',
+        SFF_PLUGIN_URL . 'assets/js/dashboard.js',
+        [],
+        '1.0.0',
+        true
+    );
+
+    wp_localize_script('sff-dashboard', 'sff_dashboard', [
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('sff_dashboard_nonce'),
+    ]);
+
     // ✅ CSS
     wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.2');
 }
