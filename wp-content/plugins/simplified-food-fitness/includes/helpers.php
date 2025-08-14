@@ -46,11 +46,16 @@ function sff_generate_meal_cards($meal_plan) {
             $output .= '<span>F: ' . esc_html($meal['fat']) . 'g</span>';
             $output .= '<span>Cal: ' . esc_html($meal['calories']) . '</span>';
             $output .= '</div>';
-            $output .= '<div class="sff-ingredients"><h4>Ingredients</h4><ul>';
-            foreach (explode(',', $meal['ingredients']) as $ingredient) {
-                $output .= '<li>' . esc_html(trim($ingredient)) . '</li>';
+            $ingredients = array_map('trim', explode(',', $meal['ingredients']));
+            if (count($ingredients) > 5) {
+                $output .= '<div class="sff-ingredients-placeholder" data-recipe-id="' . esc_attr($meal['id']) . '"><h4>Ingredients</h4><p>Loading...</p></div>';
+            } else {
+                $output .= '<div class="sff-ingredients"><h4>Ingredients</h4><ul>';
+                foreach ($ingredients as $ingredient) {
+                    $output .= '<li>' . esc_html($ingredient) . '</li>';
+                }
+                $output .= '</ul></div>';
             }
-            $output .= '</ul></div>';
             $output .= '<a href="#" class="sff-view-recipe">View Recipe</a>';
             $output .= '<button class="sff-change-meal" data-meal="' . esc_attr($meal['id']) . '">Change Meal</button>';
             $output .= '</div>'; 
@@ -260,9 +265,26 @@ function sff_get_recipe_macros_from_ids($ingredient_ids) {
 }
 
 function sff_get_recipe_macros($recipe_id) {
+    $last_modified = get_post_modified_time('U', true, $recipe_id);
+    $cache_key     = 'sff_recipe_macros_' . $recipe_id . '_' . $last_modified;
+    $cached        = get_transient($cache_key);
+    if ($cached !== false) {
+        return $cached;
+    }
     $ingredient_ids = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
-    return sff_get_recipe_macros_from_ids($ingredient_ids);
+    $totals         = sff_get_recipe_macros_from_ids($ingredient_ids);
+    set_transient($cache_key, $totals, DAY_IN_SECONDS);
+    return $totals;
 }
+
+function sff_clear_recipe_macros_cache($recipe_id) {
+    global $wpdb;
+    $like = $wpdb->esc_like('_transient_sff_recipe_macros_' . $recipe_id . '_') . '%';
+    $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $like));
+    $like = $wpdb->esc_like('_transient_timeout_sff_recipe_macros_' . $recipe_id . '_') . '%';
+    $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $like));
+}
+add_action('save_post_recipe', 'sff_clear_recipe_macros_cache');
 
 function sff_admin_notice() {
     if (isset($_GET['ingredient_saved']) && $_GET['ingredient_saved'] == 'true') {

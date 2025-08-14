@@ -729,3 +729,22 @@ function sff_load_profile() {
     echo do_shortcode('[sff_client_profile]');
     wp_die();
 }
+
+add_action('wp_ajax_sff_fetch_ingredients', 'sff_fetch_ingredients');
+add_action('wp_ajax_nopriv_sff_fetch_ingredients', 'sff_fetch_ingredients');
+
+function sff_fetch_ingredients() {
+    check_ajax_referer('sff_ingredient_nonce', 'nonce');
+    $recipe_id = intval($_POST['recipe_id'] ?? 0);
+    if (!$recipe_id) {
+        wp_send_json_error('Invalid recipe');
+    }
+    $ingredient_ids = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
+    $ingredients    = [];
+    if (is_array($ingredient_ids)) {
+        foreach ($ingredient_ids as $ingredient_id) {
+            $ingredients[] = get_the_title($ingredient_id);
+        }
+    }
+    wp_send_json_success($ingredients);
+}

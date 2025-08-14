@@ -22,6 +22,18 @@ function sff_enqueue_assets() {
         'nonce'    => wp_create_nonce('sff_scan_nonce')
     ]);
 
+    wp_enqueue_script(
+        'sff-ingredient-loader',
+        SFF_PLUGIN_URL . 'assets/js/ingredient-observer.js',
+        [],
+        '1.0.0',
+        true
+    );
+    wp_localize_script('sff-ingredient-loader', 'sff_ingredient_loader', [
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('sff_ingredient_nonce')
+    ]);
+
     // ✅ CSS
     wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.2');
 }
