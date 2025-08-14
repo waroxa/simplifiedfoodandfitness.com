@@ -111,3 +111,30 @@ add_action('set_user_role', function ($user_id, $new_role, $old_roles) {
         }
     }
 }, 10, 3);
+
+/**
+ * Customize the login screen logo.
+ */
+function sff_custom_login_logo() {
+    ?>
+    <style>
+        #login h1 a, .login h1 a {
+            background-image: url('https://simplifiedfoodandfitness.com/wp-content/uploads/2024/10/3.png');
+            width: 320px;
+            height: 65px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            padding-bottom: 30px;
+        }
+    </style>
+    <?php
+}
+add_action('login_enqueue_scripts', 'sff_custom_login_logo');
+
+// Update login logo link and title.
+add_filter('login_headerurl', function () {
+    return home_url('/');
+});
+add_filter('login_headertext', function () {
+    return 'Simplified Food and Fitness';
+});
