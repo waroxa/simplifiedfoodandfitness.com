@@ -138,3 +138,10 @@ add_filter('login_headerurl', function () {
 add_filter('login_headertext', function () {
     return 'Simplified Food and Fitness';
 });
+
+/**
+ * Disable WordPress emoji scripts and styles to stop automatic emoji replacement.
+ */
+remove_action('wp_head', 'print_emoji_detection_script', 7);
+remove_action('wp_print_styles', 'print_emoji_styles');
+
