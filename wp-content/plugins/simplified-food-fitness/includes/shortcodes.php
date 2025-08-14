@@ -44,6 +44,89 @@ function sff_display_user_dashboard() {
 }
 add_shortcode('sff_dashboard', 'sff_display_user_dashboard');
 
+// Dashboard showing meal plans assigned via _sff_assigned_users
+function sff_meal_dashboard_shortcode() {
+    if (!is_user_logged_in()) {
+        return '<p>Please log in to view your meal plan.</p>';
+    }
+
+    $user_id = get_current_user_id();
+
+    $meal_posts = get_posts([
+        'post_type'      => 'meal_plan',
+        'numberposts'    => -1,
+        'meta_query'     => [
+            [
+                'key'     => '_sff_assigned_users',
+                'value'   => '"' . $user_id . '"',
+                'compare' => 'LIKE',
+            ],
+        ],
+    ]);
+
+    if (!$meal_posts) {
+        return '<p>No meal plans assigned.</p>';
+    }
+
+    $meals = [];
+    $ingredients_text = '';
+
+    foreach ($meal_posts as $meal_post) {
+        $data = get_post_meta($meal_post->ID, '_sff_meal_data', true);
+        if (!$data || !is_array($data)) {
+            continue;
+        }
+
+        $data['id']    = $meal_post->ID;
+        $data['image'] = get_the_post_thumbnail_url($meal_post, 'medium') ?: '';
+        $meals[]       = $data;
+
+        if (!empty($data['ingredients'])) {
+            $ingredients_text .= $data['ingredients'] . ' ';
+        }
+    }
+
+    if (!$meals) {
+        return '<p>No meal plans assigned.</p>';
+    }
+
+    $progress = get_user_meta($user_id, 'sff_meal_progress', true);
+    if (!is_array($progress)) {
+        $progress = [];
+    }
+
+    $total     = count($meals);
+    $completed = count(array_intersect(array_column($meals, 'id'), $progress));
+
+    ob_start();
+    ?>
+    <div class="sff-dashboard">
+        <div class="sff-progress">
+            <progress id="sff-progress-bar" value="<?php echo esc_attr($completed); ?>" max="<?php echo esc_attr($total); ?>"></progress>
+            <span id="sff-progress-text"><?php echo esc_html("$completed/$total meals completed"); ?></span>
+        </div>
+
+        <div class="sff-meals">
+            <?php foreach ($meals as $meal) : ?>
+                <div class="sff-meal-entry">
+                    <?php echo sff_generate_meal_cards(wp_json_encode([$meal])); ?>
+                    <?php $checked = in_array($meal['id'], $progress) ? 'checked' : ''; ?>
+                    <label class="sff-meal-check">
+                        <input type="checkbox" class="sff-meal-progress" data-meal-id="<?php echo esc_attr($meal['id']); ?>" <?php echo $checked; ?> />
+                        Completed
+                    </label>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <h3>Grocery List</h3>
+        <?php echo sff_generate_grocery_list($ingredients_text); ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('sff_meal_dashboard', 'sff_meal_dashboard_shortcode');
+
 
 function sff_frontend_ingredient_page() {
     if (!is_user_logged_in()) return sff_custom_login_form();
