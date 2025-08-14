@@ -2,7 +2,7 @@
 /*
 Plugin Name: Simplified Food & Fitness Macro Tracker
 Description: A custom plugin for managing client meal plans, macro targets, and grocery lists with a mobile-first design.
-Version: 1.0.2
+Version: 1.1.0
 Author: Simplified Food & Fitness
 */
 
@@ -13,6 +13,18 @@ if (!defined('ABSPATH')) {
 // Define constants for paths
 define('SFF_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SFF_PLUGIN_URL', plugin_dir_url(__FILE__));
+
+define('SFF_PLUGIN_VERSION', '1.1.0');
+if (!defined('SFF_MACRO_FIELDS')) {
+    define('SFF_MACRO_FIELDS', [
+        'calories', 'carbs', 'protein', 'fat',
+        'saturated_fat', 'trans_fat', 'cholesterol', 'sodium',
+        'fiber', 'sugars', 'added_sugars', 'vitamin_d', 'calcium',
+        'iron', 'potassium', 'magnesium', 'vitamin_a', 'vitamin_c',
+        'vitamin_e', 'zinc', 'folate', 'riboflavin', 'niacin',
+        'vitamin_b6', 'vitamin_b12', 'thiamin'
+    ]);
+}
 
 // Include all feature files
 require_once SFF_PLUGIN_DIR . 'includes/post-types.php';
@@ -71,4 +83,74 @@ function sff_create_profile_page() {
         ]);
     }
 }
-register_activation_hook(__FILE__, 'sff_create_profile_page');
+
+function sff_install_tables() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'sff_ingredient_nutrition';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $columns = '';
+    foreach (SFF_MACRO_FIELDS as $field) {
+        $columns .= "$field FLOAT DEFAULT 0,\n";
+    }
+
+    $sql = "CREATE TABLE $table_name (
+        ingredient_id BIGINT(20) UNSIGNED NOT NULL,
+        $columns
+        cost DECIMAL(10,2) DEFAULT 0,
+        PRIMARY KEY  (ingredient_id)
+    ) $charset_collate;";
+
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    dbDelta($sql);
+}
+
+function sff_migrate_macros_from_meta() {
+    $ids = get_posts([
+        'post_type' => 'ingredient',
+        'numberposts' => -1,
+        'fields' => 'ids'
+    ]);
+    if (empty($ids)) {
+        return;
+    }
+
+    global $wpdb;
+    $table = $wpdb->prefix . 'sff_ingredient_nutrition';
+    $formats = array_merge(['%d'], array_fill(0, count(SFF_MACRO_FIELDS), '%f'), ['%f']);
+
+    foreach ($ids as $id) {
+        $macros = get_post_meta($id, '_sff_macros', true);
+        $data = array_merge(['ingredient_id' => $id], array_fill_keys(SFF_MACRO_FIELDS, 0));
+        if (is_array($macros)) {
+            foreach (SFF_MACRO_FIELDS as $field) {
+                $data[$field] = isset($macros[$field]) ? floatval($macros[$field]) : 0;
+            }
+        }
+        $data['cost'] = 0;
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT ingredient_id FROM $table WHERE ingredient_id = %d", $id));
+        if ($exists) {
+            $wpdb->update($table, $data, ['ingredient_id' => $id], $formats, ['%d']);
+        } else {
+            $wpdb->insert($table, $data, $formats);
+        }
+    }
+}
+
+function sff_plugin_activate() {
+    sff_create_profile_page();
+    sff_install_tables();
+    sff_migrate_macros_from_meta();
+    update_option('sff_plugin_version', SFF_PLUGIN_VERSION);
+}
+register_activation_hook(__FILE__, 'sff_plugin_activate');
+
+function sff_plugin_update_check() {
+    $installed = get_option('sff_plugin_version');
+    if ($installed !== SFF_PLUGIN_VERSION) {
+        sff_install_tables();
+        sff_migrate_macros_from_meta();
+        update_option('sff_plugin_version', SFF_PLUGIN_VERSION);
+    }
+}
+add_action('init', 'sff_plugin_update_check', 20);
