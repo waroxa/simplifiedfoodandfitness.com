@@ -367,6 +367,25 @@ jQuery(document).ready(function($) {
       }
     });
   });
+
+  // Ensure busy/activity day fields are only required when visible
+  function toggleClientDayRequired(selector) {
+    var fields = $(selector);
+    if (!fields.length) return;
+    function toggle() {
+      fields.each(function () {
+        $(this).prop('required', $(this).is(':visible'));
+      });
+    }
+    toggle();
+    const observer = new MutationObserver(toggle);
+    fields.each(function () {
+      observer.observe(this, { attributes: true, attributeFilter: ['style', 'class'] });
+    });
+  }
+
+  toggleClientDayRequired('[name="client[]busy_days"]');
+  toggleClientDayRequired('[name="client[]activity_days"]');
 });
 
 
