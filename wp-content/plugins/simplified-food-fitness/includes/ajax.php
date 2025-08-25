@@ -586,6 +586,12 @@ function sff_calculate_macros() {
     $fat_g = round($fat_cals / 9);
     $carb_g = round($carb_cals / 4);
 
+    // Store calculated macros for the lead
+    update_post_meta($lead_id, 'sff_macro_calories', round($adjusted_calories));
+    update_post_meta($lead_id, 'sff_macro_protein_g', $protein_g);
+    update_post_meta($lead_id, 'sff_macro_carb_g', $carb_g);
+    update_post_meta($lead_id, 'sff_macro_fat_g', $fat_g);
+
     // Response
     wp_send_json_success([
         'bmr' => round($bmr),
