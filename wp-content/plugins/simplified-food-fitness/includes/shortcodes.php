@@ -306,13 +306,15 @@ function sff_frontend_dashboard_pretty() {
         'post_status'    => 'publish',
         'posts_per_page' => 1,
     );
-    $macro_post = get_posts($args);
+    $macro_post   = get_posts($args);
     $macro_post_id = $macro_post ? $macro_post[0]->ID : null;
 
+    $macro_targets = $macro_post_id ? get_post_meta($macro_post_id, '_macro_targets', true) : [];
+
     // 🔥 Fetch saved macro percentages or use defaults
-    $carb_percent = $macro_post_id ? get_post_meta($macro_post_id, 'carb_percent', true) : '';
-    $protein_percent = $macro_post_id ? get_post_meta($macro_post_id, 'protein_percent', true) : '';
-    $fat_percent = $macro_post_id ? get_post_meta($macro_post_id, 'fat_percent', true) : '';
+    $carb_percent    = $macro_targets['carb_percent'] ?? ($macro_post_id ? get_post_meta($macro_post_id, 'carb_percent', true) : '');
+    $protein_percent = $macro_targets['protein_percent'] ?? ($macro_post_id ? get_post_meta($macro_post_id, 'protein_percent', true) : '');
+    $fat_percent     = $macro_targets['fat_percent'] ?? ($macro_post_id ? get_post_meta($macro_post_id, 'fat_percent', true) : '');
 
     if (!$carb_percent) {
         $carb_percent = 40; // Default from ajax.php
@@ -325,15 +327,15 @@ function sff_frontend_dashboard_pretty() {
     }
 
     // 🔥 Fetch total calories or fallback to 2000
-    $total_calories = $macro_post_id ? get_post_meta($macro_post_id, 'calories', true) : 2000;
+    $total_calories = $macro_targets['calories'] ?? ($macro_post_id ? get_post_meta($macro_post_id, 'calories', true) : 2000);
     if (!$total_calories) {
         $total_calories = 2000; // fallback default
     }
 
-    // 🔥 Calculate grams for macros
-    $carbs_goal_g = ($carb_percent / 100) * $total_calories / 4; // 4 cal/g carbs
-    $protein_goal_g = ($protein_percent / 100) * $total_calories / 4; // 4 cal/g protein
-    $fat_goal_g = ($fat_percent / 100) * $total_calories / 9; // 9 cal/g fat
+    // 🔥 Use stored grams or compute from percentages
+    $carbs_goal_g   = $macro_targets['carbs']   ?? ($total_calories * $carb_percent / 400);
+    $protein_goal_g = $macro_targets['protein'] ?? ($total_calories * $protein_percent / 400);
+    $fat_goal_g     = $macro_targets['fats']    ?? ($total_calories * $fat_percent / 900);
 
     // 🔥 Example: current intake (replace these with dynamic values if you track)
     $carbs_current_g = 135;
@@ -452,7 +454,7 @@ function sff_frontend_macro_micro_targets() {
     }
 
     $post_id = $macro_post[0]->ID;
-    $macros = get_post_meta($post_id, '_macro_target', true);
+    $macros = get_post_meta($post_id, '_macro_targets', true);
     $micros = get_post_meta($post_id, '_micro_targets', true);
 
     // Logo URL (replace with your actual logo URL)

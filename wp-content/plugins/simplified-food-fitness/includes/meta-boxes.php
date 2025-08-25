@@ -476,11 +476,23 @@ function sff_save_macro_target_meta_box($post_id) {
         return;
     }
 
+    $calories       = floatval($_POST['calories']);
+    $carb_percent    = isset($_POST['carb_percent']) ? floatval($_POST['carb_percent']) : 0;
+    $protein_percent = isset($_POST['protein_percent']) ? floatval($_POST['protein_percent']) : 0;
+    $fat_percent     = isset($_POST['fat_percent']) ? floatval($_POST['fat_percent']) : 0;
+
+    $carbs   = $calories * $carb_percent / 400;
+    $protein = $calories * $protein_percent / 400;
+    $fats    = $calories * $fat_percent / 900;
+
     $macros = [
-        'calories' => $_POST['calories'],
-        'protein'  => $_POST['protein'],
-        'carbs'    => $_POST['carbs'],
-        'fats'     => $_POST['fats'],
+        'calories'        => $calories,
+        'carb_percent'    => $carb_percent,
+        'protein_percent' => $protein_percent,
+        'fat_percent'     => $fat_percent,
+        'carbs'           => $carbs,
+        'protein'         => $protein,
+        'fats'            => $fats,
     ];
 
     $micros = [
