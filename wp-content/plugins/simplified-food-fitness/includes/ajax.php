@@ -700,11 +700,50 @@ function sff_convert_to_client() {
         ));
 
         if (!is_wp_error($post_id)) {
-            // Save default macro data
-            update_post_meta($post_id, 'calories', 2000); // Default Calories
-            update_post_meta($post_id, 'carb_percent', 50); // Default Carbs %
-            update_post_meta($post_id, 'protein_percent', 30); // Default Protein %
-            update_post_meta($post_id, 'fat_percent', 20); // Default Fats %
+            // Pull macro data stored on the lead
+            $calories       = intval(get_post_meta($lead_id, 'sff_macro_calories', true));
+            $protein_percent = floatval(get_post_meta($lead_id, 'sff_macro_protein_percent', true));
+            $carb_percent    = floatval(get_post_meta($lead_id, 'sff_macro_carb_percent', true));
+            $fat_percent     = floatval(get_post_meta($lead_id, 'sff_macro_fat_percent', true));
+
+            // If percentages are missing, derive them from gram values
+            if (!$protein_percent || !$carb_percent || !$fat_percent) {
+                $protein_g = floatval(get_post_meta($lead_id, 'sff_macro_protein_g', true));
+                $carb_g    = floatval(get_post_meta($lead_id, 'sff_macro_carb_g', true));
+                $fat_g     = floatval(get_post_meta($lead_id, 'sff_macro_fat_g', true));
+
+                if ($calories > 0) {
+                    if (!$protein_percent && $protein_g) {
+                        $protein_percent = $protein_g * 4 / $calories * 100;
+                    }
+                    if (!$carb_percent && $carb_g) {
+                        $carb_percent = $carb_g * 4 / $calories * 100;
+                    }
+                    if (!$fat_percent && $fat_g) {
+                        $fat_percent = $fat_g * 9 / $calories * 100;
+                    }
+                }
+            }
+
+            // Fallback defaults if data is missing
+            if (!$calories) {
+                $calories = 2000;
+            }
+            if (!$carb_percent) {
+                $carb_percent = 50;
+            }
+            if (!$protein_percent) {
+                $protein_percent = 30;
+            }
+            if (!$fat_percent) {
+                $fat_percent = 20;
+            }
+
+            // Save calculated macro data to the macro_target post
+            update_post_meta($post_id, 'calories', round($calories));
+            update_post_meta($post_id, 'carb_percent', round($carb_percent));
+            update_post_meta($post_id, 'protein_percent', round($protein_percent));
+            update_post_meta($post_id, 'fat_percent', round($fat_percent));
         }
     }
 
