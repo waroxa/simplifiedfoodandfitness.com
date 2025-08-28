@@ -586,11 +586,23 @@ function sff_calculate_macros() {
     $fat_g = round($fat_cals / 9);
     $carb_g = round($carb_cals / 4);
 
+    // Calculate macro percentages
+    if ($adjusted_calories > 0) {
+        $protein_percent = ($protein_g * 4 / $adjusted_calories) * 100;
+        $carb_percent    = ($carb_g * 4 / $adjusted_calories) * 100;
+        $fat_percent     = ($fat_g * 9 / $adjusted_calories) * 100;
+    } else {
+        $protein_percent = $carb_percent = $fat_percent = 0;
+    }
+
     // Store calculated macros for the lead
     update_post_meta($lead_id, 'sff_macro_calories', round($adjusted_calories));
     update_post_meta($lead_id, 'sff_macro_protein_g', $protein_g);
     update_post_meta($lead_id, 'sff_macro_carb_g', $carb_g);
     update_post_meta($lead_id, 'sff_macro_fat_g', $fat_g);
+    update_post_meta($lead_id, 'sff_macro_protein_percent', round($protein_percent, 2));
+    update_post_meta($lead_id, 'sff_macro_carb_percent', round($carb_percent, 2));
+    update_post_meta($lead_id, 'sff_macro_fat_percent', round($fat_percent, 2));
 
     // Response
     wp_send_json_success([
