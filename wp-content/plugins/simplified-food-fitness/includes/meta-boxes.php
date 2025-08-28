@@ -619,7 +619,7 @@ add_action('add_meta_boxes', function () {
         'macro_percentages_meta_box',
         'Macro Percentages',
         'render_macro_percentages_meta_box',
-        'macro_targets', // your CPT name
+        'macro_target', // CPT slug
         'normal',
         'high'
     );
@@ -644,7 +644,7 @@ function render_macro_percentages_meta_box($post) {
 }
 
 // Save the custom fields when the post is saved
-add_action('save_post_macro_targets', function ($post_id) {
+add_action('save_post_macro_target', function ($post_id) {
     if (isset($_POST['carb_percent'])) {
         update_post_meta($post_id, 'carb_percent', intval($_POST['carb_percent']));
     }
