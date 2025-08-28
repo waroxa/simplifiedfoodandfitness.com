@@ -760,7 +760,7 @@ function sff_convert_to_client() {
     }
 
     // ✅ Email user credentials
-    $login_url = wp_login_url(site_url('/client-dashboard/'));
+    $login_url = wp_login_url(site_url('/dashboard/'));
     wp_new_user_notification($user_id, null, 'user');
 
     wp_send_json_success([

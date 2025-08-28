@@ -154,3 +154,20 @@ function sff_plugin_update_check() {
     }
 }
 add_action('init', 'sff_plugin_update_check', 20);
+
+// Redirect clients and customers to dashboard on login
+function sff_login_redirect($redirect_to, $request, $user) {
+    if (isset($user->roles) && (in_array('client', $user->roles) || in_array('customer', $user->roles))) {
+        return home_url('/dashboard/');
+    }
+    return $redirect_to;
+}
+add_filter('login_redirect', 'sff_login_redirect', 10, 3);
+
+function sff_woocommerce_login_redirect($redirect, $user) {
+    if (isset($user->roles) && (in_array('client', $user->roles) || in_array('customer', $user->roles))) {
+        return home_url('/dashboard/');
+    }
+    return $redirect;
+}
+add_filter('woocommerce_login_redirect', 'sff_woocommerce_login_redirect', 10, 2);
