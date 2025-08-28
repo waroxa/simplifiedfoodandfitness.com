@@ -172,10 +172,14 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("calculate-macros-btn").addEventListener("click", function() {
         var leadId = this.getAttribute("data-lead-id");
 
+        const params = new URLSearchParams();
+        params.append('action', 'calculate_macros');
+        params.append('lead_id', leadId);
+
         fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'action=calculate_macros&lead_id=' + leadId
+    body: params.toString()
 })
 .then(response => response.json())
 .then(data => {
