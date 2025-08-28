@@ -224,7 +224,7 @@ add_action('save_post', 'sff_save_ingredient_details');
 function sff_custom_login_form() {
    $args = array(
         'echo'           => false,
-        'redirect'       => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+        'redirect'       => home_url('/dashboard/'),
         'label_username' => __('Username or Email'),
         'label_password' => __('Password'),
         'label_remember' => __('Remember Me'),
