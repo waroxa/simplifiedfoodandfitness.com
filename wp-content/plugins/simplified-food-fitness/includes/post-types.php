@@ -23,7 +23,8 @@ function sff_register_custom_post_types() {
         'public' => false,
         'has_archive' => false,
         'show_ui' => true,
-        'supports' => ['title', 'custom-fields'],
+        // Removed default custom fields to keep the UI clean. Bespoke meta boxes handle data entry.
+        'supports' => ['title'],
         'menu_icon' => 'dashicons-chart-bar',
     ]);
 
