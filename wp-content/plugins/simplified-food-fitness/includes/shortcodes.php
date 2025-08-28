@@ -301,34 +301,37 @@ function sff_frontend_dashboard_pretty() {
 
     // 🔥 Fetch this client's Macro Target post
     $args = array(
-        'post_type'      => 'macro_targets',
+        'post_type'      => 'macro_target',
         'author'         => $client_id,
         'post_status'    => 'publish',
         'posts_per_page' => 1,
     );
     $macro_post   = get_posts($args);
-    $macro_post_id = $macro_post ? $macro_post[0]->ID : null;
+    $macro_post_id = (!empty($macro_post) && isset($macro_post[0]->ID)) ? $macro_post[0]->ID : null;
 
     $macro_targets = $macro_post_id ? get_post_meta($macro_post_id, '_macro_targets', true) : [];
+    if (!is_array($macro_targets)) {
+        $macro_targets = [];
+    }
 
     // 🔥 Fetch saved macro percentages or use defaults
     $carb_percent    = $macro_targets['carb_percent'] ?? ($macro_post_id ? get_post_meta($macro_post_id, 'carb_percent', true) : '');
     $protein_percent = $macro_targets['protein_percent'] ?? ($macro_post_id ? get_post_meta($macro_post_id, 'protein_percent', true) : '');
     $fat_percent     = $macro_targets['fat_percent'] ?? ($macro_post_id ? get_post_meta($macro_post_id, 'fat_percent', true) : '');
 
-    if (!$carb_percent) {
+    if ($carb_percent === '' || $carb_percent === null) {
         $carb_percent = 40; // Default from ajax.php
     }
-    if (!$protein_percent) {
+    if ($protein_percent === '' || $protein_percent === null) {
         $protein_percent = 20; // Default
     }
-    if (!$fat_percent) {
+    if ($fat_percent === '' || $fat_percent === null) {
         $fat_percent = 20; // Default
     }
 
     // 🔥 Fetch total calories or fallback to 2000
     $total_calories = $macro_targets['calories'] ?? ($macro_post_id ? get_post_meta($macro_post_id, 'calories', true) : 2000);
-    if (!$total_calories) {
+    if ($total_calories === '' || $total_calories === null) {
         $total_calories = 2000; // fallback default
     }
 
