@@ -429,6 +429,17 @@ add_action('save_post', 'sff_save_recipe_details');
 function sff_render_macro_target_meta_box($post) {
     // Retrieve existing macro & micro targets
     $macros = get_post_meta($post->ID, '_macro_targets', true);
+    if (empty($macros)) {
+        $macros = [
+            'calories'        => get_post_meta($post->ID, 'calories', true),
+            'carbs'           => get_post_meta($post->ID, 'carbs', true),
+            'protein'         => get_post_meta($post->ID, 'protein', true),
+            'fats'            => get_post_meta($post->ID, 'fats', true),
+            'carb_percent'    => get_post_meta($post->ID, 'carb_percent', true),
+            'protein_percent' => get_post_meta($post->ID, 'protein_percent', true),
+            'fat_percent'     => get_post_meta($post->ID, 'fat_percent', true),
+        ];
+    }
     $micros = get_post_meta($post->ID, '_micro_targets', true);
     ?>
 
@@ -502,6 +513,13 @@ function sff_save_macro_target_meta_box($post_id) {
     ];
 
     update_post_meta($post_id, '_macro_targets', $macros);
+    update_post_meta($post_id, 'calories', $calories);
+    update_post_meta($post_id, 'carbs', $carbs);
+    update_post_meta($post_id, 'protein', $protein);
+    update_post_meta($post_id, 'fats', $fats);
+    update_post_meta($post_id, 'carb_percent', $carb_percent);
+    update_post_meta($post_id, 'protein_percent', $protein_percent);
+    update_post_meta($post_id, 'fat_percent', $fat_percent);
     update_post_meta($post_id, '_micro_targets', $micros);
 }
 add_action('save_post_macro_target', 'sff_save_macro_target_meta_box');
