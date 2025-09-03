@@ -26,6 +26,11 @@ if (!defined('SFF_MACRO_FIELDS')) {
     ]);
 }
 
+if (!defined('SFF_USDA_API_KEY')) {
+    // Expect the USDA API key to be provided via environment variable to avoid committing secrets.
+    define('SFF_USDA_API_KEY', getenv('USDA_API_KEY') ?: '');
+}
+
 // Include all feature files
 require_once SFF_PLUGIN_DIR . 'includes/post-types.php';
 require_once SFF_PLUGIN_DIR . 'includes/meta-boxes.php';
