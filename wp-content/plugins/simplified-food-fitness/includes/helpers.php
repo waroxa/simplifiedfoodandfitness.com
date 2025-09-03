@@ -62,10 +62,51 @@ function sff_generate_meal_cards($meal_plan) {
     return $output;
 }
 
+function sff_fetch_usda_macros($fdc_id) {
+    $api_key = defined('SFF_USDA_API_KEY') ? SFF_USDA_API_KEY : '';
+    if (empty($api_key) || empty($fdc_id)) {
+        return [];
+    }
+
+    $url = 'https://api.nal.usda.gov/fdc/v1/food/' . intval($fdc_id) . '?api_key=' . urlencode($api_key);
+    $response = wp_remote_get($url, ['timeout' => 15]);
+    if (is_wp_error($response)) {
+        return [];
+    }
+
+    $data = json_decode(wp_remote_retrieve_body($response), true);
+    if (empty($data['foodNutrients'])) {
+        return [];
+    }
+
+    $macros = ['calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0];
+    foreach ($data['foodNutrients'] as $nutrient) {
+        $name  = $nutrient['nutrientName'] ?? '';
+        $value = isset($nutrient['value']) ? floatval($nutrient['value']) : 0;
+        switch ($name) {
+            case 'Energy':
+                $macros['calories'] = $value;
+                break;
+            case 'Carbohydrate, by difference':
+                $macros['carbs'] = $value;
+                break;
+            case 'Protein':
+                $macros['protein'] = $value;
+                break;
+            case 'Total lipid (fat)':
+                $macros['fat'] = $value;
+                break;
+        }
+    }
+
+    return $macros;
+}
+
 function sff_render_ingredient_form($post_id = null) {
    // Get existing ingredient data if editing
     $brand_name = $serving_size = $servings = '';
     $front_image = $nutrition_label_image = '';
+    $fdc_id = '';
     $macros = [
         'calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0, 
         'saturated_fat' => 0, 'trans_fat' => 0, 'cholesterol' => 0, 
@@ -82,6 +123,7 @@ function sff_render_ingredient_form($post_id = null) {
         $macros = get_post_meta($post_id, '_sff_macros', true) ?: $macros;
         $front_image = get_post_meta($post_id, '_sff_front_image', true);
         $nutrition_label_image = get_post_meta($post_id, '_sff_nutrition_label_image', true);
+        $fdc_id = get_post_meta($post_id, '_sff_fdc_id', true);
     }
 
     ob_start(); ?>
@@ -126,6 +168,9 @@ function sff_render_ingredient_form($post_id = null) {
 
         <label style="font-size:14px; color:#777;">Product Name:</label>
         <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="e.g., Brand X" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+        <label style="font-size:14px; color:#777;">USDA FDC ID (optional):</label>
+        <input type="text" name="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>" placeholder="e.g., 123456" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
 
 
         <input type="file" id="sff_nutrition_label_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
@@ -194,12 +239,24 @@ function sff_save_ingredient_details($post_id) {
         update_post_meta($post_id, '_sff_brand_name', sanitize_text_field($_POST['sff_brand_name']));
     }
 
+    $fdc_id = '';
+    if (isset($_POST['sff_fdc_id'])) {
+        $fdc_id = sanitize_text_field($_POST['sff_fdc_id']);
+        update_post_meta($post_id, '_sff_fdc_id', $fdc_id);
+    }
+
     if (isset($_POST['sff_measurements'])) {
         update_post_meta($post_id, '_sff_measurements', sanitize_textarea_field($_POST['sff_measurements']));
     }
 
     if (isset($_POST['sff_macros'])) {
         $macros = array_map('sanitize_text_field', $_POST['sff_macros']);
+        if (array_sum(array_map('floatval', $macros)) === 0 && !empty($fdc_id)) {
+            $api_macros = sff_fetch_usda_macros($fdc_id);
+            foreach ($api_macros as $key => $value) {
+                $macros[$key] = $value;
+            }
+        }
         update_post_meta($post_id, '_sff_macros', $macros);
 
         global $wpdb;
@@ -285,30 +342,39 @@ function sff_create_recipe_from_modal($name, $ingredient_ids) {
 }
 
 function sff_get_recipe_macros_from_ids($ingredient_ids) {
-    $totals = ['calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0];
+    $totals = array_fill_keys(SFF_MACRO_FIELDS, 0);
     if (!is_array($ingredient_ids) || empty($ingredient_ids)) {
         return $totals;
     }
 
     global $wpdb;
     $table = $wpdb->prefix . 'sff_ingredient_nutrition';
+    $fields = implode(', ', SFF_MACRO_FIELDS);
     $placeholders = implode(',', array_fill(0, count($ingredient_ids), '%d'));
-    $query = $wpdb->prepare("SELECT calories, carbs, protein, fat FROM $table WHERE ingredient_id IN ($placeholders)", $ingredient_ids);
+    $query = $wpdb->prepare("SELECT $fields FROM $table WHERE ingredient_id IN ($placeholders)", $ingredient_ids);
     $results = $wpdb->get_results($query, ARRAY_A);
 
     foreach ($results as $row) {
-        $totals['calories'] += floatval($row['calories']);
-        $totals['carbs'] += floatval($row['carbs']);
-        $totals['protein'] += floatval($row['protein']);
-        $totals['fat'] += floatval($row['fat']);
+        foreach (SFF_MACRO_FIELDS as $field) {
+            $totals[$field] += isset($row[$field]) ? floatval($row[$field]) : 0;
+        }
     }
 
     return $totals;
 }
 
-function sff_get_recipe_macros($recipe_id) {
+function sff_get_recipe_macros($recipe_id, $per_serving = false) {
     $ingredient_ids = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
-    return sff_get_recipe_macros_from_ids($ingredient_ids);
+    $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
+    if ($per_serving) {
+        $servings = (int) get_post_meta($recipe_id, '_sff_recipe_servings', true);
+        if ($servings > 0) {
+            foreach ($totals as $key => $value) {
+                $totals[$key] = $value / $servings;
+            }
+        }
+    }
+    return $totals;
 }
 
 function sff_admin_notice() {

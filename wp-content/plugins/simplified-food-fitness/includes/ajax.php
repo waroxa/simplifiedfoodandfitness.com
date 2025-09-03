@@ -877,3 +877,29 @@ function sff_create_recipe() {
     ]);
 }
 add_action('wp_ajax_sff_create_recipe', 'sff_create_recipe');
+
+function sff_calc_recipe_macros() {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'sff_scan_nonce')) {
+        wp_send_json_error('Nonce verification failed.');
+    }
+
+    $ingredient_ids = isset($_POST['ingredients']) ? array_map('intval', (array) $_POST['ingredients']) : [];
+    $servings = max(1, intval($_POST['servings'] ?? 1));
+
+    if (!function_exists('sff_get_recipe_macros_from_ids')) {
+        require_once SFF_PLUGIN_DIR . 'includes/helpers.php';
+    }
+
+    $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
+    $per_serving = [];
+    foreach ($totals as $key => $value) {
+        $per_serving[$key] = $value / $servings;
+    }
+
+    wp_send_json_success([
+        'total' => $totals,
+        'per_serving' => $per_serving,
+    ]);
+}
+add_action('wp_ajax_sff_calc_recipe_macros', 'sff_calc_recipe_macros');
+add_action('wp_ajax_nopriv_sff_calc_recipe_macros', 'sff_calc_recipe_macros');

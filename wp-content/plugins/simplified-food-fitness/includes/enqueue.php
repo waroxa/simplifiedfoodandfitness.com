@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-function sff_enqueue_assets() {
+function sff_enqueue_assets($hook = '') {
     // ✅ Load jQuery
     wp_enqueue_script('jquery');
 
@@ -35,6 +35,20 @@ function sff_enqueue_assets() {
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce'    => wp_create_nonce('sff_dashboard_nonce'),
     ]);
+
+    // Recipe editor macros updater (admin only)
+    if (is_admin()) {
+        $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+        if ($screen && 'recipe' === $screen->post_type) {
+            wp_enqueue_script(
+                'sff-recipe-macros',
+                SFF_PLUGIN_URL . 'assets/js/recipe-macros.js',
+                ['jquery', 'sff-scripts'],
+                '1.0.0',
+                true
+            );
+        }
+    }
 
     // ✅ CSS
     wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.2');
