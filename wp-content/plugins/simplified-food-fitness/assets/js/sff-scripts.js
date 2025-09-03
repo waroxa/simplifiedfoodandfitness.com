@@ -386,6 +386,32 @@ jQuery(document).ready(function($) {
 
   toggleClientDayRequired('[name="client[]busy_days"]');
   toggleClientDayRequired('[name="client[]activity_days"]');
+
+  $('#sff-usda-search').on('click', function(){
+    var query = $('[name="sff_brand_name"]').val();
+    if(!query) return;
+    $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_search',security:sff_ajax_obj.nonce,query:query},function(res){
+      if(res.success){
+        var list = $('<ul/>');
+        $.each(res.data,function(i,item){
+          list.append($('<li>').text(item.description).attr('data-fdc',item.fdc_id).css('cursor','pointer'));
+        });
+        $('#usda-search-results').html(list);
+      }
+    });
+  });
+
+  $('#usda-search-results').on('click','li',function(){
+    var fdc = $(this).data('fdc');
+    $('[name="sff_fdc_id"]').val(fdc);
+    $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
+      if(res.success){
+        $.each(res.data,function(k,v){
+          $('[name="sff_macros['+k+']"]').val(v);
+        });
+      }
+    });
+  });
 });
 
 

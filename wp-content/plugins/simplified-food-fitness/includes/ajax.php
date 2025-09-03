@@ -247,6 +247,10 @@ function sff_handle_ingredient_submission() {
         'brand_name' => sanitize_text_field($_POST['sff_brand_name']),
         'serving_size' => sanitize_text_field($_POST['sff_serving_size']),
         'servings' => absint($_POST['sff_servings']),
+        'fdc_id' => sanitize_text_field($_POST['sff_fdc_id']),
+        'sku' => sanitize_text_field($_POST['sff_sku']),
+        'affiliate_link' => esc_url_raw($_POST['sff_affiliate_link']),
+        'price' => isset($_POST['sff_price']) ? (float)$_POST['sff_price'] : 0,
         'macros' => [
             'calories' => isset($_POST['sff_macros']['calories']) ? (float)$_POST['sff_macros']['calories'] : 0,
             'carbs' => isset($_POST['sff_macros']['carbs']) ? (float)$_POST['sff_macros']['carbs'] : 0,
@@ -296,6 +300,10 @@ function sff_handle_ingredient_submission() {
     update_post_meta($post_id, '_sff_serving_size', $data['serving_size']);
     update_post_meta($post_id, '_sff_servings', $data['servings']);
     update_post_meta($post_id, '_sff_macros', $data['macros']);
+    update_post_meta($post_id, '_sff_fdc_id', $data['fdc_id']);
+    update_post_meta($post_id, '_sff_sku', $data['sku']);
+    update_post_meta($post_id, '_sff_affiliate_link', $data['affiliate_link']);
+    update_post_meta($post_id, '_sff_price', $data['price']);
 
     // Handle image uploads properly
     require_once(ABSPATH . 'wp-admin/includes/file.php');
@@ -314,7 +322,14 @@ if (isset($_POST['nutrition_label_image_id'])) {
     wp_update_post(['ID' => $nutrition_label_id, 'post_parent' => $post_id]);
 }
 
-   // If request is AJAX, return JSON response
+    // Store macros in custom table for quick aggregation
+    global $wpdb;
+    $table = $wpdb->prefix . 'sff_ingredient_nutrition';
+    $row = array_merge(['ingredient_id' => $post_id], $data['macros'], ['cost' => $data['price']]);
+    $formats = array_merge(['%d'], array_fill(0, count(SFF_MACRO_FIELDS), '%f'), ['%f']);
+    $wpdb->replace($table, $row, $formats);
+
+    // If request is AJAX, return JSON response
     if (wp_doing_ajax()) {
         wp_send_json_success([
             'message' => 'Ingredient added successfully!',
@@ -471,6 +486,55 @@ function sff_save_client_intake() {
 
     wp_send_json_success(['message' => 'Client intake saved successfully!']);
 }
+
+function sff_usda_search() {
+    check_ajax_referer('sff_scan_nonce', 'security');
+    $query = sanitize_text_field($_POST['query'] ?? '');
+    if (!$query || !SFF_USDA_API_KEY) {
+        wp_send_json_error('Missing query');
+    }
+    $url = 'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' . urlencode(SFF_USDA_API_KEY) . '&query=' . urlencode($query) . '&pageSize=5';
+    $resp = wp_remote_get($url);
+    if (is_wp_error($resp)) {
+        wp_send_json_error('API error');
+    }
+    $body = json_decode(wp_remote_retrieve_body($resp), true);
+    $items = [];
+    if (!empty($body['foods'])) {
+        foreach ($body['foods'] as $food) {
+            $items[] = ['fdc_id' => $food['fdcId'], 'description' => $food['description']];
+        }
+    }
+    wp_send_json_success($items);
+}
+add_action('wp_ajax_sff_usda_search', 'sff_usda_search');
+
+function sff_usda_macros() {
+    check_ajax_referer('sff_scan_nonce', 'security');
+    $fdc_id = intval($_POST['fdc_id'] ?? 0);
+    if (!$fdc_id) {
+        wp_send_json_error('Missing FDC ID');
+    }
+    $macros = sff_fetch_usda_macros($fdc_id);
+    if (!$macros) {
+        wp_send_json_error('Not found');
+    }
+    wp_send_json_success($macros);
+}
+add_action('wp_ajax_sff_usda_macros', 'sff_usda_macros');
+
+function sff_recalc_recipe_nutrition() {
+    check_ajax_referer('sff_scan_nonce', 'security');
+    $ids = isset($_POST['ingredient_ids']) ? array_map('intval', (array) $_POST['ingredient_ids']) : [];
+    $servings = max(1, intval($_POST['servings'] ?? 1));
+    $totals = sff_get_recipe_macros_from_ids($ids);
+    $per = [];
+    foreach ($totals as $k => $v) {
+        $per[$k] = $v / $servings;
+    }
+    wp_send_json_success(['total' => $totals, 'per_serving' => $per]);
+}
+add_action('wp_ajax_sff_recalc_recipe_nutrition', 'sff_recalc_recipe_nutrition');
 
 
 

@@ -411,20 +411,23 @@ function sff_render_recipe_meta_box($post) {
 
     $totals = get_post_meta($post->ID, '_sff_recipe_macros_total', true);
     $macros = get_post_meta($post->ID, '_sff_recipe_macros', true);
+    echo '<h4>Macros per serving</h4>';
+    echo '<div id="sff-recipe-nutrients-per-serving">';
     if (is_array($macros)) {
-        echo '<h4>Macros per serving</h4>';
-        echo '<p><strong>Calories:</strong> ' . esc_html($macros['calories'] ?? 0) . '</p>';
-        echo '<p><strong>Carbs:</strong> ' . esc_html($macros['carbs'] ?? 0) . 'g</p>';
-        echo '<p><strong>Protein:</strong> ' . esc_html($macros['protein'] ?? 0) . 'g</p>';
-        echo '<p><strong>Fat:</strong> ' . esc_html($macros['fat'] ?? 0) . 'g</p>';
+        foreach (SFF_MACRO_FIELDS as $field) {
+            echo '<p><strong>' . esc_html(ucwords(str_replace('_', ' ', $field))) . ':</strong> ' . esc_html($macros[$field] ?? 0) . '</p>';
+        }
     }
+    echo '</div>';
+
+    echo '<h4>Total for recipe</h4>';
+    echo '<div id="sff-recipe-nutrients-total">';
     if (is_array($totals)) {
-        echo '<h4>Total for recipe</h4>';
-        echo '<p><strong>Calories:</strong> ' . esc_html($totals['calories'] ?? 0) . '</p>';
-        echo '<p><strong>Carbs:</strong> ' . esc_html($totals['carbs'] ?? 0) . 'g</p>';
-        echo '<p><strong>Protein:</strong> ' . esc_html($totals['protein'] ?? 0) . 'g</p>';
-        echo '<p><strong>Fat:</strong> ' . esc_html($totals['fat'] ?? 0) . 'g</p>';
+        foreach (SFF_MACRO_FIELDS as $field) {
+            echo '<p><strong>' . esc_html(ucwords(str_replace('_', ' ', $field))) . ':</strong> ' . esc_html($totals[$field] ?? 0) . '</p>';
+        }
     }
+    echo '</div>';
 }
 
 function sff_save_recipe_details($post_id) {

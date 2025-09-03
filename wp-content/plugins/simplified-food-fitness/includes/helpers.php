@@ -107,6 +107,8 @@ function sff_render_ingredient_form($post_id = null) {
     $brand_name = $serving_size = $servings = '';
     $front_image = $nutrition_label_image = '';
     $fdc_id = '';
+    $sku = $affiliate_link = '';
+    $price = 0;
     $macros = [
         'calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0, 
         'saturated_fat' => 0, 'trans_fat' => 0, 'cholesterol' => 0, 
@@ -124,6 +126,9 @@ function sff_render_ingredient_form($post_id = null) {
         $front_image = get_post_meta($post_id, '_sff_front_image', true);
         $nutrition_label_image = get_post_meta($post_id, '_sff_nutrition_label_image', true);
         $fdc_id = get_post_meta($post_id, '_sff_fdc_id', true);
+        $sku = get_post_meta($post_id, '_sff_sku', true);
+        $affiliate_link = get_post_meta($post_id, '_sff_affiliate_link', true);
+        $price = get_post_meta($post_id, '_sff_price', true);
     }
 
     ob_start(); ?>
@@ -171,6 +176,8 @@ function sff_render_ingredient_form($post_id = null) {
 
         <label style="font-size:14px; color:#777;">USDA FDC ID (optional):</label>
         <input type="text" name="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>" placeholder="e.g., 123456" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+        <button type="button" id="sff-usda-search" style="margin-bottom:10px;" class="button">Search USDA</button>
+        <div id="usda-search-results" style="margin-bottom:10px;"></div>
 
 
         <input type="file" id="sff_nutrition_label_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
@@ -200,6 +207,15 @@ function sff_render_ingredient_form($post_id = null) {
                 <?php endforeach; ?>
             </div>
         </fieldset>
+
+        <label style="font-size:14px; color:#777;">SKU:</label>
+        <input type="text" name="sff_sku" value="<?php echo esc_attr($sku); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+        <label style="font-size:14px; color:#777;">Affiliate Link:</label>
+        <input type="url" name="sff_affiliate_link" value="<?php echo esc_attr($affiliate_link); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+        <label style="font-size:14px; color:#777;">Price:</label>
+        <input type="number" step="0.01" name="sff_price" value="<?php echo esc_attr($price); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
 
         <input type="submit" name="sff_submit_ingredient" value="Save Ingredient" style="background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
     </form>
@@ -342,7 +358,8 @@ function sff_create_recipe_from_modal($name, $ingredient_ids) {
 }
 
 function sff_get_recipe_macros_from_ids($ingredient_ids) {
-    $totals = ['calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0];
+    $fields = array_merge(SFF_MACRO_FIELDS, ['cost']);
+    $totals = array_fill_keys($fields, 0);
     if (!is_array($ingredient_ids) || empty($ingredient_ids)) {
         return $totals;
     }
@@ -350,14 +367,14 @@ function sff_get_recipe_macros_from_ids($ingredient_ids) {
     global $wpdb;
     $table = $wpdb->prefix . 'sff_ingredient_nutrition';
     $placeholders = implode(',', array_fill(0, count($ingredient_ids), '%d'));
-    $query = $wpdb->prepare("SELECT calories, carbs, protein, fat FROM $table WHERE ingredient_id IN ($placeholders)", $ingredient_ids);
+    $select = implode(', ', $fields);
+    $query = $wpdb->prepare("SELECT $select FROM $table WHERE ingredient_id IN ($placeholders)", $ingredient_ids);
     $results = $wpdb->get_results($query, ARRAY_A);
 
     foreach ($results as $row) {
-        $totals['calories'] += floatval($row['calories']);
-        $totals['carbs'] += floatval($row['carbs']);
-        $totals['protein'] += floatval($row['protein']);
-        $totals['fat'] += floatval($row['fat']);
+        foreach ($fields as $field) {
+            $totals[$field] += floatval($row[$field]);
+        }
     }
 
     return $totals;
