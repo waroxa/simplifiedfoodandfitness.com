@@ -395,7 +395,10 @@ function sff_render_recipe_meta_box($post) {
     if (!is_array($saved)) {
         $saved = [];
     }
+
+    $servings = get_post_meta($post->ID, '_sff_recipe_servings', true);
     $ingredients = get_posts(['post_type' => 'ingredient', 'numberposts' => -1]);
+
     echo '<label><strong>Ingredients:</strong></label>';
     echo '<select name="sff_recipe_ingredients[]" multiple style="width:100%; height:150px;">';
     foreach ($ingredients as $ingredient) {
@@ -403,23 +406,44 @@ function sff_render_recipe_meta_box($post) {
         echo '<option value="' . esc_attr($ingredient->ID) . '" ' . $selected . '>' . esc_html($ingredient->post_title) . '</option>';
     }
     echo '</select>';
+
+    echo '<p><label><strong>Servings:</strong></label> <input type="number" name="sff_recipe_servings" value="' . esc_attr($servings) . '" min="1" style="width:80px;" /></p>';
+
+    $totals = get_post_meta($post->ID, '_sff_recipe_macros_total', true);
     $macros = get_post_meta($post->ID, '_sff_recipe_macros', true);
     if (is_array($macros)) {
+        echo '<h4>Macros per serving</h4>';
         echo '<p><strong>Calories:</strong> ' . esc_html($macros['calories'] ?? 0) . '</p>';
         echo '<p><strong>Carbs:</strong> ' . esc_html($macros['carbs'] ?? 0) . 'g</p>';
         echo '<p><strong>Protein:</strong> ' . esc_html($macros['protein'] ?? 0) . 'g</p>';
         echo '<p><strong>Fat:</strong> ' . esc_html($macros['fat'] ?? 0) . 'g</p>';
+    }
+    if (is_array($totals)) {
+        echo '<h4>Total for recipe</h4>';
+        echo '<p><strong>Calories:</strong> ' . esc_html($totals['calories'] ?? 0) . '</p>';
+        echo '<p><strong>Carbs:</strong> ' . esc_html($totals['carbs'] ?? 0) . 'g</p>';
+        echo '<p><strong>Protein:</strong> ' . esc_html($totals['protein'] ?? 0) . 'g</p>';
+        echo '<p><strong>Fat:</strong> ' . esc_html($totals['fat'] ?? 0) . 'g</p>';
     }
 }
 
 function sff_save_recipe_details($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (!current_user_can('edit_post', $post_id)) return;
+    if (isset($_POST['sff_recipe_servings'])) {
+        update_post_meta($post_id, '_sff_recipe_servings', absint($_POST['sff_recipe_servings']));
+    }
     if (isset($_POST['sff_recipe_ingredients'])) {
         $ingredient_ids = array_map('intval', (array) $_POST['sff_recipe_ingredients']);
         update_post_meta($post_id, '_sff_recipe_ingredients', $ingredient_ids);
         $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
-        update_post_meta($post_id, '_sff_recipe_macros', $totals);
+        update_post_meta($post_id, '_sff_recipe_macros_total', $totals);
+        $servings = max(1, intval(get_post_meta($post_id, '_sff_recipe_servings', true)));
+        $per_serving = [];
+        foreach ($totals as $key => $value) {
+            $per_serving[$key] = $value / $servings;
+        }
+        update_post_meta($post_id, '_sff_recipe_macros', $per_serving);
     }
 }
 add_action('save_post', 'sff_save_recipe_details');
