@@ -76,7 +76,53 @@ function sff_register_custom_post_types() {
     'menu_position' => 6
 ]);
 
+    register_taxonomy('ingredient_category', ['ingredient'], [
+        'labels' => [
+            'name' => __('Ingredient Categories'),
+            'singular_name' => __('Ingredient Category')
+        ],
+        'public' => false,
+        'show_ui' => true,
+        'show_admin_column' => true,
+        'hierarchical' => true,
+    ]);
+
+    $default_terms = ['Meals', 'Vegetables', 'Fruits', 'Proteins', 'Grains'];
+    foreach ($default_terms as $term) {
+        if (!term_exists($term, 'ingredient_category')) {
+            wp_insert_term($term, 'ingredient_category');
+        }
+    }
+
 
 }
 add_action('init', 'sff_register_custom_post_types');
+
+function sff_ingredient_category_admin_filter() {
+    global $typenow;
+    if ($typenow === 'ingredient') {
+        $taxonomy = 'ingredient_category';
+        $selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
+        wp_dropdown_categories([
+            'show_option_all' => __('All Categories'),
+            'taxonomy' => $taxonomy,
+            'name' => $taxonomy,
+            'orderby' => 'name',
+            'selected' => $selected,
+            'hierarchical' => true,
+            'hide_empty' => false,
+        ]);
+    }
+}
+add_action('restrict_manage_posts', 'sff_ingredient_category_admin_filter');
+
+function sff_ingredient_category_filter_query($query) {
+    global $pagenow;
+    $taxonomy = 'ingredient_category';
+    if ($pagenow === 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] === 'ingredient' && !empty($_GET[$taxonomy])) {
+        $term = intval($_GET[$taxonomy]);
+        $query->query_vars[$taxonomy] = $term;
+    }
+}
+add_filter('parse_query', 'sff_ingredient_category_filter_query');
 

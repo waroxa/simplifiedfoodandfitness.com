@@ -109,6 +109,7 @@ function sff_render_ingredient_form($post_id = null) {
     $fdc_id = '';
     $sku = $affiliate_link = '';
     $price = 0;
+    $ingredient_category = 0;
     $macros = [
         'calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0, 
         'saturated_fat' => 0, 'trans_fat' => 0, 'cholesterol' => 0, 
@@ -129,6 +130,10 @@ function sff_render_ingredient_form($post_id = null) {
         $sku = get_post_meta($post_id, '_sff_sku', true);
         $affiliate_link = get_post_meta($post_id, '_sff_affiliate_link', true);
         $price = get_post_meta($post_id, '_sff_price', true);
+        $cat_terms = wp_get_post_terms($post_id, 'ingredient_category', ['fields' => 'ids']);
+        if (!empty($cat_terms)) {
+            $ingredient_category = $cat_terms[0];
+        }
     }
 
     ob_start(); ?>
@@ -173,6 +178,20 @@ function sff_render_ingredient_form($post_id = null) {
 
         <label style="font-size:14px; color:#777;">Product Name:</label>
         <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="e.g., Brand X" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+        <label style="font-size:14px; color:#777;">Category:</label>
+        <?php
+        $dropdown = wp_dropdown_categories([
+            'taxonomy' => 'ingredient_category',
+            'hide_empty' => false,
+            'name' => 'sff_ingredient_category',
+            'orderby' => 'name',
+            'selected' => $ingredient_category,
+            'show_option_none' => __('Select category'),
+            'echo' => false,
+        ]);
+        echo str_replace('<select', '<select style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;"', $dropdown);
+        ?>
 
         <label style="font-size:14px; color:#777;">USDA FDC ID (optional):</label>
         <input type="text" name="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>" placeholder="e.g., 123456" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
@@ -253,6 +272,15 @@ function sff_save_ingredient_details($post_id) {
 
     if (isset($_POST['sff_brand_name'])) {
         update_post_meta($post_id, '_sff_brand_name', sanitize_text_field($_POST['sff_brand_name']));
+    }
+
+    if (isset($_POST['sff_ingredient_category'])) {
+        $cat = intval($_POST['sff_ingredient_category']);
+        if ($cat) {
+            wp_set_object_terms($post_id, $cat, 'ingredient_category');
+        } else {
+            wp_set_object_terms($post_id, [], 'ingredient_category');
+        }
     }
 
     $fdc_id = '';

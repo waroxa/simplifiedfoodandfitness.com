@@ -325,8 +325,9 @@ jQuery(document).ready(function($) {
 
   $('#sff-ingredient-search').on('keyup', function(){
     var q = $(this).val();
+    var cat = $('#sff-ingredient-category-filter').val();
     if (q.length < 2) { $('#sff-ingredient-results').empty(); return; }
-    $.get(sff_ajax_obj.ajax_url, {action:'sff_search_ingredients', security:sff_ajax_obj.nonce, q:q}, function(res){
+    $.get(sff_ajax_obj.ajax_url, {action:'sff_search_ingredients', security:sff_ajax_obj.nonce, q:q, category:cat}, function(res){
       if(res.success){
         var list = $('#sff-ingredient-results').empty();
         res.data.forEach(function(item){
@@ -335,6 +336,10 @@ jQuery(document).ready(function($) {
         });
       }
     });
+  });
+
+  $('#sff-ingredient-category-filter').on('change', function(){
+    $('#sff-ingredient-search').trigger('keyup');
   });
 
   $(document).on('click', '#sff-ingredient-results li', function(){
