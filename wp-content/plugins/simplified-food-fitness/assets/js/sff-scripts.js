@@ -17,7 +17,20 @@ jQuery(document).ready(function($) {
             $('#sff_scan_fields').show();
         }
 
+        // Set the Step 2 category from the USDA filter
+        var categorySelect = $('select[name="sff_ingredient_category"]');
+        var usdaCategory = $('#usda-category-filter').val();
+        if (categorySelect.length && usdaCategory) {
+            categorySelect.val(usdaCategory);
+        }
+
         var fdc = $('#sff_fdc_id').val();
+        if (fdc && categorySelect.length) {
+            // Hide/disable category selection when a USDA match is used
+            categorySelect.prop('disabled', true).hide();
+            categorySelect.prev('label').hide();
+        }
+
         if (fdc) {
             $.post(
                 sff_ajax_obj.ajax_url,
@@ -32,6 +45,10 @@ jQuery(document).ready(function($) {
                     }
                 }
             );
+        } else if (categorySelect.length) {
+            // Ensure category dropdown is visible if no USDA match
+            categorySelect.prop('disabled', false).show();
+            categorySelect.prev('label').show();
         }
     });
 
