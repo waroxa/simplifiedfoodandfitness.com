@@ -7,12 +7,6 @@ jQuery(document).ready(function($) {
     $('#next_step_button').on('click', function() {
         $('#sff-wizard-step-1').hide();
         $('#sff-wizard-step-2').show();
-
-        // 🚀 Ensure Step 2 input keeps scanned product name
-        let scannedProductName = $('#scan_front_results').text().match(/Product name: (.+)/);
-        if (scannedProductName) {
-            $('#step-2-product-name').val(scannedProductName[1].trim()).trigger('change');
-        }
     });
 
     $('#scan_front_image_button').on('click', function() {
@@ -153,6 +147,9 @@ jQuery(document).ready(function($) {
                     }
 
                     $('#scan_results').html('<p style="color:green;">✅ Scan successful!</p>');
+
+                    $('#sff_macro_source').val('scan');
+                    $('#macro_source_text').text('Scan');
 
                     // ✅ Highlight next step: Save button
                     $('#save_nutrition_data_button').html('3️⃣ Save & Continue ✅').fadeIn();
@@ -414,8 +411,15 @@ jQuery(document).ready(function($) {
         $.each(res.data,function(k,v){
           $('[name="sff_macros['+k+']"]').val(v);
         });
+        $('#sff_macro_source').val('usda');
+        $('#macro_source_text').text('USDA');
       }
     });
+  });
+
+  $('#sff-wizard-step-2').on('input','[name^="sff_macros"]',function(){
+    $('#sff_macro_source').val('manual');
+    $('#macro_source_text').text('Manual');
   });
 });
 
