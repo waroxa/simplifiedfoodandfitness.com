@@ -184,6 +184,33 @@
     font-family: "Inter", sans-serif;
 }
 
+/* USDA Autocomplete Dropdown */
+#usda-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+}
+#usda-suggestions ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#usda-suggestions li {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+#usda-suggestions li:hover,
+#usda-suggestions li.active {
+    background: #E9FAB0;
+}
+
 .sff-profile-card h2 {
     margin-top: 0;
     font-size: 22px;

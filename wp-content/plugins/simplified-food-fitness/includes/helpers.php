@@ -155,10 +155,10 @@ function sff_render_ingredient_form($post_id = null) {
         <p style="font-size:14px; color:#777;">Scan a packaged item to grab its name, search the USDA database to load macros for fresh foods, or skip to type everything manually.</p>
 
         <label style="font-size:14px; color:#777;">Ingredient Name:</label>
-        <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-
-        <button type="button" id="sff-usda-search" style="margin-bottom:10px;" class="button">Search USDA</button>
-        <div id="usda-search-results" style="margin-bottom:10px;"></div>
+        <div style="position:relative;">
+            <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+            <div id="usda-suggestions" style="display:none;"></div>
+        </div>
 
         <?php if ($front_image) : ?>
             <img src="<?php echo esc_url($front_image); ?>" alt="Front Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
