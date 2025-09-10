@@ -79,29 +79,45 @@ function sff_fetch_usda_macros($fdc_id) {
         return [];
     }
 
-    $macros = ['calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0];
+    $map = [
+        'Energy' => 'calories',
+        'Carbohydrate, by difference' => 'carbs',
+        'Protein' => 'protein',
+        'Total lipid (fat)' => 'fat',
+        'Fatty acids, total saturated' => 'saturated_fat',
+        'Fatty acids, total trans' => 'trans_fat',
+        'Cholesterol' => 'cholesterol',
+        'Sodium, Na' => 'sodium',
+        'Fiber, total dietary' => 'fiber',
+        'Sugars, total including NLEA' => 'sugars',
+        'Sugars, added' => 'added_sugars',
+        'Vitamin D (D2 + D3)' => 'vitamin_d',
+        'Calcium, Ca' => 'calcium',
+        'Iron, Fe' => 'iron',
+        'Potassium, K' => 'potassium',
+        'Magnesium, Mg' => 'magnesium',
+        'Vitamin A, RAE' => 'vitamin_a',
+        'Vitamin C, total ascorbic acid' => 'vitamin_c',
+        'Vitamin E (alpha-tocopherol)' => 'vitamin_e',
+        'Zinc, Zn' => 'zinc',
+        'Folate, total' => 'folate',
+        'Riboflavin' => 'riboflavin',
+        'Niacin' => 'niacin',
+        'Vitamin B-6' => 'vitamin_b6',
+        'Vitamin B-12' => 'vitamin_b12',
+        'Thiamin' => 'thiamin',
+    ];
+
+    $macros = array_fill_keys(array_values($map), 0);
     foreach ($data['foodNutrients'] as $nutrient) {
         $name  = $nutrient['nutrientName'] ?? '';
-        $value = isset($nutrient['value']) ? floatval($nutrient['value']) : 0;
-        switch ($name) {
-            case 'Energy':
-                $macros['calories'] = $value;
-                break;
-            case 'Carbohydrate, by difference':
-                $macros['carbs'] = $value;
-                break;
-            case 'Protein':
-                $macros['protein'] = $value;
-                break;
-            case 'Total lipid (fat)':
-                $macros['fat'] = $value;
-                break;
+        if (isset($map[$name])) {
+            $macros[$map[$name]] = isset($nutrient['value']) ? floatval($nutrient['value']) : 0;
         }
     }
 
     return $macros;
 }
-
 function sff_render_ingredient_form($post_id = null) {
    // Get existing ingredient data if editing
     $brand_name = $serving_size = $servings = '';

@@ -1,4 +1,10 @@
 jQuery(document).ready(function($) {
+    function sffPopulateMacros(map) {
+        $.each(map, function(k, v) {
+            $('[name="sff_macros[' + k + ']"]').val(v);
+        });
+    }
+
 
         // Product Name Scan Handler
   
@@ -37,9 +43,7 @@ jQuery(document).ready(function($) {
                 { action: 'sff_usda_macros', security: sff_ajax_obj.nonce, fdc_id: fdc },
                 function(res) {
                     if (res.success) {
-                        $.each(res.data, function(k, v) {
-                            $('[name="sff_macros[' + k + ']"]').val(v);
-                        });
+                        sffPopulateMacros(res.data);
                         $('#sff_macro_source').val('usda');
                         $('#macro_source_text').text('USDA');
                     }
@@ -500,9 +504,7 @@ jQuery(document).ready(function($) {
     $('#usda-suggestions').hide().empty();
     $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
       if(res.success){
-        $.each(res.data,function(k,v){
-          $('[name="sff_macros['+k+']"]').val(v);
-        });
+        sffPopulateMacros(res.data);
         $('#sff_macro_source').val('usda');
         $('#macro_source_text').text('USDA');
       }

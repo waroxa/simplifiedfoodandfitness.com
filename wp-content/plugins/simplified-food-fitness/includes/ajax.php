@@ -525,6 +525,7 @@ function sff_usda_macros() {
         wp_send_json_error('Missing FDC ID');
     }
     $macros = sff_fetch_usda_macros($fdc_id);
+    $macros = array_intersect_key($macros, array_flip(SFF_MACRO_FIELDS));
     if (!$macros) {
         wp_send_json_error('Not found');
     }
