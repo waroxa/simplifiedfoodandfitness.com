@@ -200,18 +200,23 @@ function sff_render_ingredient_form($post_id = null) {
 
         <input type="hidden" name="sff_fdc_id" id="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>">
 
-        <label style="font-size:14px; color:#777;">Category:</label>
         <?php
-        $dropdown = wp_dropdown_categories([
-            'taxonomy' => 'ingredient_category',
-            'hide_empty' => false,
-            'name' => 'sff_ingredient_category',
-            'orderby' => 'name',
-            'selected' => $ingredient_category,
-            'show_option_none' => __('Select category'),
-            'echo' => false,
-        ]);
-        echo str_replace('<select', '<select style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;"', $dropdown);
+        $show_category_dropdown = apply_filters('sff_show_category_dropdown', empty($fdc_id));
+        if ($show_category_dropdown) :
+            ?>
+            <label style="font-size:14px; color:#777;">Category:</label>
+            <?php
+            $dropdown = wp_dropdown_categories([
+                'taxonomy' => 'ingredient_category',
+                'hide_empty' => false,
+                'name' => 'sff_ingredient_category',
+                'orderby' => 'name',
+                'selected' => $ingredient_category,
+                'show_option_none' => __('Select category'),
+                'echo' => false,
+            ]);
+            echo str_replace('<select', '<select style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;"', $dropdown);
+        endif;
         ?>
 
         <div id="sff_scan_fields">
