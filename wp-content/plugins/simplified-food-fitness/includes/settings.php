@@ -17,7 +17,7 @@ add_action('admin_menu', 'sff_add_settings_menu');
 function sff_render_settings_page() {
    ?>
     <div class="wrap">
-        <h2>Google Vision API Settings</h2>
+        <h2>API Settings</h2>
         <form method="post" action="options.php">
             <?php
             settings_fields('sff_nutrition_settings');
@@ -31,14 +31,36 @@ function sff_render_settings_page() {
 
 function sff_register_settings() {
     register_setting('sff_nutrition_settings', 'sff_google_api_key');
+    register_setting('sff_nutrition_settings', 'sff_usda_api_key');
+
     add_settings_section('sff_api_settings_section', 'API Configuration', null, 'sff-nutrition-settings');
-    add_settings_field('sff_google_api_key', 'Google Cloud Vision API Key', 'sff_render_api_key_field', 'sff-nutrition-settings', 'sff_api_settings_section');
+
+    add_settings_field(
+        'sff_google_api_key',
+        'Google Cloud Vision API Key',
+        'sff_render_api_key_field',
+        'sff-nutrition-settings',
+        'sff_api_settings_section'
+    );
+
+    add_settings_field(
+        'sff_usda_api_key',
+        'USDA API Key',
+        'sff_render_usda_api_key_field',
+        'sff-nutrition-settings',
+        'sff_api_settings_section'
+    );
 }
 add_action('admin_init', 'sff_register_settings');
 
 function sff_render_api_key_field() {
     $api_key = get_option('sff_google_api_key', '');
     echo '<input type="text" name="sff_google_api_key" value="' . esc_attr($api_key) . '" style="width: 400px;">';
+}
+
+function sff_render_usda_api_key_field() {
+    $api_key = get_option('sff_usda_api_key', '');
+    echo '<input type="text" name="sff_usda_api_key" value="' . esc_attr($api_key) . '" style="width: 400px;">';
 }
 
 // function sff_client_leads_dashboard() {

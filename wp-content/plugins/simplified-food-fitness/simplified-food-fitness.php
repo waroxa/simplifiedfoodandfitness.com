@@ -26,9 +26,16 @@ if (!defined('SFF_MACRO_FIELDS')) {
     ]);
 }
 
-if (!defined('SFF_USDA_API_KEY')) {
-    // Expect the USDA API key to be provided via environment variable to avoid committing secrets.
-    define('SFF_USDA_API_KEY', getenv('USDA_API_KEY') ?: '');
+// Define USDA API key, preferring environment variable with fallback to saved option.
+$env_usda_key = getenv('USDA_API_KEY');
+if ($env_usda_key) {
+    define('SFF_USDA_API_KEY', $env_usda_key);
+} else {
+    add_action('init', function () {
+        if (!defined('SFF_USDA_API_KEY')) {
+            define('SFF_USDA_API_KEY', get_option('sff_usda_api_key', ''));
+        }
+    });
 }
 
 // Include all feature files
