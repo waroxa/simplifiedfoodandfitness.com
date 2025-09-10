@@ -411,7 +411,7 @@ jQuery(document).ready(function($) {
   function usdaSearch(){
     var query = $('[name="sff_brand_name"]').val();
     var category = $('#usda-category-filter').val();
-    if(query.length < 3){
+    if(query.length < 2){
       $('#usda-suggestions').hide().empty();
       usdaIndex = -1;
       return;
@@ -430,6 +430,8 @@ jQuery(document).ready(function($) {
           $('#usda-suggestions').hide().empty();
         }
         usdaIndex = -1;
+      } else {
+        $('#usda-suggestions').hide().empty();
       }
     });
   }
