@@ -389,23 +389,51 @@ jQuery(document).ready(function($) {
   toggleClientDayRequired('[name="client[]busy_days"]');
   toggleClientDayRequired('[name="client[]activity_days"]');
 
-  $('#sff-usda-search').on('click', function(){
-    var query = $('[name="sff_brand_name"]').val();
-    if(!query) return;
+  var usdaIndex = -1;
+
+  $('[name="sff_brand_name"]').on('keydown', function(e){
+    var items = $('#usda-suggestions li');
+    if(!items.length) return;
+    if(e.key === 'ArrowDown'){
+      e.preventDefault();
+      usdaIndex = (usdaIndex + 1) % items.length;
+      items.removeClass('active').eq(usdaIndex).addClass('active');
+    } else if(e.key === 'ArrowUp'){
+      e.preventDefault();
+      usdaIndex = (usdaIndex - 1 + items.length) % items.length;
+      items.removeClass('active').eq(usdaIndex).addClass('active');
+    } else if(e.key === 'Enter' && usdaIndex >= 0){
+      e.preventDefault();
+      items.eq(usdaIndex).trigger('click');
+    }
+  });
+
+  $('[name="sff_brand_name"]').on('keyup', function(e){
+    var ignored = ['ArrowDown','ArrowUp','Enter'];
+    if(ignored.includes(e.key)) return;
+    var query = $(this).val();
+    if(query.length < 3){
+      $('#usda-suggestions').hide().empty();
+      usdaIndex = -1;
+      return;
+    }
     $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_search',security:sff_ajax_obj.nonce,query:query},function(res){
       if(res.success){
         var list = $('<ul/>');
         $.each(res.data,function(i,item){
-          list.append($('<li>').text(item.description).attr('data-fdc',item.fdc_id).css('cursor','pointer'));
+          list.append($('<li>').text(item.description).attr('data-fdc',item.fdc_id));
         });
-        $('#usda-search-results').html(list);
+        $('#usda-suggestions').html(list).show();
+        usdaIndex = -1;
       }
     });
   });
 
-  $('#usda-search-results').on('click','li',function(){
+  $('#usda-suggestions').on('click','li',function(){
     var fdc = $(this).data('fdc');
+    $('[name="sff_brand_name"]').val($(this).text());
     $('[name="sff_fdc_id"]').val(fdc);
+    $('#usda-suggestions').hide().empty();
     $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
       if(res.success){
         $.each(res.data,function(k,v){
