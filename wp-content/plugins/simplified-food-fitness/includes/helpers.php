@@ -266,6 +266,8 @@ function sff_render_ingredient_form($post_id = null) {
             </div>
         </fieldset>
 
+        <div id="usda-macro-display" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:14px; color:#333;"></div>
+
         <label style="font-size:14px; color:#777;">SKU:</label>
         <input type="text" name="sff_sku" value="<?php echo esc_attr($sku); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
 

@@ -1,8 +1,20 @@
 jQuery(document).ready(function($) {
+    function sffShowMacroPreview(map) {
+        var html = '<strong>Fetched Macros:</strong><ul>';
+        $.each(map, function(k, v) {
+            if ($('[name="sff_macros[' + k + ']"]').length) {
+                html += '<li>' + k.replace(/_/g, ' ') + ': ' + v + '</li>';
+            }
+        });
+        html += '</ul>';
+        $('#usda-macro-display').html(html);
+    }
+
     function sffPopulateMacros(map) {
         $.each(map, function(k, v) {
             $('[name="sff_macros[' + k + ']"]').val(v);
         });
+        sffShowMacroPreview(map);
     }
 
 
@@ -180,6 +192,8 @@ jQuery(document).ready(function($) {
                     $('[name="sff_macros[iron]"]').val(data.iron || 0);
                     $('[name="sff_macros[potassium]"]').val(data.potassium || 0);
                     $('[name="sff_macros[magnesium]"]').val(data.magnesium || 0);
+
+                    sffShowMacroPreview(data);
 
                     // ✅ Store hidden input for attachment ID
                     if ($('#nutrition_label_image_id').length) {
