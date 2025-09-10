@@ -494,7 +494,7 @@ function sff_usda_search() {
     if (!$query || !SFF_USDA_API_KEY) {
         wp_send_json_error('Missing query');
     }
-    $url = 'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' . urlencode(SFF_USDA_API_KEY) . '&query=' . urlencode($query) . '&pageSize=5';
+    $url = 'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' . urlencode(SFF_USDA_API_KEY) . '&query=' . urlencode($query) . '&pageSize=50';
     if ($category) {
         $url .= '&foodCategory=' . urlencode($category);
     }

@@ -164,6 +164,7 @@ function sff_render_ingredient_form($post_id = null) {
                     <option value="Vegetables">Vegetables</option>
                     <option value="Grains">Grains</option>
                 </select>
+                <button type="button" id="usda-search-button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-bottom:10px;">🔍 Search</button>
                 <div id="usda-suggestions" style="display:none;"></div>
             </div>
         </div>
@@ -213,11 +214,13 @@ function sff_render_ingredient_form($post_id = null) {
         echo str_replace('<select', '<select style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;"', $dropdown);
         ?>
 
-        <input type="file" id="sff_nutrition_label_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
-        <button type="button" id="scan_nutrition_label_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
-            2️⃣ Scan Nutrition Label 🥗
-        </button>
-        <div id="scan_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+        <div id="sff_scan_fields">
+            <input type="file" id="sff_nutrition_label_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+            <button type="button" id="scan_nutrition_label_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
+                2️⃣ Scan Nutrition Label 🥗
+            </button>
+            <div id="scan_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+        </div>
 
         <p style="font-size:14px; color:#777;">Macros source: <span id="macro_source_text"><?php echo ucfirst($macro_source); ?></span></p>
         <input type="hidden" name="sff_macro_source" id="sff_macro_source" value="<?php echo esc_attr($macro_source); ?>">
