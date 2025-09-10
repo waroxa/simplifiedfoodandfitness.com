@@ -490,10 +490,14 @@ function sff_save_client_intake() {
 function sff_usda_search() {
     check_ajax_referer('sff_scan_nonce', 'security');
     $query = sanitize_text_field($_POST['query'] ?? '');
+    $category = sanitize_text_field($_POST['category'] ?? '');
     if (!$query || !SFF_USDA_API_KEY) {
         wp_send_json_error('Missing query');
     }
     $url = 'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' . urlencode(SFF_USDA_API_KEY) . '&query=' . urlencode($query) . '&pageSize=5';
+    if ($category) {
+        $url .= '&foodCategory=' . urlencode($category);
+    }
     $resp = wp_remote_get($url);
     if (is_wp_error($resp)) {
         wp_send_json_error('API error');
@@ -502,7 +506,12 @@ function sff_usda_search() {
     $items = [];
     if (!empty($body['foods'])) {
         foreach ($body['foods'] as $food) {
-            $items[] = ['fdc_id' => $food['fdcId'], 'description' => $food['description']];
+            $items[] = [
+                'fdc_id' => $food['fdcId'],
+                'description' => $food['description'],
+                'dataType' => $food['dataType'] ?? '',
+                'foodCategory' => $food['foodCategory'] ?? ''
+            ];
         }
     }
     wp_send_json_success($items);

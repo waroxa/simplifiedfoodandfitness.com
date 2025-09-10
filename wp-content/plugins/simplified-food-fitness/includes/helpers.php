@@ -157,6 +157,12 @@ function sff_render_ingredient_form($post_id = null) {
         <label style="font-size:14px; color:#777;">Ingredient Name:</label>
         <div style="position:relative;">
             <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+            <select id="usda-category-filter" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                <option value="">All Categories</option>
+                <option value="Fruits">Fruits</option>
+                <option value="Vegetables">Vegetables</option>
+                <option value="Grains">Grains</option>
+            </select>
             <div id="usda-suggestions" style="display:none;"></div>
         </div>
 
