@@ -408,25 +408,41 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $('[name="sff_brand_name"]').on('keyup', function(e){
-    var ignored = ['ArrowDown','ArrowUp','Enter'];
-    if(ignored.includes(e.key)) return;
-    var query = $(this).val();
+  function usdaSearch(){
+    var query = $('[name="sff_brand_name"]').val();
+    var category = $('#usda-category-filter').val();
     if(query.length < 3){
       $('#usda-suggestions').hide().empty();
       usdaIndex = -1;
       return;
     }
-    $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_search',security:sff_ajax_obj.nonce,query:query},function(res){
+    $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_search',security:sff_ajax_obj.nonce,query:query,category:category},function(res){
       if(res.success){
         var list = $('<ul/>');
         $.each(res.data,function(i,item){
-          list.append($('<li>').text(item.description).attr('data-fdc',item.fdc_id));
+          if(!category || (item.foodCategory && item.foodCategory.toLowerCase().includes(category.toLowerCase())) || (item.dataType && item.dataType.toLowerCase().includes(category.toLowerCase()))){
+            list.append($('<li>').text(item.description).attr('data-fdc',item.fdc_id));
+          }
         });
-        $('#usda-suggestions').html(list).show();
+        if(list.children().length){
+          $('#usda-suggestions').html(list).show();
+        } else {
+          $('#usda-suggestions').hide().empty();
+        }
         usdaIndex = -1;
       }
     });
+  }
+
+  $('[name="sff_brand_name"]').on('keyup', function(e){
+    var ignored = ['ArrowDown','ArrowUp','Enter'];
+    if(ignored.includes(e.key)) return;
+    usdaSearch();
+  });
+
+  $('#usda-category-filter').on('change', function(){
+    $('[name="sff_fdc_id"]').val('');
+    usdaSearch();
   });
 
   $('#usda-suggestions').on('click','li',function(){
