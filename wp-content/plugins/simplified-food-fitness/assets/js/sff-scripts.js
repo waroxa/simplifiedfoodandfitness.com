@@ -436,18 +436,21 @@ jQuery(document).ready(function($) {
     });
   }
 
-  $('[name="sff_brand_name"]').on('keyup', function(e){
-    var ignored = ['ArrowDown','ArrowUp','Enter'];
-    if(ignored.includes(e.key)) return;
+  $('#usda-search-button').on('click', function(){
     usdaSearch();
   });
-
-  $('#usda-category-filter').on('change', function(){
+  $('[name="sff_brand_name"]').on('keypress', function(e){
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      usdaSearch();
+    }
+  });
+  $('#usda-category-filter').off('change').on('change', function(){
     $('[name="sff_fdc_id"]').val('');
     usdaSearch();
   });
 
-  $('#usda-suggestions').on('click','li',function(){
+    $  $('#usda-suggestions').on('click','li',function(){
     var fdc = $(this).data('fdc');
     $('[name="sff_brand_name"]').val($(this).text());
     $('[name="sff_fdc_id"]').val(fdc);
@@ -470,3 +473,46 @@ jQuery(document).ready(function($) {
 });
 
 
+jQuery(document).ready(function($){
+  $('#usda-search-button').on('click', function(){
+    usdaSearch();
+  });
+  $('[name="sff_brand_name"]').on('keypress', function(e){
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      usdaSearch();
+    }
+  });
+  $('#usda-suggestions').off('click').on('click','li',function(){
+    var fdc = $(this).data('fdc');
+    $('[name="sff_brand_name"]').val($(this).text());
+    $('[name="sff_fdc_id"]').val(fdc);
+    $('#usda-suggestions').hide().empty();
+  });
+  $('#next_step_button').off('click').on('click', function(){
+    $('#sff-wizard-step-1').hide();
+    $('#sff-wizard-step-2').show();
+    var hasImage = $('#front_image_attachment_id').val() || ($('#sff_front_image_upload')[0] && $('#sff_front_image_upload')[0].files.length > 0);
+    if(!hasImage){
+      $('#sff_scan_fields').hide();
+    } else {
+      $('#sff_scan_fields').show();
+    }
+    var fdc = $('#sff_fdc_id').val();
+    if(fdc){
+      $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
+        if(res.success){
+          $.each(res.data,function(k,v){
+            $('[name="sff_macros['+k+']"]').val(v);
+          });
+          $('#sff_macro_source').val('usda');
+          $('#macro_source_text').text('USDA');
+        }
+      });
+    }
+  });
+  $('#usda-category-filter').off('change').on('change', function(){
+    $('[name="sff_fdc_id"]').val('');
+    usdaSearch();
+  });
+});
