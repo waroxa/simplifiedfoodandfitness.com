@@ -888,11 +888,23 @@ function sff_search_ingredients() {
     }
 
     $term = isset($_GET['q']) ? sanitize_text_field(wp_unslash($_GET['q'])) : '';
-    $query = new WP_Query([
+    $tax_query = [];
+    if (!empty($_GET['category'])) {
+        $tax_query[] = [
+            'taxonomy' => 'ingredient_category',
+            'field' => 'term_id',
+            'terms' => intval($_GET['category']),
+        ];
+    }
+    $args = [
         'post_type' => 'ingredient',
         'posts_per_page' => 10,
         's' => $term,
-    ]);
+    ];
+    if ($tax_query) {
+        $args['tax_query'] = $tax_query;
+    }
+    $query = new WP_Query($args);
 
     $results = [];
     foreach ($query->posts as $post) {

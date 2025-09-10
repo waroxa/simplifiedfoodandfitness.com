@@ -183,6 +183,13 @@ function sff_render_meal_plan_meta_box($post) {
             <h3><?php esc_html_e('Create Recipe'); ?></h3>
 
             <input type="text" id="sff-recipe-name" placeholder="<?php esc_attr_e('Recipe Name'); ?>" style="width:100%; margin-bottom:8px;">
+            <?php $ingredient_categories = get_terms('ingredient_category', ['hide_empty' => false]); ?>
+            <select id="sff-ingredient-category-filter" style="width:100%; margin-bottom:8px;">
+                <option value=""><?php esc_html_e('All Categories'); ?></option>
+                <?php foreach ($ingredient_categories as $cat) : ?>
+                    <option value="<?php echo esc_attr($cat->term_id); ?>"><?php echo esc_html($cat->name); ?></option>
+                <?php endforeach; ?>
+            </select>
             <input type="text" id="sff-ingredient-search" placeholder="<?php esc_attr_e('Search ingredients'); ?>" style="width:100%; margin-bottom:8px;">
 
             <ul id="sff-ingredient-results" style="max-height:200px; overflow:auto; border:1px solid #eee; padding:8px; margin-bottom:8px;"></ul>
