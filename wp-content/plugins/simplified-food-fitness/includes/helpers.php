@@ -111,19 +111,21 @@ function sff_render_ingredient_form($post_id = null) {
     $price = 0;
     $ingredient_category = 0;
     $macros = [
-        'calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0, 
-        'saturated_fat' => 0, 'trans_fat' => 0, 'cholesterol' => 0, 
+        'calories' => 0, 'carbs' => 0, 'protein' => 0, 'fat' => 0,
+        'saturated_fat' => 0, 'trans_fat' => 0, 'cholesterol' => 0,
         'sodium' => 0, 'fiber' => 0, 'sugars' => 0, 'added_sugars' => 0,
         'vitamin_d' => 0, 'calcium' => 0, 'iron' => 0, 'potassium' => 0, 'magnesium' => 0,
         'vitamin_a' => 0, 'vitamin_c' => 0, 'vitamin_e' => 0, 'zinc' => 0, 'folate' => 0,
         'riboflavin' => 0, 'niacin' => 0, 'vitamin_b6' => 0, 'vitamin_b12' => 0, 'thiamin' => 0
     ];
+    $macro_source = 'manual';
 
     if ($post_id) {
         $brand_name = get_post_meta($post_id, '_sff_brand_name', true);
         $serving_size = get_post_meta($post_id, '_sff_serving_size', true);
         $servings = get_post_meta($post_id, '_sff_servings', true);
         $macros = get_post_meta($post_id, '_sff_macros', true) ?: $macros;
+        $macro_source = get_post_meta($post_id, '_sff_macro_source', true) ?: 'manual';
         $front_image = get_post_meta($post_id, '_sff_front_image', true);
         $nutrition_label_image = get_post_meta($post_id, '_sff_nutrition_label_image', true);
         $fdc_id = get_post_meta($post_id, '_sff_fdc_id', true);
@@ -144,40 +146,45 @@ function sff_render_ingredient_form($post_id = null) {
             <h2 style="font-size:20px; color:#333; margin-bottom:15px;">Add Ingredient</h2>
 
             <!-- Step 1: Product Name Extraction -->
-            <div id="sff-wizard-step-1">
-                <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 1: Upload Front Image</h3>
-                <p style="font-size:14px; color:#777;">Take a picture of the front of the product to extract the name.</p>
-                
-                <?php if ($front_image) : ?>
-                    <img src="<?php echo esc_url($front_image); ?>" alt="Front Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
-                <?php endif; ?>
+            <form method="POST" action="<?php echo admin_url('admin-post.php'); ?>" enctype="multipart/form-data">
+    <input type="hidden" name="action" value="sff_save_ingredient">
+    <?php wp_nonce_field('sff_ingredient_nonce', 'sff_nonce_field'); ?>
 
-                <input type="file" id="sff_front_image_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
-                <button type="button" id="scan_front_image_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
-                    1️⃣ Scan Nutrition Label 
-                </button>
-                <div id="scan_front_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+    <div id="sff-wizard-step-1">
+        <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 1: Find Ingredient</h3>
+        <p style="font-size:14px; color:#777;">Scan a packaged item to grab its name, search the USDA database to load macros for fresh foods, or skip to type everything manually.</p>
 
-                <button type="button" id="next_step_button" style="display:none; background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
-                    Next Step →
-                </button>
-            </div>
+        <label style="font-size:14px; color:#777;">Ingredient Name:</label>
+        <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
 
-            <!-- Step 2: Nutrition Label Extraction -->
-<div id="sff-wizard-step-2" style="display:none;">
-    <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 2: Upload Nutrition Label</h3>
-    <p style="font-size:14px; color:#777;">Take a picture of the nutrition label to extract macros.</p>
-    
-    <?php if ($nutrition_label_image) : ?>
-        <img src="<?php echo esc_url($nutrition_label_image); ?>" alt="Nutrition Label Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
-    <?php endif; ?>
+        <button type="button" id="sff-usda-search" style="margin-bottom:10px;" class="button">Search USDA</button>
+        <div id="usda-search-results" style="margin-bottom:10px;"></div>
 
-    <form method="POST" action="<?php echo admin_url('admin-post.php'); ?>" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="sff_save_ingredient">
-        <?php wp_nonce_field('sff_ingredient_nonce', 'sff_nonce_field'); ?>
+        <?php if ($front_image) : ?>
+            <img src="<?php echo esc_url($front_image); ?>" alt="Front Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
+        <?php endif; ?>
 
-        <label style="font-size:14px; color:#777;">Product Name:</label>
-        <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="e.g., Brand X" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+        <input type="file" id="sff_front_image_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+        <button type="button" id="scan_front_image_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
+            1️⃣ Scan Product Name
+        </button>
+        <div id="scan_front_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+
+        <button type="button" id="next_step_button" style="background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
+            Next Step →
+        </button>
+    </div>
+
+    <!-- Step 2: Nutrition Details -->
+    <div id="sff-wizard-step-2" style="display:none;">
+        <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 2: Add Nutrition Details</h3>
+        <p style="font-size:14px; color:#777;">Scan a nutrition label, use a USDA match, or enter macros manually.</p>
+
+        <?php if ($nutrition_label_image) : ?>
+            <img src="<?php echo esc_url($nutrition_label_image); ?>" alt="Nutrition Label Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
+        <?php endif; ?>
+
+        <input type="hidden" name="sff_fdc_id" id="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>">
 
         <label style="font-size:14px; color:#777;">Category:</label>
         <?php
@@ -193,17 +200,14 @@ function sff_render_ingredient_form($post_id = null) {
         echo str_replace('<select', '<select style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;"', $dropdown);
         ?>
 
-        <label style="font-size:14px; color:#777;">USDA FDC ID (optional):</label>
-        <input type="text" name="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>" placeholder="e.g., 123456" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-        <button type="button" id="sff-usda-search" style="margin-bottom:10px;" class="button">Search USDA</button>
-        <div id="usda-search-results" style="margin-bottom:10px;"></div>
-
-
         <input type="file" id="sff_nutrition_label_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
         <button type="button" id="scan_nutrition_label_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
             2️⃣ Scan Nutrition Label 🥗
         </button>
         <div id="scan_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+
+        <p style="font-size:14px; color:#777;">Macros source: <span id="macro_source_text"><?php echo ucfirst($macro_source); ?></span></p>
+        <input type="hidden" name="sff_macro_source" id="sff_macro_source" value="<?php echo esc_attr($macro_source); ?>">
 
         <fieldset style="border:none; padding:0; margin-top:15px;">
             <legend style="font-size:16px; font-weight:bold; color:#333;">Macros per Serving</legend>
@@ -216,8 +220,6 @@ function sff_render_ingredient_form($post_id = null) {
         <input type="number" name="sff_servings" id="sff_servings" value="<?php echo esc_attr($servings); ?>" placeholder="e.g., 4" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:15px;">
 
-                 
-        
                 <?php foreach ($macros as $key => $value) : ?>
                     <div>
                         <label style="font-size:14px; color:#777;"><?php echo ucwords(str_replace('_', ' ', $key)); ?>:</label>
@@ -237,7 +239,9 @@ function sff_render_ingredient_form($post_id = null) {
         <input type="number" step="0.01" name="sff_price" value="<?php echo esc_attr($price); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
 
         <input type="submit" name="sff_submit_ingredient" value="Save Ingredient" style="background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
-    </form>
+    </div>
+</form>
+
 </div>
 
 <!-- Step 3: Success Confirmation (NEW) -->
@@ -295,13 +299,15 @@ function sff_save_ingredient_details($post_id) {
 
     if (isset($_POST['sff_macros'])) {
         $macros = array_map('sanitize_text_field', $_POST['sff_macros']);
-        if (array_sum(array_map('floatval', $macros)) === 0 && !empty($fdc_id)) {
+        $macro_source = isset($_POST['sff_macro_source']) ? sanitize_text_field($_POST['sff_macro_source']) : 'manual';
+        if (array_sum(array_map('floatval', $macros)) === 0 && $macro_source === 'usda' && !empty($fdc_id)) {
             $api_macros = sff_fetch_usda_macros($fdc_id);
             foreach ($api_macros as $key => $value) {
                 $macros[$key] = $value;
             }
         }
         update_post_meta($post_id, '_sff_macros', $macros);
+        update_post_meta($post_id, '_sff_macro_source', $macro_source);
 
         global $wpdb;
         $table = $wpdb->prefix . 'sff_ingredient_nutrition';
