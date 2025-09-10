@@ -211,6 +211,22 @@
     background: #E9FAB0;
 }
 
+.sff-option {
+    margin-bottom: 20px;
+}
+
+.sff-divider {
+    text-align: center;
+    margin: 15px 0;
+    font-weight: 600;
+    color: #777;
+}
+
+.sff-divider span {
+    background: #fff;
+    padding: 0 10px;
+}
+
 .sff-profile-card h2 {
     margin-top: 0;
     font-size: 22px;

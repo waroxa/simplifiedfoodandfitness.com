@@ -152,29 +152,37 @@ function sff_render_ingredient_form($post_id = null) {
 
     <div id="sff-wizard-step-1">
         <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 1: Find Ingredient</h3>
-        <p style="font-size:14px; color:#777;">Scan a packaged item to grab its name, search the USDA database to load macros for fresh foods, or skip to type everything manually.</p>
+        <p style="font-size:14px; color:#777;">Choose a source below to begin.</p>
 
-        <label style="font-size:14px; color:#777;">Ingredient Name:</label>
-        <div style="position:relative;">
-            <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-            <select id="usda-category-filter" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-                <option value="">All Categories</option>
-                <option value="Fruits">Fruits</option>
-                <option value="Vegetables">Vegetables</option>
-                <option value="Grains">Grains</option>
-            </select>
-            <div id="usda-suggestions" style="display:none;"></div>
+        <div class="sff-option">
+            <h4 style="font-size:16px; color:#333; margin-bottom:8px;">Option 1: Search USDA Database</h4>
+            <div style="position:relative;">
+                <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="Start typing e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                <select id="usda-category-filter" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                    <option value="">All Categories</option>
+                    <option value="Fruits">Fruits</option>
+                    <option value="Vegetables">Vegetables</option>
+                    <option value="Grains">Grains</option>
+                </select>
+                <button type="button" id="usda-search-button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-bottom:10px;">Search USDA</button>
+                <div id="usda-suggestions" style="display:none;"></div>
+            </div>
         </div>
 
-        <?php if ($front_image) : ?>
-            <img src="<?php echo esc_url($front_image); ?>" alt="Front Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
-        <?php endif; ?>
+        <div class="sff-divider"><span>OR</span></div>
 
-        <input type="file" id="sff_front_image_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
-        <button type="button" id="scan_front_image_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
-            1️⃣ Scan Product Name
-        </button>
-        <div id="scan_front_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+        <div class="sff-option">
+            <h4 style="font-size:16px; color:#333; margin-bottom:8px;">Option 2: Upload Product Label</h4>
+            <?php if ($front_image) : ?>
+                <img src="<?php echo esc_url($front_image); ?>" alt="Front Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
+            <?php endif; ?>
+
+            <input type="file" id="sff_front_image_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+            <button type="button" id="scan_front_image_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
+                1️⃣ Scan Product Name
+            </button>
+            <div id="scan_front_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+        </div>
 
         <button type="button" id="next_step_button" style="background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
             Next Step →

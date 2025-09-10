@@ -3,10 +3,34 @@ jQuery(document).ready(function($) {
         // Product Name Scan Handler
   
 
-    // Ensure wizard moves to Step 2 and retains scanned data
+    // Move to Step 2 and determine macro workflow
     $('#next_step_button').on('click', function() {
         $('#sff-wizard-step-1').hide();
         $('#sff-wizard-step-2').show();
+
+        var fdc = $('#sff_fdc_id').val();
+        var fromPicture = $('#front_image_attachment_id').length > 0;
+
+        if (fdc) {
+            // Hide scan option and fetch macros from USDA
+            $('#sff_nutrition_label_upload, #scan_nutrition_label_button, #scan_results').hide();
+            $.post(sff_ajax_obj.ajax_url, {action:'sff_usda_macros', security:sff_ajax_obj.nonce, fdc_id:fdc}, function(res){
+                if(res.success){
+                    $.each(res.data, function(k,v){
+                        $('[name="sff_macros['+k+']"]').val(v);
+                    });
+                    $('#sff_macro_source').val('usda');
+                    $('#macro_source_text').text('USDA');
+                }
+            });
+        } else {
+            // Show scan option only if product image provided
+            if(fromPicture){
+                $('#sff_nutrition_label_upload, #scan_nutrition_label_button, #scan_results').show();
+            } else {
+                $('#sff_nutrition_label_upload, #scan_nutrition_label_button, #scan_results').hide();
+            }
+        }
     });
 
     $('#scan_front_image_button').on('click', function() {
@@ -411,7 +435,7 @@ jQuery(document).ready(function($) {
   function usdaSearch(){
     var query = $('[name="sff_brand_name"]').val();
     var category = $('#usda-category-filter').val();
-    if(query.length < 3){
+    if(query.length < 1){
       $('#usda-suggestions').hide().empty();
       usdaIndex = -1;
       return;
@@ -430,19 +454,19 @@ jQuery(document).ready(function($) {
           $('#usda-suggestions').hide().empty();
         }
         usdaIndex = -1;
+      } else {
+        $('#usda-suggestions').hide().empty();
       }
     });
   }
 
-  $('[name="sff_brand_name"]').on('keyup', function(e){
-    var ignored = ['ArrowDown','ArrowUp','Enter'];
-    if(ignored.includes(e.key)) return;
+  $('#usda-search-button').on('click', function(){
+    $('[name="sff_fdc_id"]').val('');
     usdaSearch();
   });
 
   $('#usda-category-filter').on('change', function(){
-    $('[name="sff_fdc_id"]').val('');
-    usdaSearch();
+    $('#usda-search-button').trigger('click');
   });
 
   $('#usda-suggestions').on('click','li',function(){
@@ -450,15 +474,6 @@ jQuery(document).ready(function($) {
     $('[name="sff_brand_name"]').val($(this).text());
     $('[name="sff_fdc_id"]').val(fdc);
     $('#usda-suggestions').hide().empty();
-    $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
-      if(res.success){
-        $.each(res.data,function(k,v){
-          $('[name="sff_macros['+k+']"]').val(v);
-        });
-        $('#sff_macro_source').val('usda');
-        $('#macro_source_text').text('USDA');
-      }
-    });
   });
 
   $('#sff-wizard-step-2').on('input','[name^="sff_macros"]',function(){
