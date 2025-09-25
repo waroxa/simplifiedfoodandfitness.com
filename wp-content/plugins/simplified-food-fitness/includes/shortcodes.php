@@ -162,6 +162,7 @@ function sff_render_header($username, $day_type) {
                 <ul>
                     <li><a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>">Dashboard</a></li>
                     <li><a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/add-ingredient/' ) ); ?>">Add Ingredient</a></li>
                     <li><a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>">Logout</a></li>
                 </ul>
             </nav>
