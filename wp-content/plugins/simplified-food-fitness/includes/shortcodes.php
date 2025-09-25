@@ -248,6 +248,16 @@ function sff_client_profile_shortcode() {
             'sff_disliked_fruits'          => 'Disliked Fruits',
             'sff_favorite_vegetables'      => 'Favorite Vegetables',
             'sff_disliked_vegetables'      => 'Disliked Vegetables',
+            'sff_favorite_red_meat'        => 'Favorite Red Meat',
+            'sff_favorite_red_meat_other'  => 'Favorite Red Meat (Other)',
+            'sff_favorite_poultry'         => 'Favorite Poultry',
+            'sff_favorite_poultry_other'   => 'Favorite Poultry (Other)',
+            'sff_favorite_pork'            => 'Favorite Pork',
+            'sff_favorite_pork_other'      => 'Favorite Pork (Other)',
+            'sff_favorite_fish'            => 'Favorite Fish',
+            'sff_favorite_fish_other'      => 'Favorite Fish (Other)',
+            'sff_favorite_seafood'         => 'Favorite Seafood',
+            'sff_favorite_seafood_other'   => 'Favorite Seafood (Other)',
             'sff_leftovers'                => 'Leftovers',
             'sff_leftovers_other'          => 'Leftovers (Other)',
             'sff_repeating_meals'          => 'Repeating Meals',
@@ -720,6 +730,16 @@ function sff_client_intake_form() {
                 'favorite_vegetables_other'   => 'sanitize_text_field',
                 'disliked_vegetables'         => 'array',
                 'disliked_vegetables_other'   => 'sanitize_text_field',
+                'favorite_red_meat'           => 'array',
+                'favorite_red_meat_other'     => 'sanitize_text_field',
+                'favorite_poultry'            => 'array',
+                'favorite_poultry_other'      => 'sanitize_text_field',
+                'favorite_pork'               => 'array',
+                'favorite_pork_other'         => 'sanitize_text_field',
+                'favorite_fish'               => 'array',
+                'favorite_fish_other'         => 'sanitize_text_field',
+                'favorite_seafood'            => 'array',
+                'favorite_seafood_other'      => 'sanitize_text_field',
                 'leftovers'                   => 'sanitize_text_field',
                 'leftovers_other'             => 'sanitize_text_field',
                 'repeating_meals'             => 'sanitize_text_field',
@@ -1257,6 +1277,90 @@ function sff_client_intake_form() {
                 </div>
                 <input type="text" name="disliked_vegetables_other" placeholder="e.g., Arugula" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; display:none;" class="conditional-field" data-condition="disliked_vegetables[]">
 
+                <label style="font-weight:bold; margin-bottom:5px;">🥩 Favorite Red Meat</label>
+                <div style="margin-bottom:15px; column-count:2;" class="checkbox-group" data-name="favorite_red_meat[]">
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Beef"> Beef</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Bison"> Bison</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Lamb"> Lamb</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Goat"> Goat</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Veal"> Veal</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Venison"> Venison</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Beef roast"> Beef roast</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Steak"> Steak</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Ground beef"> Ground beef</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="None"> None</label><br>
+                    <label><input type="checkbox" name="favorite_red_meat[]" value="Other"> Other (Please specify)</label>
+                </div>
+                <input type="text" name="favorite_red_meat_other" placeholder="e.g., Elk" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; display:none;" class="conditional-field" data-condition="favorite_red_meat[]">
+
+                <label style="font-weight:bold; margin-bottom:5px;">🍗 Favorite Poultry</label>
+                <div style="margin-bottom:15px; column-count:2;" class="checkbox-group" data-name="favorite_poultry[]">
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Chicken breast"> Chicken breast</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Chicken thighs"> Chicken thighs</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Ground chicken"> Ground chicken</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Chicken wings"> Chicken wings</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Turkey breast"> Turkey breast</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Ground turkey"> Ground turkey</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Turkey sausage"> Turkey sausage</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Duck"> Duck</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Cornish hen"> Cornish hen</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Quail"> Quail</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="None"> None</label><br>
+                    <label><input type="checkbox" name="favorite_poultry[]" value="Other"> Other (Please specify)</label>
+                </div>
+                <input type="text" name="favorite_poultry_other" placeholder="e.g., Goose" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; display:none;" class="conditional-field" data-condition="favorite_poultry[]">
+
+                <label style="font-weight:bold; margin-bottom:5px;">🥓 Favorite Pork</label>
+                <div style="margin-bottom:15px; column-count:2;" class="checkbox-group" data-name="favorite_pork[]">
+                    <label><input type="checkbox" name="favorite_pork[]" value="Pork tenderloin"> Pork tenderloin</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Pork chops"> Pork chops</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Pork shoulder"> Pork shoulder</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Ground pork"> Ground pork</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Pork loin"> Pork loin</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Bacon"> Bacon</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Ham"> Ham</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Pork sausage"> Pork sausage</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Prosciutto"> Prosciutto</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Chorizo"> Chorizo</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="None"> None</label><br>
+                    <label><input type="checkbox" name="favorite_pork[]" value="Other"> Other (Please specify)</label>
+                </div>
+                <input type="text" name="favorite_pork_other" placeholder="e.g., Pancetta" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; display:none;" class="conditional-field" data-condition="favorite_pork[]">
+
+                <label style="font-weight:bold; margin-bottom:5px;">🐟 Favorite Fish</label>
+                <div style="margin-bottom:15px; column-count:2;" class="checkbox-group" data-name="favorite_fish[]">
+                    <label><input type="checkbox" name="favorite_fish[]" value="Salmon"> Salmon</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Tuna"> Tuna</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Cod"> Cod</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Tilapia"> Tilapia</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Snapper"> Snapper</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Mahi mahi"> Mahi mahi</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Trout"> Trout</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Sardines"> Sardines</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Halibut"> Halibut</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Catfish"> Catfish</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="None"> None</label><br>
+                    <label><input type="checkbox" name="favorite_fish[]" value="Other"> Other (Please specify)</label>
+                </div>
+                <input type="text" name="favorite_fish_other" placeholder="e.g., Barramundi" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; display:none;" class="conditional-field" data-condition="favorite_fish[]">
+
+                <label style="font-weight:bold; margin-bottom:5px;">🦐 Favorite Seafood</label>
+                <div style="margin-bottom:15px; column-count:2;" class="checkbox-group" data-name="favorite_seafood[]">
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Shrimp"> Shrimp</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Crab"> Crab</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Lobster"> Lobster</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Scallops"> Scallops</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Mussels"> Mussels</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Clams"> Clams</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Oysters"> Oysters</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Calamari"> Calamari</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Octopus"> Octopus</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Crayfish"> Crayfish</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="None"> None</label><br>
+                    <label><input type="checkbox" name="favorite_seafood[]" value="Other"> Other (Please specify)</label>
+                </div>
+                <input type="text" name="favorite_seafood_other" placeholder="e.g., Sea urchin" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px; display:none;" class="conditional-field" data-condition="favorite_seafood[]">
+
                 <label style="font-weight:bold; margin-bottom:5px;">🍲 Do you mind eating leftovers for lunch the following day?</label>
                 <div style="margin-bottom:15px;">
                     <input type="radio" name="leftovers" value="Yes" style="margin-right:5px;" required> Yes
@@ -1448,6 +1552,11 @@ document.addEventListener('DOMContentLoaded', function () {
         { name: 'disliked_fruits', otherName: 'disliked_fruits_other' },
         { name: 'favorite_vegetables', otherName: 'favorite_vegetables_other' },
         { name: 'disliked_vegetables', otherName: 'disliked_vegetables_other' },
+        { name: 'favorite_red_meat', otherName: 'favorite_red_meat_other' },
+        { name: 'favorite_poultry', otherName: 'favorite_poultry_other' },
+        { name: 'favorite_pork', otherName: 'favorite_pork_other' },
+        { name: 'favorite_fish', otherName: 'favorite_fish_other' },
+        { name: 'favorite_seafood', otherName: 'favorite_seafood_other' },
         { name: 'grocery_store', otherName: 'grocery_store_other' },
         { name: 'grocery_delivery_service', otherName: 'grocery_delivery_service_other' }
     ];
