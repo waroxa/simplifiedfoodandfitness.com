@@ -155,142 +155,136 @@ function sff_render_ingredient_form($post_id = null) {
     }
 
     ob_start(); ?>
+    <div class="sff-ingredient-form-card" style="background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); padding:20px;">
+        <h2 style="font-size:20px; color:#333; margin-bottom:15px;">Add Ingredient</h2>
 
-    <div class="dashboard-container" style="max-width:600px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
-        
-        <div style="background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); padding:20px;">
-            <h2 style="font-size:20px; color:#333; margin-bottom:15px;">Add Ingredient</h2>
+        <!-- Step 1: Product Name Extraction -->
+        <form method="POST" action="<?php echo admin_url('admin-post.php'); ?>" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="sff_save_ingredient">
+            <?php wp_nonce_field('sff_ingredient_nonce', 'sff_nonce_field'); ?>
 
-            <!-- Step 1: Product Name Extraction -->
-            <form method="POST" action="<?php echo admin_url('admin-post.php'); ?>" enctype="multipart/form-data">
-    <input type="hidden" name="action" value="sff_save_ingredient">
-    <?php wp_nonce_field('sff_ingredient_nonce', 'sff_nonce_field'); ?>
+            <div id="sff-wizard-step-1">
+                <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 1: Find Ingredient</h3>
+                <p style="font-size:14px; color:#777;">Choose a source below to begin.</p>
 
-    <div id="sff-wizard-step-1">
-        <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 1: Find Ingredient</h3>
-        <p style="font-size:14px; color:#777;">Choose a source below to begin.</p>
-
-        <div class="sff-option">
-            <h4 style="font-size:16px; color:#333; margin-bottom:8px;">Option 1: Search USDA Database</h4>
-            <div style="position:relative;">
-                <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="Start typing e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-                <select id="usda-category-filter" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-                    <option value="">All Categories</option>
-                    <option value="Fruits">Fruits</option>
-                    <option value="Vegetables">Vegetables</option>
-                    <option value="Grains">Grains</option>
-                </select>
-                <button type="button" id="usda-search-button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-bottom:10px;">🔍 Search</button>
-                <div id="usda-suggestions" style="display:none;"></div>
-            </div>
-        </div>
-
-        <div class="sff-divider"><span>OR</span></div>
-
-        <div class="sff-option">
-            <h4 style="font-size:16px; color:#333; margin-bottom:8px;">Option 2: Upload Product Label</h4>
-            <?php if ($front_image) : ?>
-                <img src="<?php echo esc_url($front_image); ?>" alt="Front Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
-            <?php endif; ?>
-
-            <input type="file" id="sff_front_image_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
-            <button type="button" id="scan_front_image_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
-                1️⃣ Scan Product Name
-            </button>
-            <div id="scan_front_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
-        </div>
-
-        <button type="button" id="next_step_button" style="background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
-            Next Step →
-        </button>
-    </div>
-
-    <!-- Step 2: Nutrition Details -->
-    <div id="sff-wizard-step-2" style="display:none;">
-        <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 2: Add Nutrition Details</h3>
-        <p style="font-size:14px; color:#777;">Scan a nutrition label, use a USDA match, or enter macros manually.</p>
-
-        <?php if ($nutrition_label_image) : ?>
-            <img src="<?php echo esc_url($nutrition_label_image); ?>" alt="Nutrition Label Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
-        <?php endif; ?>
-
-        <input type="hidden" name="sff_fdc_id" id="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>">
-
-        <?php
-        $show_category_dropdown = apply_filters('sff_show_category_dropdown', empty($fdc_id));
-        if ($show_category_dropdown) :
-            ?>
-            <label style="font-size:14px; color:#777;">Category:</label>
-            <?php
-            $dropdown = wp_dropdown_categories([
-                'taxonomy' => 'ingredient_category',
-                'hide_empty' => false,
-                'name' => 'sff_ingredient_category',
-                'orderby' => 'name',
-                'selected' => $ingredient_category,
-                'show_option_none' => __('Select category'),
-                'echo' => false,
-            ]);
-            echo str_replace('<select', '<select style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;"', $dropdown);
-        endif;
-        ?>
-
-        <div id="sff_scan_fields">
-            <input type="file" id="sff_nutrition_label_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
-            <button type="button" id="scan_nutrition_label_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
-                2️⃣ Scan Nutrition Label 🥗
-            </button>
-            <div id="scan_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
-        </div>
-
-        <p style="font-size:14px; color:#777;">Macros source: <span id="macro_source_text"><?php echo ucfirst($macro_source); ?></span></p>
-        <input type="hidden" name="sff_macro_source" id="sff_macro_source" value="<?php echo esc_attr($macro_source); ?>">
-
-        <fieldset style="border:none; padding:0; margin-top:15px;">
-            <legend style="font-size:16px; font-weight:bold; color:#333;">Macros per Serving</legend>
-
-<!-- Add Serving Size and Servings Per Container Fields -->
-        <label style="font-size:14px; color:#777;">Serving Size:</label>
-        <input type="text" name="sff_serving_size" id="sff_serving_size" value="<?php echo esc_attr($serving_size); ?>" placeholder="e.g., 1 cup (240ml)" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-
-        <label style="font-size:14px; color:#777;">Servings Per Container:</label>
-        <input type="number" name="sff_servings" id="sff_servings" value="<?php echo esc_attr($servings); ?>" placeholder="e.g., 4" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:15px;">
-
-                <?php foreach ($macros as $key => $value) : ?>
-                    <div>
-                        <label style="font-size:14px; color:#777;"><?php echo ucwords(str_replace('_', ' ', $key)); ?>:</label>
-                        <input type="number" name="sff_macros[<?php echo $key; ?>]" value="<?php echo esc_attr($value); ?>" step="0.1" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                <div class="sff-option">
+                    <h4 style="font-size:16px; color:#333; margin-bottom:8px;">Option 1: Search USDA Database</h4>
+                    <div style="position:relative;">
+                        <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="Start typing e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                        <select id="usda-category-filter" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                            <option value="">All Categories</option>
+                            <option value="Fruits">Fruits</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Grains">Grains</option>
+                        </select>
+                        <button type="button" id="usda-search-button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-bottom:10px;">🔍 Search</button>
+                        <div id="usda-suggestions" style="display:none;"></div>
                     </div>
-                <?php endforeach; ?>
+                </div>
+
+                <div class="sff-divider"><span>OR</span></div>
+
+                <div class="sff-option">
+                    <h4 style="font-size:16px; color:#333; margin-bottom:8px;">Option 2: Upload Product Label</h4>
+                    <?php if ($front_image) : ?>
+                        <img src="<?php echo esc_url($front_image); ?>" alt="Front Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
+                    <?php endif; ?>
+
+                    <input type="file" id="sff_front_image_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                    <button type="button" id="scan_front_image_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
+                        1️⃣ Scan Product Name
+                    </button>
+                    <div id="scan_front_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+                </div>
+
+                <button type="button" id="next_step_button" style="background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
+                    Next Step →
+                </button>
             </div>
-        </fieldset>
 
-        <div id="usda-macro-display" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:14px; color:#333;"></div>
+            <!-- Step 2: Nutrition Details -->
+            <div id="sff-wizard-step-2" style="display:none;">
+                <h3 style="font-size:18px; color:#333; margin-bottom:10px;">Step 2: Add Nutrition Details</h3>
+                <p style="font-size:14px; color:#777;">Scan a nutrition label, use a USDA match, or enter macros manually.</p>
 
-        <label style="font-size:14px; color:#777;">SKU:</label>
-        <input type="text" name="sff_sku" value="<?php echo esc_attr($sku); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                <?php if ($nutrition_label_image) : ?>
+                    <img src="<?php echo esc_url($nutrition_label_image); ?>" alt="Nutrition Label Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
+                <?php endif; ?>
 
-        <label style="font-size:14px; color:#777;">Affiliate Link:</label>
-        <input type="url" name="sff_affiliate_link" value="<?php echo esc_attr($affiliate_link); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                <input type="hidden" name="sff_fdc_id" id="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>">
 
-        <label style="font-size:14px; color:#777;">Price:</label>
-        <input type="number" step="0.01" name="sff_price" value="<?php echo esc_attr($price); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                <?php
+                $show_category_dropdown = apply_filters('sff_show_category_dropdown', empty($fdc_id));
+                if ($show_category_dropdown) :
+                    ?>
+                    <label style="font-size:14px; color:#777;">Category:</label>
+                    <?php
+                    $dropdown = wp_dropdown_categories([
+                        'taxonomy' => 'ingredient_category',
+                        'hide_empty' => false,
+                        'name'      => 'sff_ingredient_category',
+                        'orderby'   => 'name',
+                        'selected'  => $ingredient_category,
+                        'show_option_none' => __('Select category'),
+                        'echo'      => false,
+                    ]);
+                    echo str_replace('<select', '<select style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;"', $dropdown);
+                endif;
+                ?>
 
-        <input type="submit" name="sff_submit_ingredient" value="Save Ingredient" style="background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
-    </div>
-</form>
+                <div id="sff_scan_fields">
+                    <input type="file" id="sff_nutrition_label_upload" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                    <button type="button" id="scan_nutrition_label_button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-top:10px;">
+                        2️⃣ Scan Nutrition Label 🥗
+                    </button>
+                    <div id="scan_results" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:0.9rem; text-align:center;"></div>
+                </div>
 
-</div>
+                <p style="font-size:14px; color:#777;">Macros source: <span id="macro_source_text"><?php echo ucfirst($macro_source); ?></span></p>
+                <input type="hidden" name="sff_macro_source" id="sff_macro_source" value="<?php echo esc_attr($macro_source); ?>">
 
-<!-- Step 3: Success Confirmation (NEW) -->
-    <div id="sff-wizard-step-3" style="display:none; text-align:center; padding:20px;">
-        <h2>✅ Ingredient Added!</h2>
-        <p>Your ingredient has been successfully saved.</p>
-        <button id="add_new_ingredient_button" style="background:#023441; color:#E9FAB0; padding:12px 20px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-            ➕ Add a New Ingredient
-        </button>
-    </div>
+                <fieldset style="border:none; padding:0; margin-top:15px;">
+                    <legend style="font-size:16px; font-weight:bold; color:#333;">Macros per Serving</legend>
+
+                    <!-- Add Serving Size and Servings Per Container Fields -->
+                    <label style="font-size:14px; color:#777;">Serving Size:</label>
+                    <input type="text" name="sff_serving_size" id="sff_serving_size" value="<?php echo esc_attr($serving_size); ?>" placeholder="e.g., 1 cup (240ml)" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+                    <label style="font-size:14px; color:#777;">Servings Per Container:</label>
+                    <input type="number" name="sff_servings" id="sff_servings" value="<?php echo esc_attr($servings); ?>" placeholder="e.g., 4" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:15px;">
+                        <?php foreach ($macros as $key => $value) : ?>
+                            <div>
+                                <label style="font-size:14px; color:#777;"><?php echo ucwords(str_replace('_', ' ', $key)); ?>:</label>
+                                <input type="number" name="sff_macros[<?php echo $key; ?>]" value="<?php echo esc_attr($value); ?>" step="0.1" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </fieldset>
+
+                <div id="usda-macro-display" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:14px; color:#333;"></div>
+
+                <label style="font-size:14px; color:#777;">SKU:</label>
+                <input type="text" name="sff_sku" value="<?php echo esc_attr($sku); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+                <label style="font-size:14px; color:#777;">Affiliate Link:</label>
+                <input type="url" name="sff_affiliate_link" value="<?php echo esc_attr($affiliate_link); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+                <label style="font-size:14px; color:#777;">Price:</label>
+                <input type="number" step="0.01" name="sff_price" value="<?php echo esc_attr($price); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+
+                <input type="submit" name="sff_submit_ingredient" value="Save Ingredient" style="background:#E9FAB0; color:#023441; border:none; padding:12px; border-radius:8px; cursor:pointer; font-size:16px; width:100%; margin-top:20px;">
+            </div>
+        </form>
+
+        <!-- Step 3: Success Confirmation (NEW) -->
+        <div id="sff-wizard-step-3" style="display:none; text-align:center; padding:20px;">
+            <h2>✅ Ingredient Added!</h2>
+            <p>Your ingredient has been successfully saved.</p>
+            <button id="add_new_ingredient_button" style="background:#023441; color:#E9FAB0; padding:12px 20px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                ➕ Add a New Ingredient
+            </button>
         </div>
     </div>
 
