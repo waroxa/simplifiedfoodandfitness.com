@@ -129,8 +129,21 @@ add_shortcode('sff_meal_dashboard', 'sff_meal_dashboard_shortcode');
 
 
 function sff_frontend_ingredient_page() {
-    if (!is_user_logged_in()) return sff_custom_login_form();
-    return sff_render_ingredient_form();
+    if (!is_user_logged_in()) {
+        return sff_custom_login_form();
+    }
+
+    $user     = wp_get_current_user();
+    $username = $user->display_name ?: $user->user_login;
+    $day_type = 'Rest Day';
+
+    ob_start(); ?>
+    <div class="dashboard-container" style="max-width:600px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
+        <?php echo sff_render_header($username, $day_type); ?>
+        <?php echo sff_render_ingredient_form(); ?>
+    </div>
+    <?php
+    return ob_get_clean();
 }
 add_shortcode('sff_add_ingredient', 'sff_frontend_ingredient_page');
 
