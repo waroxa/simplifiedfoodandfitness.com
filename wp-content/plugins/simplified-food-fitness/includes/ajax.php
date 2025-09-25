@@ -515,7 +515,46 @@ function sff_usda_search() {
     $body = json_decode(wp_remote_retrieve_body($resp), true);
     $items = [];
     if (!empty($body['foods'])) {
+        $grouped = [];
         foreach ($body['foods'] as $food) {
+            $description = $food['description'] ?? '';
+            $normalized = strtoupper(trim($description));
+            $timestamp = null;
+            foreach (['modifiedDate', 'publicationDate', 'publishedDate'] as $field) {
+                if (!empty($food[$field])) {
+                    $time = strtotime($food[$field]);
+                    if ($time !== false) {
+                        $timestamp = $time;
+                        break;
+                    }
+                }
+            }
+
+            if (!isset($grouped[$normalized])) {
+                $grouped[$normalized] = [
+                    'food' => $food,
+                    'timestamp' => $timestamp,
+                ];
+                continue;
+            }
+
+            $existing_timestamp = $grouped[$normalized]['timestamp'];
+            $should_replace = false;
+
+            if ($timestamp && (!$existing_timestamp || $timestamp > $existing_timestamp)) {
+                $should_replace = true;
+            }
+
+            if ($should_replace) {
+                $grouped[$normalized] = [
+                    'food' => $food,
+                    'timestamp' => $timestamp,
+                ];
+            }
+        }
+
+        foreach ($grouped as $data) {
+            $food = $data['food'];
             $items[] = [
                 'fdc_id' => $food['fdcId'],
                 'description' => $food['description'],
@@ -524,7 +563,7 @@ function sff_usda_search() {
             ];
         }
     }
-    wp_send_json_success($items);
+    wp_send_json_success(array_values($items));
 }
 add_action('wp_ajax_sff_usda_search', 'sff_usda_search');
 
