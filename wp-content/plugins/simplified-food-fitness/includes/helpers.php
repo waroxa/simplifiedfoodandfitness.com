@@ -385,7 +385,9 @@ function sff_render_ingredient_form($post_id = null) {
                 </fieldset>
 
                 <div id="usda-macro-display" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:14px; color:#333;"></div>
-                <pre id="usda-full-response" style="display:none; margin-top:10px; padding:12px; background:#fafafa; border:1px solid #d9d9d9; border-radius:8px; font-size:12px; color:#333; max-height:280px; overflow:auto; white-space:pre-wrap; word-break:break-word;">USDA API response will appear here after you select a food.</pre>
+                <div id="usda-full-response" class="usda-response-box" style="display:none;">
+                    <p class="usda-response-message">USDA API response will appear here after you select a food.</p>
+                </div>
 
                 <label style="font-size:14px; color:#777;">SKU:</label>
                 <input type="text" name="sff_sku" value="<?php echo esc_attr($sku); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
