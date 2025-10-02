@@ -583,12 +583,19 @@ function sff_usda_macros() {
     if (!$fdc_id) {
         wp_send_json_error('Missing FDC ID');
     }
-    $macros = sff_fetch_usda_macros($fdc_id);
+    $raw_response = null;
+    $macros = sff_fetch_usda_macros($fdc_id, $raw_response);
     $macros = array_intersect_key($macros, array_flip(SFF_MACRO_FIELDS));
     if (!$macros) {
-        wp_send_json_error('Not found');
+        wp_send_json_error([
+            'message' => 'Not found',
+            'raw'     => $raw_response,
+        ]);
     }
-    wp_send_json_success($macros);
+    wp_send_json_success([
+        'macros' => $macros,
+        'raw'    => $raw_response,
+    ]);
 }
 add_action('wp_ajax_sff_usda_macros', 'sff_usda_macros');
 

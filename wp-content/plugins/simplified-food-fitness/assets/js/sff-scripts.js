@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
     function sffShowMacroPreview(map) {
         var html = '<strong>Fetched Macros:</strong><ul>';
-        $.each(map, function(k, v) {
+        $.each(map || {}, function(k, v) {
             if ($('[name="sff_macros[' + k + ']"]').length) {
                 html += '<li>' + k.replace(/_/g, ' ') + ': ' + v + '</li>';
             }
@@ -11,10 +11,44 @@ jQuery(document).ready(function($) {
     }
 
     function sffPopulateMacros(map) {
-        $.each(map, function(k, v) {
+        $.each(map || {}, function(k, v) {
             $('[name="sff_macros[' + k + ']"]').val(v);
         });
         sffShowMacroPreview(map);
+    }
+
+    function sffShowRawResponse(raw) {
+        var $el = $('#usda-raw-response');
+        if (!$el.length) {
+            return;
+        }
+
+        if (raw) {
+            try {
+                $el.text(JSON.stringify(raw, null, 2));
+            } catch (e) {
+                $el.text(String(raw));
+            }
+        } else {
+            $el.text('No raw response available.');
+        }
+    }
+
+    function sffHandleUsdaResponse(res) {
+        console.log('USDA API response:', res);
+        if (res.success && res.data) {
+            var macros = res.data.macros || {};
+            sffPopulateMacros(macros);
+            sffShowRawResponse(res.data.raw || null);
+            $('#sff_macro_source').val('usda');
+            $('#macro_source_text').text('USDA');
+        } else {
+            var data = res.data || {};
+            sffShowRawResponse(data.raw || null);
+            if (data.message) {
+                $('#usda-macro-display').html('<strong>USDA Error:</strong> ' + data.message);
+            }
+        }
     }
 
 
@@ -54,11 +88,7 @@ jQuery(document).ready(function($) {
                 sff_ajax_obj.ajax_url,
                 { action: 'sff_usda_macros', security: sff_ajax_obj.nonce, fdc_id: fdc },
                 function(res) {
-                    if (res.success) {
-                        sffPopulateMacros(res.data);
-                        $('#sff_macro_source').val('usda');
-                        $('#macro_source_text').text('USDA');
-                    }
+                    sffHandleUsdaResponse(res);
                 }
             );
         } else if (categorySelect.length) {
@@ -517,11 +547,7 @@ jQuery(document).ready(function($) {
     $('[name="sff_fdc_id"]').val(fdc);
     $('#usda-suggestions').hide().empty();
     $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
-      if(res.success){
-        sffPopulateMacros(res.data);
-        $('#sff_macro_source').val('usda');
-        $('#macro_source_text').text('USDA');
-      }
+      sffHandleUsdaResponse(res);
     });
   });
 
