@@ -1,36 +1,97 @@
 jQuery(document).ready(function($) {
-    function sffShowMacroPreview(map) {
+    function sffFormatMacroLabel(key) {
+        if (!key) {
+            return '';
+        }
+        return key.replace(/_/g, ' ').replace(/\b\w/g, function(letter) {
+            return letter.toUpperCase();
+        });
+    }
+
+    function sffCollectMacroValues() {
+        var values = {};
+        $('[name^="sff_macros"]').each(function() {
+            var match = $(this).attr('name').match(/\[(.+)\]/);
+            if (!match || !match[1]) {
+                return;
+            }
+            var numeric = parseFloat($(this).val());
+            if (isNaN(numeric)) {
+                return;
+            }
+            values[match[1]] = numeric;
+        });
+        return values;
+    }
+
+    function sffShowMacroSummary(map, source) {
         map = map || {};
+        var $summary = $('#sff-macro-summary');
+        if (!$summary.length) {
+            return;
+        }
 
-        var listItems = '';
-        var hasValues = false;
+        var fields = (window.sff_ajax_obj && Array.isArray(sff_ajax_obj.macro_fields) && sff_ajax_obj.macro_fields.length)
+            ? sff_ajax_obj.macro_fields
+            : Object.keys(map);
 
+        var gridItems = '';
+        var hasEntries = false;
+
+        fields.forEach(function(field) {
+            if (!Object.prototype.hasOwnProperty.call(map, field)) {
+                return;
+            }
+            var numeric = parseFloat(map[field]);
+            if (isNaN(numeric)) {
+                return;
+            }
+            if (Math.abs(numeric) < 0.0001) {
+                return;
+            }
+            hasEntries = true;
+            gridItems += '<div class="sff-macro-summary-item">' +
+                '<span class="sff-macro-summary-label">' + sffFormatMacroLabel(field) + '</span>' +
+                '<span class="sff-macro-summary-value">' + numeric.toFixed(2) + '</span>' +
+            '</div>';
+        });
+
+        if (!hasEntries) {
+            $summary.hide().empty();
+            return;
+        }
+
+        var title = 'Nutrition Summary';
+        if (source === 'scan') {
+            title = 'Values from Scanned Label';
+        } else if (source === 'usda') {
+            title = 'Values from USDA';
+        } else if (source === 'manual') {
+            title = 'Values from Manual Entry';
+        }
+
+        var html = '<div class="sff-macro-summary-title">' + title + '</div>' +
+            '<div class="sff-macro-summary-grid">' + gridItems + '</div>';
+
+        $summary.html(html).fadeIn(150);
+    }
+
+    function sffPopulateMacros(map, source) {
+        map = map || {};
+        var hasField = false;
         $.each(map, function(k, v) {
-            if ($('[name="sff_macros[' + k + ']"]').length) {
-                var numeric = parseFloat(v);
-                if (!isNaN(numeric)) {
-                    hasValues = true;
-                    listItems += '<li>' + k.replace(/_/g, ' ') + ': ' + numeric + '</li>';
-                }
+            var $field = $('[name="sff_macros[' + k + ']"]');
+            if ($field.length) {
+                $field.val(v);
+                hasField = true;
             }
         });
 
-        var html = '<strong>Fetched Macros:</strong>';
-        if (hasValues) {
-            html += '<ul>' + listItems + '</ul>';
-        } else {
-            html += '<p>No macro data returned from USDA.</p>';
+        if (hasField) {
+            sffShowMacroSummary(map, source);
+        } else if (source) {
+            $('#sff-macro-summary').hide().empty();
         }
-
-        $('#usda-macro-display').html(html);
-    }
-
-    function sffPopulateMacros(map) {
-        map = map || {};
-        $.each(map, function(k, v) {
-            $('[name="sff_macros[' + k + ']"]').val(v);
-        });
-        sffShowMacroPreview(map);
     }
 
     function sffEscapeHtml(value) {
@@ -298,7 +359,7 @@ jQuery(document).ready(function($) {
                 function(res) {
                     if (res.success) {
                         var macros = res.data && res.data.macros ? res.data.macros : {};
-                        sffPopulateMacros(macros);
+                        sffPopulateMacros(macros, 'usda');
                         $('#sff_macro_source').val('usda');
                         $('#macro_source_text').text('USDA');
                         var notice = res.data && res.data.notice ? res.data.notice : '';
@@ -306,7 +367,7 @@ jQuery(document).ready(function($) {
                         sffRenderUsdaRaw(res.data ? res.data.raw : null, message);
                     } else {
                         var errorMessage = res.data && res.data.message ? res.data.message : 'Unable to fetch USDA data.';
-                        sffPopulateMacros({});
+                        sffPopulateMacros({}, 'clear');
                         sffRenderUsdaRaw(null, errorMessage);
                     }
                 }
@@ -426,24 +487,44 @@ jQuery(document).ready(function($) {
                     // ✅ Fill form fields with scanned data
                     $('[name="sff_serving_size"]').val(data.serving_size || '');
                     $('[name="sff_servings"]').val(data.servings || 0);
-                    $('[name="sff_macros[calories]"]').val(data.calories || 0);
-                    $('[name="sff_macros[carbs]"]').val(data.carbohydrates || 0);
-                    $('[name="sff_macros[protein]"]').val(data.protein || 0);
-                    $('[name="sff_macros[fat]"]').val(data.fat || 0);
-                    $('[name="sff_macros[saturated_fat]"]').val(data.saturated_fat || 0);
-                    $('[name="sff_macros[trans_fat]"]').val(data.trans_fat || 0);
-                    $('[name="sff_macros[cholesterol]"]').val(data.cholesterol || 0);
-                    $('[name="sff_macros[sodium]"]').val(data.sodium || 0);
-                    $('[name="sff_macros[fiber]"]').val(data.fiber || 0);
-                    $('[name="sff_macros[sugars]"]').val(data.sugars || 0);
-                    $('[name="sff_macros[added_sugars]"]').val(data.added_sugars || 0);
-                    $('[name="sff_macros[vitamin_d]"]').val(data.vitamin_d || 0);
-                    $('[name="sff_macros[calcium]"]').val(data.calcium || 0);
-                    $('[name="sff_macros[iron]"]').val(data.iron || 0);
-                    $('[name="sff_macros[potassium]"]').val(data.potassium || 0);
-                    $('[name="sff_macros[magnesium]"]').val(data.magnesium || 0);
 
-                    sffShowMacroPreview(data);
+                    var labelToMacro = {
+                        calories: 'calories',
+                        carbohydrates: 'carbs',
+                        protein: 'protein',
+                        fat: 'fat',
+                        saturated_fat: 'saturated_fat',
+                        trans_fat: 'trans_fat',
+                        cholesterol: 'cholesterol',
+                        sodium: 'sodium',
+                        fiber: 'fiber',
+                        sugars: 'sugars',
+                        added_sugars: 'added_sugars',
+                        vitamin_d: 'vitamin_d',
+                        calcium: 'calcium',
+                        iron: 'iron',
+                        potassium: 'potassium',
+                        magnesium: 'magnesium',
+                        vitamin_a: 'vitamin_a',
+                        vitamin_c: 'vitamin_c',
+                        vitamin_e: 'vitamin_e',
+                        zinc: 'zinc',
+                        folate: 'folate',
+                        riboflavin: 'riboflavin',
+                        niacin: 'niacin',
+                        vitamin_b6: 'vitamin_b6',
+                        vitamin_b12: 'vitamin_b12',
+                        thiamin: 'thiamin'
+                    };
+                    var scanMap = {};
+                    Object.keys(labelToMacro).forEach(function(rawKey) {
+                        if (!Object.prototype.hasOwnProperty.call(data, rawKey)) {
+                            return;
+                        }
+                        var macroKey = labelToMacro[rawKey];
+                        scanMap[macroKey] = data[rawKey] || 0;
+                    });
+                    sffPopulateMacros(scanMap, 'scan');
 
                     // ✅ Store hidden input for attachment ID
                     if ($('#nutrition_label_image_id').length) {
@@ -616,19 +697,60 @@ jQuery(document).ready(function($) {
 
   var sffSelectedIngredients = [];
   function sffUpdateTotals() {
-    var totals = {calories:0, carbs:0, protein:0, fat:0, cost:0};
-    sffSelectedIngredients.forEach(function(item){
-      totals.calories += item.macros.calories;
-      totals.carbs += item.macros.carbs;
-      totals.protein += item.macros.protein;
-      totals.fat += item.macros.fat;
-      totals.cost += item.unit_cost;
+    var macroFields = (window.sff_ajax_obj && Array.isArray(sff_ajax_obj.macro_fields) && sff_ajax_obj.macro_fields.length)
+      ? sff_ajax_obj.macro_fields
+      : ['calories', 'carbs', 'protein', 'fat'];
+
+    var macroTotals = {};
+    macroFields.forEach(function(field){
+      macroTotals[field] = 0;
     });
-    $('#sff-total-calories').text(totals.calories.toFixed(2));
-    $('#sff-total-carbs').text(totals.carbs.toFixed(2));
-    $('#sff-total-protein').text(totals.protein.toFixed(2));
-    $('#sff-total-fat').text(totals.fat.toFixed(2));
-    $('#sff-total-cost').text(totals.cost.toFixed(2));
+    var costTotal = 0;
+
+    sffSelectedIngredients.forEach(function(item){
+      macroFields.forEach(function(field){
+        var value = item.macros && item.macros[field] !== undefined ? parseFloat(item.macros[field]) : 0;
+        if (!isNaN(value)) {
+          macroTotals[field] += value;
+        }
+      });
+      var costValue = parseFloat(item.unit_cost || 0);
+      if (!isNaN(costValue)) {
+        costTotal += costValue;
+      }
+    });
+
+    $('#sff-total-calories').text((macroTotals.calories || 0).toFixed(2));
+    $('#sff-total-carbs').text((macroTotals.carbs || 0).toFixed(2));
+    $('#sff-total-protein').text((macroTotals.protein || 0).toFixed(2));
+    $('#sff-total-fat').text((macroTotals.fat || 0).toFixed(2));
+    $('#sff-total-cost').text(costTotal.toFixed(2));
+
+    var $summary = $('#sff-recipe-macro-summary');
+    if ($summary.length) {
+      var $grid = $summary.find('.sff-recipe-macro-grid');
+      var gridHtml = '';
+      var hasEntries = false;
+      macroFields.forEach(function(field){
+        var value = macroTotals[field] || 0;
+        if (Math.abs(value) < 0.0001) {
+          return;
+        }
+        hasEntries = true;
+        gridHtml += '<div class="sff-recipe-macro-item">' +
+          '<span class="sff-recipe-macro-label">' + sffFormatMacroLabel(field) + '</span>' +
+          '<span class="sff-recipe-macro-value">' + value.toFixed(2) + '</span>' +
+        '</div>';
+      });
+
+      if (hasEntries) {
+        $grid.html(gridHtml);
+        $summary.show();
+      } else {
+        $grid.empty();
+        $summary.hide();
+      }
+    }
   }
 
   $('#sff-ingredient-search').on('keyup', function(){
@@ -770,14 +892,14 @@ jQuery(document).ready(function($) {
     $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
       if(res.success){
         var macros = res.data && res.data.macros ? res.data.macros : {};
-        sffPopulateMacros(macros);
+        sffPopulateMacros(macros, 'usda');
         $('#sff_macro_source').val('usda');
         $('#macro_source_text').text('USDA');
         var notice = res.data && res.data.notice ? res.data.notice : '';
         sffRenderUsdaRaw(res.data ? res.data.raw : null, notice);
       } else {
         var errorMessage = res.data && res.data.message ? res.data.message : 'Unable to fetch USDA data.';
-        sffPopulateMacros({});
+        sffPopulateMacros({}, 'clear');
         sffRenderUsdaRaw(null, errorMessage);
       }
     });
@@ -786,5 +908,8 @@ jQuery(document).ready(function($) {
   $('#sff-wizard-step-2').on('input','[name^="sff_macros"]',function(){
     $('#sff_macro_source').val('manual');
     $('#macro_source_text').text('Manual');
+    sffShowMacroSummary(sffCollectMacroValues(), 'manual');
   });
+
+  sffShowMacroSummary(sffCollectMacroValues(), $('#sff_macro_source').val() || 'manual');
   });

@@ -991,15 +991,16 @@ function sff_search_ingredients() {
     foreach ($query->posts as $post) {
         $macros = get_post_meta($post->ID, '_sff_macros', true);
         $unit_cost = get_post_meta($post->ID, '_sff_unit_cost', true);
+
+        $macro_values = [];
+        foreach (SFF_MACRO_FIELDS as $field) {
+            $macro_values[$field] = floatval(is_array($macros) && isset($macros[$field]) ? $macros[$field] : 0);
+        }
+
         $results[] = [
             'id' => $post->ID,
             'name' => $post->post_title,
-            'macros' => [
-                'calories' => floatval($macros['calories'] ?? 0),
-                'carbs'    => floatval($macros['carbs'] ?? 0),
-                'protein'  => floatval($macros['protein'] ?? 0),
-                'fat'      => floatval($macros['fat'] ?? 0),
-            ],
+            'macros' => $macro_values,
             'unit_cost' => floatval($unit_cost),
         ];
     }

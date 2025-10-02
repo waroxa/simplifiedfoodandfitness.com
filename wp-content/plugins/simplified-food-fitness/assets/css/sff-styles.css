@@ -522,6 +522,69 @@ body.sff-menu-open .sff-menu-items {
     margin: 20px 0 10px;
 }
 
+#sff-macro-summary.sff-macro-summary-card {
+    background: #f5fdf0;
+    border: 1px solid #d9f2c0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+    color: #023441;
+}
+
+.sff-macro-summary-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.sff-macro-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px 14px;
+}
+
+.sff-macro-summary-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+}
+
+.sff-macro-summary-label {
+    color: #475467;
+}
+
+.sff-macro-summary-value {
+    font-weight: 600;
+    color: #101828;
+}
+
+#sff-recipe-macro-summary {
+    background: #f9fafb;
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.sff-recipe-macro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 8px 12px;
+}
+
+.sff-recipe-macro-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+}
+
+.sff-recipe-macro-label {
+    color: #475467;
+}
+
+.sff-recipe-macro-value {
+    font-weight: 600;
+    color: #101828;
+}
+
 @media (max-width: 768px) {
     .dashboard-header {
         flex-direction: column;
