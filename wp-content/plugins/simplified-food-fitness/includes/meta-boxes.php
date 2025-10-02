@@ -203,6 +203,11 @@ function sff_render_meal_plan_meta_box($post) {
             <p><?php esc_html_e('Fat:'); ?> <span id="sff-total-fat">0</span></p>
             <p><?php esc_html_e('Cost: $'); ?><span id="sff-total-cost">0</span></p>
 
+            <div id="sff-recipe-macro-summary" style="display:none; margin-top:12px;">
+                <h5 style="margin:0 0 8px; font-size:15px; color:#023441;">Full Nutrition Totals</h5>
+                <div class="sff-recipe-macro-grid"></div>
+            </div>
+
             <button type="button" id="sff-save-recipe" class="button button-primary">
                 <?php esc_html_e('Save Recipe'); ?>
             </button>

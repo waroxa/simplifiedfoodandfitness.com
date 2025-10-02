@@ -27,7 +27,8 @@ function sff_enqueue_assets() {
     // ✅ Localize AJAX object
     wp_localize_script('sff-scripts', 'sff_ajax_obj', [
         'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce'    => wp_create_nonce('sff_scan_nonce')
+        'nonce'    => wp_create_nonce('sff_scan_nonce'),
+        'macro_fields' => SFF_MACRO_FIELDS,
     ]);
 
     // Dashboard interactions

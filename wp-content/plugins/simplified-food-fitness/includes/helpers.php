@@ -332,6 +332,11 @@ function sff_render_ingredient_form($post_id = null) {
                     <img src="<?php echo esc_url($nutrition_label_image); ?>" alt="Nutrition Label Image" style="width:100px; height:auto; border-radius:8px; margin-bottom:10px;">
                 <?php endif; ?>
 
+                <div id="sff-macro-summary" class="sff-macro-summary-card" style="display:none;">
+                    <div class="sff-macro-summary-title">Nutrition Summary</div>
+                    <div class="sff-macro-summary-grid"></div>
+                </div>
+
                 <input type="hidden" name="sff_fdc_id" id="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>">
 
                 <?php
@@ -384,7 +389,6 @@ function sff_render_ingredient_form($post_id = null) {
                     </div>
                 </fieldset>
 
-                <div id="usda-macro-display" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:14px; color:#333;"></div>
                 <div id="usda-full-response" class="usda-response-box" style="display:none;">
                     <p class="usda-response-message">USDA API response will appear here after you select a food.</p>
                 </div>
