@@ -211,6 +211,22 @@
     background: #E9FAB0;
 }
 
+#usda-full-response {
+    display: none;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    background: #fafafa;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+    max-height: 280px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
 .sff-option {
     margin-bottom: 20px;
 }

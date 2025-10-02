@@ -583,12 +583,47 @@ function sff_usda_macros() {
     if (!$fdc_id) {
         wp_send_json_error('Missing FDC ID');
     }
-    $macros = sff_fetch_usda_macros($fdc_id);
-    $macros = array_intersect_key($macros, array_flip(SFF_MACRO_FIELDS));
-    if (!$macros) {
-        wp_send_json_error('Not found');
+    $raw_food = null;
+    $debug = null;
+    $macros = sff_fetch_usda_macros($fdc_id, $raw_food, $debug);
+    $macros = $macros ? array_intersect_key($macros, array_flip(SFF_MACRO_FIELDS)) : [];
+
+    if (isset($debug['headers']) && is_object($debug['headers']) && method_exists($debug['headers'], 'getAll')) {
+        $debug['headers'] = $debug['headers']->getAll();
     }
-    wp_send_json_success($macros);
+
+    if (!empty($debug['error'])) {
+        $error_message = 'USDA request failed: ' . $debug['error'];
+        wp_send_json_error([
+            'message' => $error_message,
+            'debug'   => $debug,
+            'raw'     => $raw_food,
+        ]);
+    }
+
+    if ($raw_food === null && empty($debug['body'])) {
+        wp_send_json_error([
+            'message' => 'Unable to retrieve USDA data for the selected item.',
+            'debug'   => $debug,
+        ]);
+    }
+
+    $response = [
+        'macros' => $macros,
+        'raw'    => $raw_food,
+        'http'   => $debug,
+    ];
+
+    if (!empty($debug['json_error'])) {
+        $response['notice'] = 'USDA returned data that could not be parsed as JSON: ' . $debug['json_error'] . '. The raw body is shown below.';
+    } else {
+        $sum = array_sum(array_map('floatval', $macros));
+        if ($sum <= 0) {
+            $response['notice'] = 'No macro values were returned by USDA for this item. Please review the raw response below.';
+        }
+    }
+
+    wp_send_json_success($response);
 }
 add_action('wp_ajax_sff_usda_macros', 'sff_usda_macros');
 

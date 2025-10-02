@@ -1,20 +1,104 @@
 jQuery(document).ready(function($) {
     function sffShowMacroPreview(map) {
-        var html = '<strong>Fetched Macros:</strong><ul>';
+        map = map || {};
+
+        var listItems = '';
+        var hasValues = false;
+
         $.each(map, function(k, v) {
             if ($('[name="sff_macros[' + k + ']"]').length) {
-                html += '<li>' + k.replace(/_/g, ' ') + ': ' + v + '</li>';
+                var numeric = parseFloat(v);
+                if (!isNaN(numeric)) {
+                    hasValues = true;
+                    listItems += '<li>' + k.replace(/_/g, ' ') + ': ' + numeric + '</li>';
+                }
             }
         });
-        html += '</ul>';
+
+        var html = '<strong>Fetched Macros:</strong>';
+        if (hasValues) {
+            html += '<ul>' + listItems + '</ul>';
+        } else {
+            html += '<p>No macro data returned from USDA.</p>';
+        }
+
         $('#usda-macro-display').html(html);
     }
 
     function sffPopulateMacros(map) {
+        map = map || {};
         $.each(map, function(k, v) {
             $('[name="sff_macros[' + k + ']"]').val(v);
         });
         sffShowMacroPreview(map);
+    }
+
+    function sffRenderUsdaRaw(raw, message, meta) {
+        var $rawBox = $('#usda-full-response');
+        if (!$rawBox.length) {
+            return;
+        }
+
+        var sections = [];
+
+        if (message) {
+            sections.push(message);
+        }
+
+        if (meta) {
+            var metaCopy = $.extend(true, {}, meta);
+
+            if (metaCopy.body) {
+                if (!raw) {
+                    raw = metaCopy.body;
+                }
+                delete metaCopy.body;
+            }
+
+            ['url', 'status', 'error', 'json_error', 'fdc_id'].forEach(function(key) {
+                if (metaCopy[key]) {
+                    sections.push((key.replace(/_/g, ' ').toUpperCase()) + ': ' + metaCopy[key]);
+                    delete metaCopy[key];
+                }
+            });
+
+            if (metaCopy.headers) {
+                try {
+                    sections.push('HEADERS:\n' + JSON.stringify(metaCopy.headers, null, 2));
+                } catch (err) {
+                    sections.push('HEADERS: ' + String(metaCopy.headers));
+                }
+                delete metaCopy.headers;
+            }
+
+            // Include any remaining meta keys for completeness.
+            var leftoverKeys = Object.keys(metaCopy).filter(function(k) { return metaCopy[k]; });
+            if (leftoverKeys.length) {
+                try {
+                    sections.push('META:\n' + JSON.stringify(metaCopy, null, 2));
+                } catch (err) {
+                    sections.push('META: ' + String(metaCopy));
+                }
+            }
+        }
+
+        if (raw) {
+            if (typeof raw === 'string') {
+                sections.push(raw);
+            } else {
+                try {
+                    sections.push(JSON.stringify(raw, null, 2));
+                } catch (err) {
+                    sections.push('Unable to format USDA response: ' + err.message);
+                }
+            }
+        }
+
+        if (!sections.length) {
+            sections.push('No USDA response data available.');
+        }
+
+        $rawBox.text(sections.join('\n\n')).show();
     }
 
 
@@ -50,14 +134,26 @@ jQuery(document).ready(function($) {
         }
 
         if (fdc) {
+            sffRenderUsdaRaw(null, 'Loading USDA data...', null);
             $.post(
                 sff_ajax_obj.ajax_url,
                 { action: 'sff_usda_macros', security: sff_ajax_obj.nonce, fdc_id: fdc },
                 function(res) {
+                    console.log('USDA macros response (step transition)', res);
                     if (res.success) {
-                        sffPopulateMacros(res.data);
+                        var macros = res.data && res.data.macros ? res.data.macros : {};
+                        sffPopulateMacros(macros);
                         $('#sff_macro_source').val('usda');
                         $('#macro_source_text').text('USDA');
+                        var notice = res.data && res.data.notice ? res.data.notice : '';
+                        var message = notice ? notice : '';
+                        sffRenderUsdaRaw(res.data ? res.data.raw : null, message, res.data ? res.data.http : null);
+                    } else {
+                        var errorMessage = res.data && res.data.message ? res.data.message : 'Unable to fetch USDA data.';
+                        sffPopulateMacros({});
+                        var debugMeta = res.data && res.data.debug ? res.data.debug : null;
+                        var rawPayload = res.data && res.data.raw ? res.data.raw : null;
+                        sffRenderUsdaRaw(rawPayload, errorMessage, debugMeta);
                     }
                 }
             );
@@ -516,11 +612,22 @@ jQuery(document).ready(function($) {
     $('[name="sff_brand_name"]').val($(this).text());
     $('[name="sff_fdc_id"]').val(fdc);
     $('#usda-suggestions').hide().empty();
+    sffRenderUsdaRaw(null, 'Loading USDA data...', null);
     $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
+      console.log('USDA macros response (suggestion click)', res);
       if(res.success){
-        sffPopulateMacros(res.data);
+        var macros = res.data && res.data.macros ? res.data.macros : {};
+        sffPopulateMacros(macros);
         $('#sff_macro_source').val('usda');
         $('#macro_source_text').text('USDA');
+        var notice = res.data && res.data.notice ? res.data.notice : '';
+        sffRenderUsdaRaw(res.data ? res.data.raw : null, notice, res.data ? res.data.http : null);
+      } else {
+        var errorMessage = res.data && res.data.message ? res.data.message : 'Unable to fetch USDA data.';
+        sffPopulateMacros({});
+        var debugMeta = res.data && res.data.debug ? res.data.debug : null;
+        var rawPayload = res.data && res.data.raw ? res.data.raw : null;
+        sffRenderUsdaRaw(rawPayload, errorMessage, debugMeta);
       }
     });
   });
