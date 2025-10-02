@@ -583,12 +583,24 @@ function sff_usda_macros() {
     if (!$fdc_id) {
         wp_send_json_error('Missing FDC ID');
     }
-    $macros = sff_fetch_usda_macros($fdc_id);
-    $macros = array_intersect_key($macros, array_flip(SFF_MACRO_FIELDS));
-    if (!$macros) {
-        wp_send_json_error('Not found');
+    $raw_food = null;
+    $macros = sff_fetch_usda_macros($fdc_id, $raw_food);
+    $macros = $macros ? array_intersect_key($macros, array_flip(SFF_MACRO_FIELDS)) : [];
+
+    if (empty($raw_food)) {
+        wp_send_json_error(['message' => 'Unable to retrieve USDA data for the selected item.']);
     }
-    wp_send_json_success($macros);
+
+    $response = [
+        'macros' => $macros,
+        'raw'    => $raw_food,
+    ];
+
+    if (empty($macros)) {
+        $response['notice'] = 'No macro values were returned by USDA for this item. Please review the raw response below.';
+    }
+
+    wp_send_json_success($response);
 }
 add_action('wp_ajax_sff_usda_macros', 'sff_usda_macros');
 
