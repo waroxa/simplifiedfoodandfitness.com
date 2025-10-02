@@ -123,8 +123,21 @@ function sff_fetch_usda_macros($fdc_id, &$raw_data = null) {
         ];
 
         foreach ($label_map as $label_key => $macro_key) {
-            if (isset($raw_data['labelNutrients'][$label_key]['value'])) {
-                $macros[$macro_key] = floatval($raw_data['labelNutrients'][$label_key]['value']);
+            if (!isset($raw_data['labelNutrients'][$label_key]) || !is_array($raw_data['labelNutrients'][$label_key])) {
+                continue;
+            }
+
+            $entry = $raw_data['labelNutrients'][$label_key];
+            $value = null;
+
+            if (isset($entry['value'])) {
+                $value = $entry['value'];
+            } elseif (isset($entry['amount'])) {
+                $value = $entry['amount'];
+            }
+
+            if ($value !== null && $value !== '') {
+                $macros[$macro_key] = floatval($value);
             }
         }
     }
@@ -192,7 +205,14 @@ function sff_fetch_usda_macros($fdc_id, &$raw_data = null) {
         ];
 
         foreach ($raw_data['foodNutrients'] as $nutrient) {
-            $value = isset($nutrient['value']) ? floatval($nutrient['value']) : null;
+            $value = null;
+
+            if (isset($nutrient['value'])) {
+                $value = floatval($nutrient['value']);
+            } elseif (isset($nutrient['amount'])) {
+                $value = floatval($nutrient['amount']);
+            }
+
             if ($value === null) {
                 continue;
             }
