@@ -33,23 +33,228 @@ jQuery(document).ready(function($) {
         sffShowMacroPreview(map);
     }
 
+    function sffEscapeHtml(value) {
+        if (value === undefined || value === null) {
+            return '';
+        }
+        return String(value).replace(/[&<>"']/g, function(match) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[match];
+        });
+    }
+
+    function sffHasValue(value) {
+        return value !== undefined && value !== null && value !== '';
+    }
+
+    function sffMetaRow(label, value) {
+        if (!sffHasValue(value)) {
+            return '';
+        }
+        return '<div><strong>' + sffEscapeHtml(label) + ':</strong> <span>' + sffEscapeHtml(value) + '</span></div>';
+    }
+
+    function sffFindAttribute(attributes, attributeName) {
+        if (!Array.isArray(attributes) || !attributeName) {
+            return '';
+        }
+
+        var match = '';
+        $.each(attributes, function(_, attribute) {
+            if (match) {
+                return false;
+            }
+            if (attribute && attribute.name === attributeName && sffHasValue(attribute.value)) {
+                match = attribute.value;
+            }
+        });
+        return match;
+    }
+
+    function sffBuildNutrientSection(items) {
+        if (!Array.isArray(items) || !items.length) {
+            return '';
+        }
+
+        var rows = '';
+        var displayed = 0;
+        var total = 0;
+
+        $.each(items, function(_, nutrientItem) {
+            if (!nutrientItem || !nutrientItem.nutrient) {
+                return;
+            }
+
+            if (!sffHasValue(nutrientItem.amount)) {
+                return;
+            }
+
+            total++;
+            if (displayed >= 20) {
+                return;
+            }
+
+            var nutrient = nutrientItem.nutrient;
+            var name = nutrient.name || nutrient.number || 'Nutrient';
+            var amount = nutrientItem.amount;
+            var unit = nutrient.unitName || '';
+
+            rows += '<tr>' +
+                '<td>' + sffEscapeHtml(name) + '</td>' +
+                '<td>' + sffEscapeHtml(amount) + '</td>' +
+                '<td>' + sffEscapeHtml(unit) + '</td>' +
+            '</tr>';
+            displayed++;
+        });
+
+        if (!rows) {
+            return '';
+        }
+
+        var title = 'Food Nutrients';
+        if (total > displayed) {
+            title += ' (showing ' + displayed + ' of ' + total + ')';
+        }
+
+        var html = '<details class="usda-response-section" open>' +
+            '<summary>' + sffEscapeHtml(title) + '</summary>' +
+            '<table class="usda-response-table">' +
+                '<thead><tr><th>Nutrient</th><th>Amount</th><th>Unit</th></tr></thead>' +
+                '<tbody>' + rows + '</tbody>' +
+            '</table>';
+
+        if (total > displayed) {
+            html += '<p class="usda-response-note">Additional nutrients available in the full USDA record.</p>';
+        }
+
+        html += '</details>';
+        return html;
+    }
+
+    function sffBuildPortionSection(portions) {
+        if (!Array.isArray(portions) || !portions.length) {
+            return '';
+        }
+
+        var rows = '';
+        $.each(portions, function(_, portion) {
+            if (!portion) {
+                return;
+            }
+            var amountDisplay = sffHasValue(portion.amount) ? portion.amount : '—';
+            var modifier = portion.modifier || (portion.measureUnit && portion.measureUnit.name) || '—';
+            var gramDisplay = sffHasValue(portion.gramWeight) ? portion.gramWeight : '—';
+
+            rows += '<tr>' +
+                '<td>' + sffEscapeHtml(amountDisplay) + '</td>' +
+                '<td>' + sffEscapeHtml(modifier) + '</td>' +
+                '<td>' + sffEscapeHtml(gramDisplay) + '</td>' +
+            '</tr>';
+        });
+
+        if (!rows) {
+            return '';
+        }
+
+        return '<details class="usda-response-section" open>' +
+            '<summary>Portion Examples</summary>' +
+            '<table class="usda-response-table">' +
+                '<thead><tr><th>Amount</th><th>Measure</th><th>Grams</th></tr></thead>' +
+                '<tbody>' + rows + '</tbody>' +
+            '</table>' +
+        '</details>';
+    }
+
+    function sffBuildAttributeSection(attributes) {
+        if (!Array.isArray(attributes) || !attributes.length) {
+            return '';
+        }
+
+        var items = '';
+        $.each(attributes, function(_, attribute) {
+            if (!attribute || !attribute.name) {
+                return;
+            }
+
+            var value = sffHasValue(attribute.value) ? attribute.value : '—';
+            items += '<li><strong>' + sffEscapeHtml(attribute.name) + ':</strong> ' + sffEscapeHtml(value) + '</li>';
+        });
+
+        if (!items) {
+            return '';
+        }
+
+        return '<details class="usda-response-section">' +
+            '<summary>Additional Attributes</summary>' +
+            '<ul class="usda-response-list">' + items + '</ul>' +
+        '</details>';
+    }
+
     function sffRenderUsdaRaw(raw, message) {
         var $rawBox = $('#usda-full-response');
         if (!$rawBox.length) {
             return;
         }
 
-        if (raw) {
-            try {
-                $rawBox.text(JSON.stringify(raw, null, 2));
-            } catch (err) {
-                $rawBox.text('Unable to format USDA response: ' + err.message);
+        if (raw && typeof raw === 'object') {
+            var headerTitle = raw.description || 'USDA Food Item';
+            var headerHtml = '<div class="usda-response-header">' +
+                '<h4 class="usda-response-title">' + sffEscapeHtml(headerTitle) + '</h4>';
+
+            if (sffHasValue(raw.fdcId)) {
+                headerHtml += '<span class="usda-response-badge">FDC ' + sffEscapeHtml(raw.fdcId) + '</span>';
             }
-            $rawBox.show();
+
+            if (sffHasValue(raw.dataType)) {
+                headerHtml += '<span class="usda-response-badge">' + sffEscapeHtml(raw.dataType) + '</span>';
+            }
+
+            headerHtml += '</div>';
+
+            var metaHtml = '';
+            metaHtml += sffMetaRow('Publication Date', raw.publicationDate);
+            metaHtml += sffMetaRow('Category', raw.foodCategory && raw.foodCategory.description);
+            metaHtml += sffMetaRow('Food Class', raw.foodClass);
+            metaHtml += sffMetaRow('Scientific Name', sffFindAttribute(raw.foodAttributes, 'Scientific Name'));
+            if (Array.isArray(raw.foodPortions) && raw.foodPortions.length) {
+                metaHtml += sffMetaRow('Portion Options', raw.foodPortions.length);
+            }
+
+            var sections = '';
+            sections += sffBuildNutrientSection(raw.foodNutrients);
+            sections += sffBuildPortionSection(raw.foodPortions);
+            sections += sffBuildAttributeSection(raw.foodAttributes);
+
+            var jsonHtml = '';
+            try {
+                jsonHtml = '<details class="usda-response-section">' +
+                    '<summary>Full USDA JSON</summary>' +
+                    '<pre class="usda-response-json">' + sffEscapeHtml(JSON.stringify(raw, null, 2)) + '</pre>' +
+                '</details>';
+            } catch (err) {
+                jsonHtml = '<p class="usda-response-message">Unable to format USDA response: ' + sffEscapeHtml(err.message) + '</p>';
+            }
+
+            var html = headerHtml;
+            if (metaHtml) {
+                html += '<div class="usda-response-meta">' + metaHtml + '</div>';
+            }
+            if (message) {
+                html += '<p class="usda-response-note">' + sffEscapeHtml(message) + '</p>';
+            }
+            html += sections;
+            html += jsonHtml;
+
+            $rawBox.html(html).show();
         } else if (message) {
-            $rawBox.text(message).show();
+            $rawBox.html('<p class="usda-response-message">' + sffEscapeHtml(message) + '</p>').show();
         } else {
-            $rawBox.text('No USDA response data available.').show();
+            $rawBox.html('<p class="usda-response-message">No USDA response data available.</p>').show();
         }
     }
 
