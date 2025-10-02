@@ -62,27 +62,48 @@ function sff_generate_meal_cards($meal_plan) {
     return $output;
 }
 
-function sff_fetch_usda_macros($fdc_id) {
+function sff_fetch_usda_macros($fdc_id, &$raw_data = null) {
+    $raw_data = null;
     $api_key = defined('SFF_USDA_API_KEY') ? SFF_USDA_API_KEY : '';
     if (empty($api_key) || empty($fdc_id)) {
         return [];
     }
 
-    $url = 'https://api.nal.usda.gov/fdc/v1/food/' . intval($fdc_id) . '?api_key=' . urlencode($api_key);
-    $response = wp_remote_get($url, ['timeout' => 15]);
+    $endpoint = 'https://api.nal.usda.gov/fdc/v1/food/' . intval($fdc_id);
+    $url = add_query_arg(
+        [
+            'api_key' => $api_key,
+            'format'  => 'full',
+        ],
+        $endpoint
+    );
+
+    $response = wp_remote_get($url, [
+        'timeout' => 20,
+        'headers' => [
+            'Accept' => 'application/json',
+        ],
+    ]);
+
     if (is_wp_error($response)) {
         return [];
     }
 
-    $data = json_decode(wp_remote_retrieve_body($response), true);
-    if (empty($data) || !is_array($data)) {
+    $body = wp_remote_retrieve_body($response);
+    if (empty($body)) {
+        return [];
+    }
+
+    $raw_data = json_decode($body, true);
+    if (empty($raw_data) || !is_array($raw_data)) {
+        $raw_data = null;
         return [];
     }
 
     $macros = array_fill_keys(SFF_MACRO_FIELDS, 0);
 
     // Parse "labelNutrients" block first (available for many branded foods).
-    if (!empty($data['labelNutrients']) && is_array($data['labelNutrients'])) {
+    if (!empty($raw_data['labelNutrients']) && is_array($raw_data['labelNutrients'])) {
         $label_map = [
             'calories'      => 'calories',
             'carbohydrates' => 'carbs',
@@ -102,14 +123,14 @@ function sff_fetch_usda_macros($fdc_id) {
         ];
 
         foreach ($label_map as $label_key => $macro_key) {
-            if (isset($data['labelNutrients'][$label_key]['value'])) {
-                $macros[$macro_key] = floatval($data['labelNutrients'][$label_key]['value']);
+            if (isset($raw_data['labelNutrients'][$label_key]['value'])) {
+                $macros[$macro_key] = floatval($raw_data['labelNutrients'][$label_key]['value']);
             }
         }
     }
 
     // Additional nutrients may live in the broader foodNutrients array.
-    if (!empty($data['foodNutrients']) && is_array($data['foodNutrients'])) {
+    if (!empty($raw_data['foodNutrients']) && is_array($raw_data['foodNutrients'])) {
         $number_map = [
             '208' => 'calories',
             '205' => 'carbs',
@@ -170,7 +191,7 @@ function sff_fetch_usda_macros($fdc_id) {
             'Thiamin' => 'thiamin',
         ];
 
-        foreach ($data['foodNutrients'] as $nutrient) {
+        foreach ($raw_data['foodNutrients'] as $nutrient) {
             $value = isset($nutrient['value']) ? floatval($nutrient['value']) : null;
             if ($value === null) {
                 continue;
@@ -344,6 +365,7 @@ function sff_render_ingredient_form($post_id = null) {
                 </fieldset>
 
                 <div id="usda-macro-display" style="margin-top:10px; padding:10px; background:#f8f8f8; border-radius:8px; font-size:14px; color:#333;"></div>
+                <pre id="usda-full-response" style="display:none; margin-top:10px; padding:12px; background:#fafafa; border:1px solid #d9d9d9; border-radius:8px; font-size:12px; color:#333; max-height:280px; overflow:auto; white-space:pre-wrap; word-break:break-word;">USDA API response will appear here after you select a food.</pre>
 
                 <label style="font-size:14px; color:#777;">SKU:</label>
                 <input type="text" name="sff_sku" value="<?php echo esc_attr($sku); ?>" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
