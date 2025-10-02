@@ -75,45 +75,125 @@ function sff_fetch_usda_macros($fdc_id) {
     }
 
     $data = json_decode(wp_remote_retrieve_body($response), true);
-    if (empty($data['foodNutrients'])) {
+    if (empty($data) || !is_array($data)) {
         return [];
     }
 
-    $map = [
-        'Energy' => 'calories',
-        'Carbohydrate, by difference' => 'carbs',
-        'Protein' => 'protein',
-        'Total lipid (fat)' => 'fat',
-        'Fatty acids, total saturated' => 'saturated_fat',
-        'Fatty acids, total trans' => 'trans_fat',
-        'Cholesterol' => 'cholesterol',
-        'Sodium, Na' => 'sodium',
-        'Fiber, total dietary' => 'fiber',
-        'Sugars, total including NLEA' => 'sugars',
-        'Sugars, added' => 'added_sugars',
-        'Vitamin D (D2 + D3)' => 'vitamin_d',
-        'Calcium, Ca' => 'calcium',
-        'Iron, Fe' => 'iron',
-        'Potassium, K' => 'potassium',
-        'Magnesium, Mg' => 'magnesium',
-        'Vitamin A, RAE' => 'vitamin_a',
-        'Vitamin C, total ascorbic acid' => 'vitamin_c',
-        'Vitamin E (alpha-tocopherol)' => 'vitamin_e',
-        'Zinc, Zn' => 'zinc',
-        'Folate, total' => 'folate',
-        'Riboflavin' => 'riboflavin',
-        'Niacin' => 'niacin',
-        'Vitamin B-6' => 'vitamin_b6',
-        'Vitamin B-12' => 'vitamin_b12',
-        'Thiamin' => 'thiamin',
-    ];
+    $macros = array_fill_keys(SFF_MACRO_FIELDS, 0);
 
-    $macros = array_fill_keys(array_values($map), 0);
-    foreach ($data['foodNutrients'] as $nutrient) {
-        $name  = $nutrient['nutrientName'] ?? '';
-        if (isset($map[$name])) {
-            $macros[$map[$name]] = isset($nutrient['value']) ? floatval($nutrient['value']) : 0;
+    // Parse "labelNutrients" block first (available for many branded foods).
+    if (!empty($data['labelNutrients']) && is_array($data['labelNutrients'])) {
+        $label_map = [
+            'calories'      => 'calories',
+            'carbohydrates' => 'carbs',
+            'protein'       => 'protein',
+            'fat'           => 'fat',
+            'saturatedFat'  => 'saturated_fat',
+            'transFat'      => 'trans_fat',
+            'cholesterol'   => 'cholesterol',
+            'sodium'        => 'sodium',
+            'fiber'         => 'fiber',
+            'sugars'        => 'sugars',
+            'addedSugars'   => 'added_sugars',
+            'vitaminD'      => 'vitamin_d',
+            'calcium'       => 'calcium',
+            'iron'          => 'iron',
+            'potassium'     => 'potassium',
+        ];
+
+        foreach ($label_map as $label_key => $macro_key) {
+            if (isset($data['labelNutrients'][$label_key]['value'])) {
+                $macros[$macro_key] = floatval($data['labelNutrients'][$label_key]['value']);
+            }
         }
+    }
+
+    // Additional nutrients may live in the broader foodNutrients array.
+    if (!empty($data['foodNutrients']) && is_array($data['foodNutrients'])) {
+        $number_map = [
+            '208' => 'calories',
+            '205' => 'carbs',
+            '203' => 'protein',
+            '204' => 'fat',
+            '606' => 'saturated_fat',
+            '605' => 'trans_fat',
+            '601' => 'cholesterol',
+            '307' => 'sodium',
+            '291' => 'fiber',
+            '269' => 'sugars',
+            '539' => 'added_sugars',
+            '328' => 'vitamin_d',
+            '301' => 'calcium',
+            '303' => 'iron',
+            '306' => 'potassium',
+            '304' => 'magnesium',
+            '320' => 'vitamin_a',
+            '401' => 'vitamin_c',
+            '323' => 'vitamin_e',
+            '309' => 'zinc',
+            '417' => 'folate',
+            '405' => 'riboflavin',
+            '406' => 'niacin',
+            '415' => 'vitamin_b6',
+            '418' => 'vitamin_b12',
+            '404' => 'thiamin',
+        ];
+
+        $name_map = [
+            'Energy' => 'calories',
+            'Carbohydrate, by difference' => 'carbs',
+            'Protein' => 'protein',
+            'Total lipid (fat)' => 'fat',
+            'Fatty acids, total saturated' => 'saturated_fat',
+            'Fatty acids, total trans' => 'trans_fat',
+            'Cholesterol' => 'cholesterol',
+            'Sodium, Na' => 'sodium',
+            'Fiber, total dietary' => 'fiber',
+            'Sugars, total including NLEA' => 'sugars',
+            'Sugars, total' => 'sugars',
+            'Sugars, added' => 'added_sugars',
+            'Vitamin D' => 'vitamin_d',
+            'Vitamin D (D2 + D3)' => 'vitamin_d',
+            'Calcium, Ca' => 'calcium',
+            'Iron, Fe' => 'iron',
+            'Potassium, K' => 'potassium',
+            'Magnesium, Mg' => 'magnesium',
+            'Vitamin A, RAE' => 'vitamin_a',
+            'Vitamin C, total ascorbic acid' => 'vitamin_c',
+            'Vitamin E (alpha-tocopherol)' => 'vitamin_e',
+            'Zinc, Zn' => 'zinc',
+            'Folate, total' => 'folate',
+            'Riboflavin' => 'riboflavin',
+            'Niacin' => 'niacin',
+            'Vitamin B-6' => 'vitamin_b6',
+            'Vitamin B-12' => 'vitamin_b12',
+            'Thiamin' => 'thiamin',
+        ];
+
+        foreach ($data['foodNutrients'] as $nutrient) {
+            $value = isset($nutrient['value']) ? floatval($nutrient['value']) : null;
+            if ($value === null) {
+                continue;
+            }
+
+            $number = isset($nutrient['nutrientNumber']) ? (string) $nutrient['nutrientNumber'] : '';
+            if ($number && isset($number_map[$number])) {
+                $macros[$number_map[$number]] = $value;
+                continue;
+            }
+
+            $name = $nutrient['nutrientName'] ?? '';
+            if ($name && isset($name_map[$name])) {
+                $macros[$name_map[$name]] = $value;
+            }
+        }
+    }
+
+    // If every entry is still zero, treat the response as empty.
+    if (!array_filter($macros, static function ($val) {
+        return floatval($val) !== 0.0;
+    })) {
+        return [];
     }
 
     return $macros;
