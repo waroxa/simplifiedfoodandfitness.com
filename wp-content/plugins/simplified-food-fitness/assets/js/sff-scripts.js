@@ -876,16 +876,31 @@ jQuery(document).ready(function($) {
     }
     var $list = $('<ul/>');
     items.forEach(function(item, index) {
-      var label = item.brand_name || item.title || '';
-      var badge = item.owner_badge || (item.is_personal ? 'My Ingredient' : 'General Database');
-      var badgeClass = item.owner_badge_class || (item.is_personal ? 'personal' : 'general');
+      var label = item.brand_name || item.title || item.description || '';
+      var isUsda = item.source && item.source.toLowerCase() === 'usda';
+      var badge = item.owner_badge || (isUsda ? 'USDA' : (item.is_personal ? 'My Ingredient' : 'General Database'));
+      var badgeClass = item.owner_badge_class || (isUsda ? 'usda' : (item.is_personal ? 'personal' : 'general'));
+      var metaText = item.meta_text || '';
+      if (!metaText && item.serving_size) {
+        metaText = item.serving_size;
+      }
+      if (!metaText && isUsda) {
+        var parts = [];
+        if (item.dataType) {
+          parts.push(item.dataType);
+        }
+        if (item.foodCategory) {
+          parts.push(item.foodCategory);
+        }
+        metaText = parts.join(' • ');
+      }
       var $li = $('<li/>')
         .attr('data-index', index)
         .addClass('sff-ingredient-suggestion')
         .append('<span class="sff-suggestion-name">' + sffEscapeHtml(label) + '</span>' +
                 '<span class="sff-suggestion-badge sff-badge-' + sffEscapeHtml(badgeClass) + '">' + sffEscapeHtml(badge) + '</span>');
-      if (item.serving_size) {
-        $li.append('<span class="sff-suggestion-meta">' + sffEscapeHtml(item.serving_size) + '</span>');
+      if (metaText) {
+        $li.append('<span class="sff-suggestion-meta">' + sffEscapeHtml(metaText) + '</span>');
       }
       $li.data('item', item);
       $list.append($li);
@@ -986,12 +1001,34 @@ jQuery(document).ready(function($) {
       return;
     }
 
+    var suggestionLabel = item.brand_name || item.title || item.description || '';
     sffSettingProductName = true;
-    $ingredientNameField.val(item.brand_name || item.title || '');
+    $ingredientNameField.val(suggestionLabel);
     sffSettingProductName = false;
 
     $('#sff-ingredient-suggestions').hide().empty();
     sffSuggestionIndex = -1;
+
+    var isUsda = item.source && item.source.toLowerCase() === 'usda';
+
+    if (isUsda) {
+      $('#sff_source_ingredient').val('');
+      $('#sff_selected_owner').val('');
+      if (item.fdc_id) {
+        $('#sff_fdc_id').val(item.fdc_id);
+      } else {
+        $('#sff_fdc_id').val('');
+      }
+      if (item.serving_size) {
+        $('#sff_serving_size').val(item.serving_size);
+      }
+      $('#sff_macro_source').val('usda');
+      $('#macro_source_text').text('USDA');
+      sffPopulateMacros({}, 'usda');
+      $('#sff-ingredient-selection-note').text('Loaded from USDA search results. Continue to Step 2 to pull nutrition details.').show();
+      $('#usda-full-response').hide().empty();
+      return;
+    }
 
     $('#sff_source_ingredient').val(item.id || '');
     $('#sff_selected_owner').val(item.owner_type || '');
