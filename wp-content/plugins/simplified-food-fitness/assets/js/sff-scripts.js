@@ -24,8 +24,26 @@ jQuery(document).ready(function($) {
         return values;
     }
 
+    function sffNormalizeMacroSource(source) {
+        if (!source || typeof source !== 'string') {
+            return source || '';
+        }
+        var normalized = source.toLowerCase();
+        if (normalized.indexOf('personal') !== -1) {
+            return 'personal';
+        }
+        if (normalized.indexOf('general') !== -1) {
+            return 'general';
+        }
+        if (normalized.indexOf('database') !== -1) {
+            return 'database';
+        }
+        return source;
+    }
+
     function sffShowMacroSummary(map, source) {
         map = map || {};
+        source = sffNormalizeMacroSource(source);
         var $summary = $('#sff-macro-summary');
         if (!$summary.length) {
             return;
@@ -68,6 +86,12 @@ jQuery(document).ready(function($) {
             title = 'Values from USDA';
         } else if (source === 'manual') {
             title = 'Values from Manual Entry';
+        } else if (source === 'personal') {
+            title = 'Values from My Ingredients';
+        } else if (source === 'general') {
+            title = 'Values from General Database';
+        } else if (source === 'database') {
+            title = 'Values from Ingredient Database';
         }
 
         var html = '<div class="sff-macro-summary-title">' + title + '</div>' +
@@ -331,27 +355,29 @@ jQuery(document).ready(function($) {
         var hasImage = $('#front_image_attachment_id').val() ||
             ($('#sff_front_image_upload')[0] && $('#sff_front_image_upload')[0].files.length > 0);
 
-        if (!hasImage) {
+        if (sffForceLabelScan) {
+            $('#sff_scan_fields').show();
+        } else if (!hasImage) {
             $('#sff_scan_fields').hide();
         } else {
             $('#sff_scan_fields').show();
         }
+        sffForceLabelScan = false;
 
-        // Set the Step 2 category from the USDA filter
         var categorySelect = $('select[name="sff_ingredient_category"]');
-        var usdaCategory = $('#usda-category-filter').val();
-        if (categorySelect.length && usdaCategory) {
-            categorySelect.val(usdaCategory);
-        }
-
         var fdc = $('#sff_fdc_id').val();
-        if (fdc && categorySelect.length) {
-            // Hide/disable category selection when a USDA match is used
+        var macroState = sffNormalizeMacroSource($('#sff_macro_source').val());
+        var shouldFetchUsda = fdc && (!macroState || macroState === 'usda');
+
+        if (shouldFetchUsda && categorySelect.length) {
             categorySelect.prop('disabled', true).hide();
             categorySelect.prev('label').hide();
+        } else if (categorySelect.length) {
+            categorySelect.prop('disabled', false).show();
+            categorySelect.prev('label').show();
         }
 
-        if (fdc) {
+        if (shouldFetchUsda) {
             sffRenderUsdaRaw(null, 'Loading USDA data...');
             $.post(
                 sff_ajax_obj.ajax_url,
@@ -372,10 +398,8 @@ jQuery(document).ready(function($) {
                     }
                 }
             );
-        } else if (categorySelect.length) {
-            // Ensure category dropdown is visible if no USDA match
-            categorySelect.prop('disabled', false).show();
-            categorySelect.prev('label').show();
+        } else {
+            $('#usda-full-response').hide();
         }
     });
 
@@ -822,87 +846,213 @@ jQuery(document).ready(function($) {
   toggleClientDayRequired('[name="client[]busy_days"]');
   toggleClientDayRequired('[name="client[]activity_days"]');
 
-  var usdaIndex = -1;
+  var $ingredientNameField = $('#sff_product_name');
+  if (!$ingredientNameField.length) {
+    $ingredientNameField = $('[name="sff_brand_name"]');
+  }
+  var sffSuggestionIndex = -1;
+  var sffDatabaseTimer = null;
+  var sffLastDatabaseResults = [];
+  var sffSettingProductName = false;
+  var sffForceLabelScan = false;
 
-  $('[name="sff_brand_name"]').on('keydown', function(e){
-    var items = $('#usda-suggestions li');
-    if(!items.length) return;
-    if(e.key === 'ArrowDown'){
-      e.preventDefault();
-      usdaIndex = (usdaIndex + 1) % items.length;
-      items.removeClass('active').eq(usdaIndex).addClass('active');
-    } else if(e.key === 'ArrowUp'){
-      e.preventDefault();
-      usdaIndex = (usdaIndex - 1 + items.length) % items.length;
-      items.removeClass('active').eq(usdaIndex).addClass('active');
-    } else if(e.key === 'Enter' && usdaIndex >= 0){
-      e.preventDefault();
-      items.eq(usdaIndex).trigger('click');
-    }
-  });
-
-  function usdaSearch(){
-    var query = $('[name="sff_brand_name"]').val();
-    var category = $('#usda-category-filter').val();
-    if(query.length < 2){
-      $('#usda-suggestions').hide().empty();
-      usdaIndex = -1;
-      return;
-    }
-    $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_search',security:sff_ajax_obj.nonce,query:query,category:category},function(res){
-      if(res.success){
-        var list = $('<ul/>');
-        $.each(res.data,function(i,item){
-          if(!category || (item.foodCategory && item.foodCategory.toLowerCase().includes(category.toLowerCase())) || (item.dataType && item.dataType.toLowerCase().includes(category.toLowerCase()))){
-            list.append($('<li>').text(item.description).attr('data-fdc',item.fdc_id));
-          }
-        });
-        if(list.children().length){
-          $('#usda-suggestions').html(list).show();
-        } else {
-          $('#usda-suggestions').hide().empty();
-        }
-        usdaIndex = -1;
-      } else {
-        $('#usda-suggestions').hide().empty();
-      }
-    });
+  function sffClearIngredientSelectionMeta() {
+    $('#sff_source_ingredient').val('');
+    $('#sff_selected_owner').val('');
+    $('#sff-ingredient-selection-note').hide().empty();
   }
 
-  $('#usda-search-button').on('click', function(){
-    usdaSearch();
-  });
-  $('[name="sff_brand_name"]').on('keypress', function(e){
-    if(e.key === 'Enter'){
-      e.preventDefault();
-      usdaSearch();
+  function sffRenderIngredientSuggestions(items, query) {
+    var $container = $('#sff-ingredient-suggestions');
+    sffSuggestionIndex = -1;
+    if (!$container.length) {
+      return;
     }
-  });
-  $('#usda-category-filter').off('change').on('change', function(){
-    $('[name="sff_fdc_id"]').val('');
-    usdaSearch();
+    if (!items || !items.length) {
+      var emptyHtml = '<div class="sff-suggestions-empty">No ingredients found in the selected database.</div>';
+      emptyHtml += '<button type="button" class="sff-open-label-scan" data-query="' + sffEscapeHtml(query || '') + '">➕ Scan a label to add to My Ingredients</button>';
+      $container.html(emptyHtml).show();
+      return;
+    }
+    var $list = $('<ul/>');
+    items.forEach(function(item, index) {
+      var label = item.brand_name || item.title || '';
+      var badge = item.owner_badge || (item.is_personal ? 'My Ingredient' : 'General Database');
+      var badgeClass = item.owner_badge_class || (item.is_personal ? 'personal' : 'general');
+      var $li = $('<li/>')
+        .attr('data-index', index)
+        .addClass('sff-ingredient-suggestion')
+        .append('<span class="sff-suggestion-name">' + sffEscapeHtml(label) + '</span>' +
+                '<span class="sff-suggestion-badge sff-badge-' + sffEscapeHtml(badgeClass) + '">' + sffEscapeHtml(badge) + '</span>');
+      if (item.serving_size) {
+        $li.append('<span class="sff-suggestion-meta">' + sffEscapeHtml(item.serving_size) + '</span>');
+      }
+      $li.data('item', item);
+      $list.append($li);
+    });
+    $container.html($list).show();
+  }
+
+  function sffSearchIngredientDatabase() {
+    if (!$ingredientNameField.length) {
+      return;
+    }
+    var query = $ingredientNameField.val();
+    if (!query || query.trim().length < 2) {
+      $('#sff-ingredient-suggestions').hide().empty();
+      return;
+    }
+    var scope = $('#sff-ingredient-scope').val() || 'all';
+    $.post(
+      sff_ajax_obj.ajax_url,
+      {
+        action: 'sff_search_user_ingredients',
+        security: sff_ajax_obj.nonce,
+        query: query,
+        scope: scope
+      },
+      function(res) {
+        if (res && res.success && res.data) {
+          var items = Array.isArray(res.data.items) ? res.data.items : [];
+          sffLastDatabaseResults = items;
+          sffRenderIngredientSuggestions(items, res.data.query || query);
+        } else {
+          sffLastDatabaseResults = [];
+          $('#sff-ingredient-suggestions').hide().empty();
+        }
+      }
+    );
+  }
+
+  $ingredientNameField.on('input', function() {
+    if (sffSettingProductName) {
+      return;
+    }
+    sffClearIngredientSelectionMeta();
+    $('#sff_macro_source').val('manual');
+    $('#macro_source_text').text('Manual');
+    $('#usda-full-response').hide();
+    clearTimeout(sffDatabaseTimer);
+    var value = $ingredientNameField.val();
+    if (!value || value.trim().length < 2) {
+      $('#sff-ingredient-suggestions').hide().empty();
+      return;
+    }
+    sffDatabaseTimer = setTimeout(function() {
+      sffSearchIngredientDatabase();
+    }, 250);
   });
 
-    $('#usda-suggestions').on('click','li',function(){
-    var fdc = $(this).data('fdc');
-    $('[name="sff_brand_name"]').val($(this).text());
-    $('[name="sff_fdc_id"]').val(fdc);
-    $('#usda-suggestions').hide().empty();
-    sffRenderUsdaRaw(null, 'Loading USDA data...');
-    $.post(sff_ajax_obj.ajax_url,{action:'sff_usda_macros',security:sff_ajax_obj.nonce,fdc_id:fdc},function(res){
-      if(res.success){
-        var macros = res.data && res.data.macros ? res.data.macros : {};
-        sffPopulateMacros(macros, 'usda');
-        $('#sff_macro_source').val('usda');
-        $('#macro_source_text').text('USDA');
-        var notice = res.data && res.data.notice ? res.data.notice : '';
-        sffRenderUsdaRaw(res.data ? res.data.raw : null, notice);
-      } else {
-        var errorMessage = res.data && res.data.message ? res.data.message : 'Unable to fetch USDA data.';
-        sffPopulateMacros({}, 'clear');
-        sffRenderUsdaRaw(null, errorMessage);
+  $ingredientNameField.on('keydown', function(e) {
+    var $items = $('#sff-ingredient-suggestions li');
+    if (!$items.length) {
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      sffSuggestionIndex = (sffSuggestionIndex + 1) % $items.length;
+      $items.removeClass('active').eq(sffSuggestionIndex).addClass('active');
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      sffSuggestionIndex = (sffSuggestionIndex - 1 + $items.length) % $items.length;
+      $items.removeClass('active').eq(sffSuggestionIndex).addClass('active');
+    } else if (e.key === 'Enter' && sffSuggestionIndex >= 0) {
+      e.preventDefault();
+      $items.eq(sffSuggestionIndex).trigger('click');
+    } else if (e.key === 'Escape') {
+      $('#sff-ingredient-suggestions').hide().empty();
+      sffSuggestionIndex = -1;
+    }
+  });
+
+  $('#sff-database-search-button').on('click', function() {
+    sffSearchIngredientDatabase();
+  });
+
+  $('#sff-ingredient-scope').on('change', function() {
+    sffSearchIngredientDatabase();
+  });
+
+  $(document).on('click', '.sff-ingredient-suggestion', function() {
+    var $item = $(this);
+    var item = $item.data('item');
+    if (!item) {
+      var idx = parseInt($item.attr('data-index'), 10);
+      if (!isNaN(idx) && sffLastDatabaseResults[idx]) {
+        item = sffLastDatabaseResults[idx];
       }
-    });
+    }
+    if (!item) {
+      return;
+    }
+
+    sffSettingProductName = true;
+    $ingredientNameField.val(item.brand_name || item.title || '');
+    sffSettingProductName = false;
+
+    $('#sff-ingredient-suggestions').hide().empty();
+    sffSuggestionIndex = -1;
+
+    $('#sff_source_ingredient').val(item.id || '');
+    $('#sff_selected_owner').val(item.owner_type || '');
+    var macroText = item.is_personal ? 'My Ingredients' : 'General Database';
+    $('#macro_source_text').text(macroText);
+    $('#sff_macro_source').val(item.is_personal ? 'database_personal' : 'database_general');
+
+    if (item.fdc_id) {
+      $('#sff_fdc_id').val(item.fdc_id);
+    } else {
+      $('#sff_fdc_id').val('');
+    }
+
+    if (item.serving_size) {
+      $('#sff_serving_size').val(item.serving_size);
+    }
+    if (item.servings !== undefined && item.servings !== null && item.servings !== '') {
+      $('#sff_servings').val(item.servings);
+    }
+
+    if (item.category_id) {
+      var $categorySelect = $('select[name="sff_ingredient_category"]');
+      if ($categorySelect.length) {
+        $categorySelect.prop('disabled', false).show();
+        $categorySelect.prev('label').show();
+        $categorySelect.val(item.category_id);
+      }
+    }
+
+    if (item.price !== undefined && item.price !== null && !isNaN(parseFloat(item.price))) {
+      var $priceField = $('[name="sff_price"]');
+      if ($priceField.length) {
+        $priceField.val(parseFloat(item.price));
+      }
+    }
+
+    sffPopulateMacros(item.macros || {}, item.is_personal ? 'personal' : 'general');
+
+    var noteMessage = item.is_personal ? 'Loaded from your personal ingredient library.' : 'Loaded from the shared ingredient database.';
+    $('#sff-ingredient-selection-note').text(noteMessage).show();
+
+    $('#usda-full-response').hide().empty();
+  });
+
+  $(document).on('click', '.sff-open-label-scan', function(e) {
+    e.preventDefault();
+    var query = $(this).data('query');
+    if (query) {
+      sffSettingProductName = true;
+      $ingredientNameField.val(query);
+      sffSettingProductName = false;
+    }
+    sffForceLabelScan = true;
+    $('#sff-ingredient-suggestions').hide().empty();
+    sffSuggestionIndex = -1;
+    $('#sff_source_ingredient').val('');
+    $('#sff_selected_owner').val('');
+    $('#next_step_button').trigger('click');
+    setTimeout(function() {
+      $('#sff_nutrition_label_upload').trigger('focus');
+    }, 250);
   });
 
   $('#sff-wizard-step-2').on('input','[name^="sff_macros"]',function(){
@@ -911,5 +1061,6 @@ jQuery(document).ready(function($) {
     sffShowMacroSummary(sffCollectMacroValues(), 'manual');
   });
 
-  sffShowMacroSummary(sffCollectMacroValues(), $('#sff_macro_source').val() || 'manual');
-  });
+  var initialMacroSource = $('#sff_macro_source').val() || 'manual';
+  sffShowMacroSummary(sffCollectMacroValues(), sffNormalizeMacroSource(initialMacroSource));
+});

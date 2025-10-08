@@ -234,6 +234,147 @@ function sff_scan_product_name() {
 
 add_action('wp_ajax_sff_scan_product_name', 'sff_scan_product_name');
 
+function sff_search_user_ingredients() {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'sff_scan_nonce')) {
+        wp_send_json_error(['message' => 'Nonce verification failed.']);
+    }
+
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => 'You must be logged in to search ingredients.']);
+    }
+
+    $user_id = get_current_user_id();
+    $term = isset($_POST['query']) ? sanitize_text_field(wp_unslash($_POST['query'])) : '';
+    $term = trim($term);
+    $scope = isset($_POST['scope']) ? sanitize_text_field(wp_unslash($_POST['scope'])) : 'all';
+
+    if (strlen($term) < 2) {
+        wp_send_json_success([
+            'items' => [],
+            'query' => $term,
+            'scope' => $scope,
+        ]);
+    }
+
+    $args = [
+        'post_type' => 'ingredient',
+        'post_status' => 'publish',
+        'posts_per_page' => 12,
+        's' => $term,
+        'orderby' => 'title',
+        'order' => 'ASC',
+        'fields' => 'ids',
+    ];
+
+    if (!user_can($user_id, 'manage_options')) {
+        if ($scope === 'personal') {
+            $args['meta_query'] = [
+                [
+                    'key' => '_sff_owner_id',
+                    'value' => $user_id,
+                    'compare' => '=',
+                    'type' => 'NUMERIC',
+                ],
+            ];
+        } elseif ($scope === 'general') {
+            $args['meta_query'] = [
+                'relation' => 'OR',
+                [
+                    'key' => '_sff_owner_id',
+                    'value' => 0,
+                    'compare' => '=',
+                    'type' => 'NUMERIC',
+                ],
+                [
+                    'key' => '_sff_owner_id',
+                    'compare' => 'NOT EXISTS',
+                ],
+            ];
+        } else {
+            $args['meta_query'] = [
+                'relation' => 'OR',
+                [
+                    'key' => '_sff_owner_id',
+                    'value' => 0,
+                    'compare' => '=',
+                    'type' => 'NUMERIC',
+                ],
+                [
+                    'key' => '_sff_owner_id',
+                    'value' => $user_id,
+                    'compare' => '=',
+                    'type' => 'NUMERIC',
+                ],
+                [
+                    'key' => '_sff_owner_id',
+                    'compare' => 'NOT EXISTS',
+                ],
+            ];
+        }
+    } else {
+        if ($scope === 'personal') {
+            $args['author'] = $user_id;
+        }
+    }
+
+    $query = new WP_Query($args);
+
+    $items = [];
+    if ($query->have_posts()) {
+        foreach ($query->posts as $ingredient_id) {
+            if (!sff_user_can_access_ingredient($ingredient_id, $user_id)) {
+                continue;
+            }
+            if ($scope === 'personal' && sff_is_general_ingredient($ingredient_id)) {
+                continue;
+            }
+            if ($scope === 'general' && !sff_is_general_ingredient($ingredient_id)) {
+                continue;
+            }
+
+            $payload = sff_prepare_ingredient_payload($ingredient_id, $user_id);
+            if ($payload) {
+                $items[] = $payload;
+            }
+        }
+    }
+
+    wp_send_json_success([
+        'items' => $items,
+        'query' => $term,
+        'scope' => $scope,
+    ]);
+}
+add_action('wp_ajax_sff_search_user_ingredients', 'sff_search_user_ingredients');
+
+function sff_get_ingredient_details() {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'sff_scan_nonce')) {
+        wp_send_json_error(['message' => 'Nonce verification failed.']);
+    }
+
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => 'You must be logged in to load ingredient details.']);
+    }
+
+    $ingredient_id = isset($_POST['ingredient_id']) ? intval($_POST['ingredient_id']) : 0;
+    if (!$ingredient_id) {
+        wp_send_json_error(['message' => 'Invalid ingredient.']);
+    }
+
+    $user_id = get_current_user_id();
+    if (!sff_user_can_access_ingredient($ingredient_id, $user_id)) {
+        wp_send_json_error(['message' => 'You do not have access to this ingredient.']);
+    }
+
+    $payload = sff_prepare_ingredient_payload($ingredient_id, $user_id);
+    if (!$payload) {
+        wp_send_json_error(['message' => 'Unable to load ingredient data.']);
+    }
+
+    wp_send_json_success($payload);
+}
+add_action('wp_ajax_sff_get_ingredient_details', 'sff_get_ingredient_details');
+
 
 
 function sff_handle_ingredient_submission() {
@@ -281,6 +422,9 @@ function sff_handle_ingredient_submission() {
         ]
     ];
 
+    $source_ingredient = isset($_POST['sff_source_ingredient']) ? intval($_POST['sff_source_ingredient']) : 0;
+    $selected_owner    = isset($_POST['sff_selected_owner']) ? sanitize_text_field($_POST['sff_selected_owner']) : '';
+
     // Debugging: Log the data being saved
     error_log('Submitted Data: ' . print_r($data, true));
 
@@ -295,6 +439,8 @@ function sff_handle_ingredient_submission() {
         wp_die('Failed to create ingredient post.');
     }
 
+    sff_assign_ingredient_owner($post_id, null, true);
+
     // Save meta data
     update_post_meta($post_id, '_sff_brand_name', $data['brand_name']);
     update_post_meta($post_id, '_sff_serving_size', $data['serving_size']);
@@ -304,6 +450,12 @@ function sff_handle_ingredient_submission() {
     update_post_meta($post_id, '_sff_sku', $data['sku']);
     update_post_meta($post_id, '_sff_affiliate_link', $data['affiliate_link']);
     update_post_meta($post_id, '_sff_price', $data['price']);
+    if ($source_ingredient) {
+        update_post_meta($post_id, '_sff_source_ingredient', $source_ingredient);
+    }
+    if (!empty($selected_owner)) {
+        update_post_meta($post_id, '_sff_selected_owner', $selected_owner);
+    }
 
     // Handle image uploads properly
     require_once(ABSPATH . 'wp-admin/includes/file.php');
