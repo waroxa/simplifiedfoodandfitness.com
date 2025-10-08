@@ -1,4 +1,6 @@
 jQuery(document).ready(function($) {
+    var sffCanShowUsdaDetails = !!(window.sff_ajax_obj && sff_ajax_obj.show_usda_details);
+    var sffMacroGroups = (window.sff_ajax_obj && sff_ajax_obj.macro_groups) ? sff_ajax_obj.macro_groups : null;
     function sffFormatMacroLabel(key) {
         if (!key) {
             return '';
@@ -41,6 +43,43 @@ jQuery(document).ready(function($) {
         return source;
     }
 
+    function sffBuildGroupGrid(fields, map, usedRegistry) {
+        var html = '';
+        var hasEntries = false;
+
+        if (!Array.isArray(fields) || !fields.length) {
+            return { html: '', hasEntries: false };
+        }
+
+        fields.forEach(function(field) {
+            if (usedRegistry && usedRegistry[field]) {
+                return;
+            }
+            if (!Object.prototype.hasOwnProperty.call(map, field)) {
+                return;
+            }
+            var numeric = parseFloat(map[field]);
+            if (isNaN(numeric)) {
+                return;
+            }
+            if (Math.abs(numeric) < 0.0001) {
+                return;
+            }
+
+            hasEntries = true;
+            if (usedRegistry) {
+                usedRegistry[field] = true;
+            }
+
+            html += '<div class="sff-macro-summary-item">' +
+                '<span class="sff-macro-summary-label">' + sffFormatMacroLabel(field) + '</span>' +
+                '<span class="sff-macro-summary-value">' + numeric.toFixed(2) + '</span>' +
+            '</div>';
+        });
+
+        return { html: html, hasEntries: hasEntries };
+    }
+
     function sffShowMacroSummary(map, source) {
         map = map || {};
         source = sffNormalizeMacroSource(source);
@@ -53,28 +92,22 @@ jQuery(document).ready(function($) {
             ? sff_ajax_obj.macro_fields
             : Object.keys(map);
 
-        var gridItems = '';
-        var hasEntries = false;
+        var usedFields = {};
+        var macroGroupFields = (sffMacroGroups && Array.isArray(sffMacroGroups.macros) && sffMacroGroups.macros.length)
+            ? sffMacroGroups.macros
+            : fields;
+        var microGroupFields = (sffMacroGroups && Array.isArray(sffMacroGroups.micros) && sffMacroGroups.micros.length)
+            ? sffMacroGroups.micros
+            : [];
 
-        fields.forEach(function(field) {
-            if (!Object.prototype.hasOwnProperty.call(map, field)) {
-                return;
-            }
-            var numeric = parseFloat(map[field]);
-            if (isNaN(numeric)) {
-                return;
-            }
-            if (Math.abs(numeric) < 0.0001) {
-                return;
-            }
-            hasEntries = true;
-            gridItems += '<div class="sff-macro-summary-item">' +
-                '<span class="sff-macro-summary-label">' + sffFormatMacroLabel(field) + '</span>' +
-                '<span class="sff-macro-summary-value">' + numeric.toFixed(2) + '</span>' +
-            '</div>';
+        var macrosGrid = sffBuildGroupGrid(macroGroupFields, map, usedFields);
+        var microsGrid = sffBuildGroupGrid(microGroupFields, map, usedFields);
+        var remainingFields = fields.filter(function(field) {
+            return !usedFields[field];
         });
+        var remainingGrid = sffBuildGroupGrid(remainingFields, map, usedFields);
 
-        if (!hasEntries) {
+        if (!macrosGrid.hasEntries && !microsGrid.hasEntries && !remainingGrid.hasEntries) {
             $summary.hide().empty();
             return;
         }
@@ -94,8 +127,24 @@ jQuery(document).ready(function($) {
             title = 'Values from Ingredient Database';
         }
 
-        var html = '<div class="sff-macro-summary-title">' + title + '</div>' +
-            '<div class="sff-macro-summary-grid">' + gridItems + '</div>';
+        var sectionsHtml = '';
+
+        if (macrosGrid.hasEntries) {
+            sectionsHtml += '<div class="sff-macro-summary-subtitle">Macros</div>' +
+                '<div class="sff-macro-summary-grid">' + macrosGrid.html + '</div>';
+        }
+
+        if (microsGrid.hasEntries) {
+            sectionsHtml += '<div class="sff-macro-summary-subtitle">Micros</div>' +
+                '<div class="sff-macro-summary-grid">' + microsGrid.html + '</div>';
+        }
+
+        if (remainingGrid.hasEntries) {
+            sectionsHtml += '<div class="sff-macro-summary-subtitle">Additional Nutrients</div>' +
+                '<div class="sff-macro-summary-grid">' + remainingGrid.html + '</div>';
+        }
+
+        var html = '<div class="sff-macro-summary-title">' + title + '</div>' + sectionsHtml;
 
         $summary.html(html).fadeIn(150);
     }
@@ -232,8 +281,10 @@ jQuery(document).ready(function($) {
                 return;
             }
             var amountDisplay = sffHasValue(portion.amount) ? portion.amount : '—';
-            var modifier = portion.modifier || (portion.measureUnit && portion.measureUnit.name) || '—';
-            var gramDisplay = sffHasValue(portion.gramWeight) ? portion.gramWeight : '—';
+            var modifier = sffHasValue(portion.modifier)
+                ? portion.modifier
+                : (portion.measureUnit && sffHasValue(portion.measureUnit.name) ? portion.measureUnit.name : '—');
+            var gramDisplay = sffHasValue(portion.gramWeight) ? portion.gramWeight + ' g' : '—';
 
             rows += '<tr>' +
                 '<td>' + sffEscapeHtml(amountDisplay) + '</td>' +
@@ -280,6 +331,86 @@ jQuery(document).ready(function($) {
         '</details>';
     }
 
+    function sffExtractServingFromRaw(raw) {
+        if (!raw || typeof raw !== 'object') {
+            return { text: '', portionText: '', gramWeight: '', display: '' };
+        }
+
+        var servingText = '';
+        if (sffHasValue(raw.householdServingFullText)) {
+            servingText = raw.householdServingFullText;
+        }
+
+        if (!servingText && sffHasValue(raw.servingSize)) {
+            var sizeUnit = sffHasValue(raw.servingSizeUnit) ? raw.servingSizeUnit : '';
+            servingText = raw.servingSize + (sizeUnit ? ' ' + sizeUnit : '');
+        }
+
+        var portion = null;
+        if (Array.isArray(raw.foodPortions) && raw.foodPortions.length) {
+            portion = raw.foodPortions.find(function(entry) {
+                if (!entry) {
+                    return false;
+                }
+                if (sffHasValue(entry.modifier)) {
+                    return true;
+                }
+                return entry.measureUnit && sffHasValue(entry.measureUnit.name);
+            }) || raw.foodPortions[0];
+        }
+
+        var portionText = '';
+        var gramWeight = '';
+
+        if (portion) {
+            var amountDisplay = sffHasValue(portion.amount) ? portion.amount : '';
+            var modifier = sffHasValue(portion.modifier)
+                ? portion.modifier
+                : (portion.measureUnit && sffHasValue(portion.measureUnit.name) ? portion.measureUnit.name : '');
+
+            portionText = (amountDisplay ? amountDisplay + ' ' : '') + modifier;
+            portionText = portionText.trim();
+
+            if (sffHasValue(portion.gramWeight)) {
+                gramWeight = portion.gramWeight;
+            }
+
+            if (!servingText && portionText) {
+                servingText = portionText;
+            }
+        }
+
+        if (!gramWeight && sffHasValue(raw.servingSize) && String(raw.servingSizeUnit).toLowerCase() === 'g') {
+            gramWeight = raw.servingSize;
+        }
+
+        var display = servingText;
+        if (sffHasValue(gramWeight)) {
+            var gramText = parseFloat(gramWeight);
+            if (!isNaN(gramText)) {
+                gramText = gramText.toFixed(2).replace(/\.00$/, '');
+            } else {
+                gramText = gramWeight;
+            }
+
+            var gramsSuffix = gramText + ' g';
+            if (display) {
+                if (display.toLowerCase().indexOf(gramsSuffix.toLowerCase()) === -1) {
+                    display += ' (' + gramsSuffix + ')';
+                }
+            } else {
+                display = gramsSuffix;
+            }
+        }
+
+        return {
+            text: servingText,
+            portionText: portionText,
+            gramWeight: gramWeight,
+            display: display,
+        };
+    }
+
     function sffRenderUsdaRaw(raw, message) {
         var $rawBox = $('#usda-full-response');
         if (!$rawBox.length) {
@@ -301,11 +432,16 @@ jQuery(document).ready(function($) {
 
             headerHtml += '</div>';
 
+            var servingInfo = sffExtractServingFromRaw(raw);
+
             var metaHtml = '';
             metaHtml += sffMetaRow('Publication Date', raw.publicationDate);
             metaHtml += sffMetaRow('Category', raw.foodCategory && raw.foodCategory.description);
             metaHtml += sffMetaRow('Food Class', raw.foodClass);
             metaHtml += sffMetaRow('Scientific Name', sffFindAttribute(raw.foodAttributes, 'Scientific Name'));
+            if (servingInfo && sffHasValue(servingInfo.display)) {
+                metaHtml += sffMetaRow('Serving Size', servingInfo.display);
+            }
             if (Array.isArray(raw.foodPortions) && raw.foodPortions.length) {
                 metaHtml += sffMetaRow('Portion Options', raw.foodPortions.length);
             }
@@ -378,7 +514,11 @@ jQuery(document).ready(function($) {
         }
 
         if (shouldFetchUsda) {
-            sffRenderUsdaRaw(null, 'Loading USDA data...');
+            if (sffCanShowUsdaDetails) {
+                sffRenderUsdaRaw(null, 'Loading USDA data...');
+            } else {
+                $('#usda-full-response').hide();
+            }
             $.post(
                 sff_ajax_obj.ajax_url,
                 { action: 'sff_usda_macros', security: sff_ajax_obj.nonce, fdc_id: fdc },
@@ -390,11 +530,23 @@ jQuery(document).ready(function($) {
                         $('#macro_source_text').text('USDA');
                         var notice = res.data && res.data.notice ? res.data.notice : '';
                         var message = notice ? notice : '';
-                        sffRenderUsdaRaw(res.data ? res.data.raw : null, message);
+                        var servingInfo = sffExtractServingFromRaw(res.data ? res.data.raw : null);
+                        if (servingInfo && sffHasValue(servingInfo.display)) {
+                            $('#sff_serving_size').val(servingInfo.display);
+                        }
+                        if (sffCanShowUsdaDetails) {
+                            sffRenderUsdaRaw(res.data ? res.data.raw : null, message);
+                        } else {
+                            $('#usda-full-response').hide();
+                        }
                     } else {
                         var errorMessage = res.data && res.data.message ? res.data.message : 'Unable to fetch USDA data.';
                         sffPopulateMacros({}, 'clear');
-                        sffRenderUsdaRaw(null, errorMessage);
+                        if (sffCanShowUsdaDetails) {
+                            sffRenderUsdaRaw(null, errorMessage);
+                        } else {
+                            $('#usda-full-response').hide();
+                        }
                     }
                 }
             );
