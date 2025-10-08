@@ -247,6 +247,10 @@
     background: #E9FAB0;
     color: #023441;
 }
+.sff-badge-usda {
+    background: #2c7a7b;
+    color: #f0fff4;
+}
 .sff-suggestions-empty {
     padding: 14px;
     text-align: center;

@@ -256,6 +256,40 @@ function sff_search_user_ingredients() {
         ]);
     }
 
+    if (user_can($user_id, 'manage_options')) {
+        $items = [];
+        $usda_items = sff_fetch_usda_search_items($term);
+
+        if (is_wp_error($usda_items)) {
+            wp_send_json_error(['message' => $usda_items->get_error_message()]);
+        }
+
+        foreach ($usda_items as $food) {
+            $meta = [];
+            if (!empty($food['dataType'])) {
+                $meta[] = $food['dataType'];
+            }
+            if (!empty($food['foodCategory'])) {
+                $meta[] = $food['foodCategory'];
+            }
+
+            $items[] = [
+                'source'             => 'usda',
+                'fdc_id'             => $food['fdc_id'] ?? '',
+                'description'        => $food['description'] ?? '',
+                'owner_badge'        => 'USDA',
+                'owner_badge_class'  => 'usda',
+                'meta_text'          => implode(' • ', array_filter($meta)),
+            ];
+        }
+
+        wp_send_json_success([
+            'items' => $items,
+            'query' => $term,
+            'scope' => $scope,
+        ]);
+    }
+
     $args = [
         'post_type' => 'ingredient',
         'post_status' => 'publish',
@@ -346,6 +380,88 @@ function sff_search_user_ingredients() {
     ]);
 }
 add_action('wp_ajax_sff_search_user_ingredients', 'sff_search_user_ingredients');
+
+function sff_fetch_usda_search_items($query, $category = '') {
+    if (!$query || !defined('SFF_USDA_API_KEY') || !SFF_USDA_API_KEY) {
+        return new WP_Error('missing_query', __('Missing USDA search query or API key.', 'simplified-food-fitness'));
+    }
+
+    $url = 'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' . urlencode(SFF_USDA_API_KEY) . '&query=' . urlencode($query) . '&pageSize=50';
+
+    if ($category) {
+        $url .= '&foodCategory=' . urlencode($category);
+    }
+
+    $resp = wp_remote_get($url);
+
+    if (is_wp_error($resp)) {
+        return new WP_Error('usda_request_failed', __('Unable to reach the USDA service.', 'simplified-food-fitness'));
+    }
+
+    $body = json_decode(wp_remote_retrieve_body($resp), true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return new WP_Error('usda_invalid_response', __('Unexpected USDA response.', 'simplified-food-fitness'));
+    }
+
+    if (empty($body['foods']) || !is_array($body['foods'])) {
+        return [];
+    }
+
+    $grouped = [];
+
+    foreach ($body['foods'] as $food) {
+        $description = $food['description'] ?? '';
+        $normalized = strtoupper(trim($description));
+        $timestamp = null;
+
+        foreach (['modifiedDate', 'publicationDate', 'publishedDate'] as $field) {
+            if (!empty($food[$field])) {
+                $time = strtotime($food[$field]);
+                if ($time !== false) {
+                    $timestamp = $time;
+                    break;
+                }
+            }
+        }
+
+        if (!isset($grouped[$normalized])) {
+            $grouped[$normalized] = [
+                'food'      => $food,
+                'timestamp' => $timestamp,
+            ];
+            continue;
+        }
+
+        $existing_timestamp = $grouped[$normalized]['timestamp'];
+        $should_replace = false;
+
+        if ($timestamp && (!$existing_timestamp || $timestamp > $existing_timestamp)) {
+            $should_replace = true;
+        }
+
+        if ($should_replace) {
+            $grouped[$normalized] = [
+                'food'      => $food,
+                'timestamp' => $timestamp,
+            ];
+        }
+    }
+
+    $items = [];
+
+    foreach ($grouped as $data) {
+        $food = $data['food'];
+        $items[] = [
+            'fdc_id'       => $food['fdcId'] ?? '',
+            'description'  => $food['description'] ?? '',
+            'dataType'     => $food['dataType'] ?? '',
+            'foodCategory' => $food['foodCategory'] ?? '',
+        ];
+    }
+
+    return $items;
+}
 
 function sff_get_ingredient_details() {
     if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'sff_scan_nonce')) {
@@ -663,69 +779,13 @@ function sff_usda_search() {
     check_ajax_referer('sff_scan_nonce', 'security');
     $query = sanitize_text_field($_POST['query'] ?? '');
     $category = sanitize_text_field($_POST['category'] ?? '');
-    if (!$query || !SFF_USDA_API_KEY) {
-        wp_send_json_error('Missing query');
+    $results = sff_fetch_usda_search_items($query, $category);
+
+    if (is_wp_error($results)) {
+        wp_send_json_error($results->get_error_message());
     }
-    $url = 'https://api.nal.usda.gov/fdc/v1/foods/search?api_key=' . urlencode(SFF_USDA_API_KEY) . '&query=' . urlencode($query) . '&pageSize=50';
-    if ($category) {
-        $url .= '&foodCategory=' . urlencode($category);
-    }
-    $resp = wp_remote_get($url);
-    if (is_wp_error($resp)) {
-        wp_send_json_error('API error');
-    }
-    $body = json_decode(wp_remote_retrieve_body($resp), true);
-    $items = [];
-    if (!empty($body['foods'])) {
-        $grouped = [];
-        foreach ($body['foods'] as $food) {
-            $description = $food['description'] ?? '';
-            $normalized = strtoupper(trim($description));
-            $timestamp = null;
-            foreach (['modifiedDate', 'publicationDate', 'publishedDate'] as $field) {
-                if (!empty($food[$field])) {
-                    $time = strtotime($food[$field]);
-                    if ($time !== false) {
-                        $timestamp = $time;
-                        break;
-                    }
-                }
-            }
 
-            if (!isset($grouped[$normalized])) {
-                $grouped[$normalized] = [
-                    'food' => $food,
-                    'timestamp' => $timestamp,
-                ];
-                continue;
-            }
-
-            $existing_timestamp = $grouped[$normalized]['timestamp'];
-            $should_replace = false;
-
-            if ($timestamp && (!$existing_timestamp || $timestamp > $existing_timestamp)) {
-                $should_replace = true;
-            }
-
-            if ($should_replace) {
-                $grouped[$normalized] = [
-                    'food' => $food,
-                    'timestamp' => $timestamp,
-                ];
-            }
-        }
-
-        foreach ($grouped as $data) {
-            $food = $data['food'];
-            $items[] = [
-                'fdc_id' => $food['fdcId'],
-                'description' => $food['description'],
-                'dataType' => $food['dataType'] ?? '',
-                'foodCategory' => $food['foodCategory'] ?? ''
-            ];
-        }
-    }
-    wp_send_json_success(array_values($items));
+    wp_send_json_success(array_values($results));
 }
 add_action('wp_ajax_sff_usda_search', 'sff_usda_search');
 
