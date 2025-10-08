@@ -44,6 +44,7 @@ require_once SFF_PLUGIN_DIR . 'includes/meta-boxes.php';
 require_once SFF_PLUGIN_DIR . 'includes/shortcodes.php';
 require_once SFF_PLUGIN_DIR . 'includes/ajax.php';
 require_once SFF_PLUGIN_DIR . 'includes/settings.php';
+require_once SFF_PLUGIN_DIR . 'includes/admin-pages.php';
 require_once SFF_PLUGIN_DIR . 'includes/enqueue.php';
 require_once SFF_PLUGIN_DIR . 'includes/helpers.php';
 
