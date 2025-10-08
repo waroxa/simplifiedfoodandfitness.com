@@ -360,7 +360,7 @@ function sff_render_admin_ingredient_meta_box($post) {
         <div class="sff-macro-fields">
             <?php foreach ($macros as $key => $value) : ?>
                 <label><?php echo ucwords(str_replace('_', ' ', $key)); ?>:</label>
-                <input type="number" name="sff_macros[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr($value); ?>" step="0.1">
+                <input type="number" name="sff_macros[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr($value); ?>" step="any">
             <?php endforeach; ?>
         </div>
 

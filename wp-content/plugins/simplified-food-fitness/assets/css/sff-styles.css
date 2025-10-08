@@ -599,6 +599,17 @@ body.sff-menu-open .sff-menu-items {
     margin-bottom: 10px;
 }
 
+.sff-macro-summary-subtitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 12px 0 6px;
+    color: #023441;
+}
+
+#sff-macro-summary .sff-macro-summary-subtitle:first-of-type {
+    margin-top: 4px;
+}
+
 .sff-macro-summary-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));

@@ -526,7 +526,7 @@ function sff_render_ingredient_form($post_id = null) {
                         <?php foreach ($macros as $key => $value) : ?>
                             <div>
                                 <label style="font-size:14px; color:#777;"><?php echo ucwords(str_replace('_', ' ', $key)); ?>:</label>
-                                <input type="number" name="sff_macros[<?php echo $key; ?>]" value="<?php echo esc_attr($value); ?>" step="0.1" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                                <input type="number" name="sff_macros[<?php echo $key; ?>]" value="<?php echo esc_attr($value); ?>" step="any" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
                             </div>
                         <?php endforeach; ?>
                     </div>
