@@ -25,10 +25,23 @@ function sff_enqueue_assets() {
     );
 
     // ✅ Localize AJAX object
+    $macro_group_macros = [
+        'calories', 'carbs', 'protein', 'fat',
+        'saturated_fat', 'trans_fat', 'cholesterol', 'sodium',
+        'fiber', 'sugars', 'added_sugars',
+    ];
+
+    $macro_group_micros = array_values(array_diff(SFF_MACRO_FIELDS, $macro_group_macros));
+
     wp_localize_script('sff-scripts', 'sff_ajax_obj', [
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce'    => wp_create_nonce('sff_scan_nonce'),
-        'macro_fields' => SFF_MACRO_FIELDS,
+        'ajax_url'          => admin_url('admin-ajax.php'),
+        'nonce'             => wp_create_nonce('sff_scan_nonce'),
+        'macro_fields'      => SFF_MACRO_FIELDS,
+        'macro_groups'      => [
+            'macros' => $macro_group_macros,
+            'micros' => $macro_group_micros,
+        ],
+        'show_usda_details' => current_user_can('manage_options'),
     ]);
 
     // Dashboard interactions
