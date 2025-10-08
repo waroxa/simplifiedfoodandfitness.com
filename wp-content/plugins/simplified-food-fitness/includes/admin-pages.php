@@ -13,6 +13,24 @@ function sff_register_admin_pages() {
         'dashicons-carrot',
         56
     );
+
+    add_submenu_page(
+        'sff-ingredient-library',
+        __('Ingredient Library', 'simplified-food-fitness'),
+        __('Ingredient Library', 'simplified-food-fitness'),
+        'manage_options',
+        'sff-ingredient-library',
+        'sff_render_ingredient_library_page'
+    );
+
+    add_submenu_page(
+        'sff-ingredient-library',
+        __('Add General Ingredient', 'simplified-food-fitness'),
+        __('Add General Ingredient', 'simplified-food-fitness'),
+        'manage_options',
+        'sff-add-general-ingredient',
+        'sff_render_general_ingredient_add_page'
+    );
 }
 add_action('admin_menu', 'sff_register_admin_pages');
 
@@ -72,8 +90,10 @@ function sff_render_ingredient_library_page() {
 
         <p><?php esc_html_e('Use this dashboard to review ingredients that clients have submitted and promote them into the shared database.', 'simplified-food-fitness'); ?></p>
         <p>
-            <?php esc_html_e('Need to add a new shared ingredient from a USDA search or product label? Visit the front-end form at', 'simplified-food-fitness'); ?>
-            <a href="<?php echo esc_url(home_url('/add-ingredient/')); ?>" target="_blank">/add-ingredient/</a>.
+            <?php esc_html_e('Need to add a new shared ingredient from a USDA search or product label? Use the Add General Ingredient page.', 'simplified-food-fitness'); ?>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=sff-add-general-ingredient')); ?>">
+                <?php esc_html_e('Open Add General Ingredient', 'simplified-food-fitness'); ?>
+            </a>
         </p>
 
         <?php sff_render_ingredient_library_notices(); ?>
@@ -255,6 +275,24 @@ function sff_handle_promote_ingredient() {
     exit;
 }
 add_action('admin_post_sff_promote_ingredient', 'sff_handle_promote_ingredient');
+
+function sff_render_general_ingredient_add_page() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    wp_enqueue_media();
+
+    ?>
+    <div class="wrap sff-add-general-ingredient">
+        <h1><?php esc_html_e('Add General Ingredient', 'simplified-food-fitness'); ?></h1>
+        <p class="description">
+            <?php esc_html_e('Scan a nutrition label or pull data from the USDA database to add a shared ingredient that all clients can access.', 'simplified-food-fitness'); ?>
+        </p>
+        <?php echo sff_render_ingredient_form(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+    </div>
+    <?php
+}
 
 function sff_render_ingredient_library_notices() {
     if (empty($_GET['sff_promoted'])) {
