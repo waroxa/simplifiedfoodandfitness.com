@@ -3,6 +3,139 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+function sff_get_ingredient_owner_id($ingredient_id) {
+    $ingredient_id = intval($ingredient_id);
+    if (!$ingredient_id) {
+        return 0;
+    }
+
+    $owner = get_post_meta($ingredient_id, '_sff_owner_id', true);
+    if ($owner !== '' && $owner !== null) {
+        return intval($owner);
+    }
+
+    $post = get_post($ingredient_id);
+    if (!$post) {
+        return 0;
+    }
+
+    if (user_can($post->post_author, 'manage_options')) {
+        return 0;
+    }
+
+    return intval($post->post_author);
+}
+
+function sff_assign_ingredient_owner($ingredient_id, $user_id = null, $force = false) {
+    $ingredient_id = intval($ingredient_id);
+    if (!$ingredient_id) {
+        return;
+    }
+
+    if ($user_id === null) {
+        $user_id = get_current_user_id();
+        if ($user_id && user_can($user_id, 'manage_options')) {
+            $user_id = 0;
+        }
+    }
+
+    if (!$force) {
+        $current = get_post_meta($ingredient_id, '_sff_owner_id', true);
+        if ($current !== '' && $current !== null) {
+            return;
+        }
+    }
+
+    update_post_meta($ingredient_id, '_sff_owner_id', intval($user_id));
+}
+
+function sff_user_can_access_ingredient($ingredient_id, $user_id = 0) {
+    $ingredient_id = intval($ingredient_id);
+    if (!$ingredient_id) {
+        return false;
+    }
+
+    if (!$user_id) {
+        $user_id = get_current_user_id();
+    }
+
+    if ($user_id && user_can($user_id, 'manage_options')) {
+        return true;
+    }
+
+    $owner_id = sff_get_ingredient_owner_id($ingredient_id);
+    if ($owner_id === 0) {
+        return true;
+    }
+
+    return $owner_id === intval($user_id);
+}
+
+function sff_is_general_ingredient($ingredient_id) {
+    return sff_get_ingredient_owner_id($ingredient_id) === 0;
+}
+
+function sff_prepare_ingredient_payload($ingredient_id, $user_id = 0) {
+    $ingredient_id = intval($ingredient_id);
+    if (!$ingredient_id) {
+        return null;
+    }
+
+    $post = get_post($ingredient_id);
+    if (!$post || $post->post_type !== 'ingredient') {
+        return null;
+    }
+
+    if (!$user_id) {
+        $user_id = get_current_user_id();
+    }
+
+    $macros_raw = get_post_meta($ingredient_id, '_sff_macros', true);
+    $macros = array_fill_keys(SFF_MACRO_FIELDS, 0);
+    if (is_array($macros_raw)) {
+        foreach (SFF_MACRO_FIELDS as $field) {
+            if (isset($macros_raw[$field])) {
+                $macros[$field] = floatval($macros_raw[$field]);
+            }
+        }
+    }
+
+    $terms = wp_get_post_terms($ingredient_id, 'ingredient_category', ['number' => 1]);
+    $category_id = 0;
+    $category_name = '';
+    if (!is_wp_error($terms) && !empty($terms)) {
+        $category_id = intval($terms[0]->term_id);
+        $category_name = $terms[0]->name;
+    }
+
+    $owner_id = sff_get_ingredient_owner_id($ingredient_id);
+    $is_personal = ($owner_id && $owner_id === intval($user_id));
+    $is_general = ($owner_id === 0);
+
+    $owner_badge = $is_personal ? __('My Ingredient', 'simplified-food-fitness') : __('General Database', 'simplified-food-fitness');
+    $owner_badge_class = $is_personal ? 'personal' : ($is_general ? 'general' : 'restricted');
+
+    return [
+        'id' => $ingredient_id,
+        'title' => get_the_title($ingredient_id),
+        'brand_name' => get_post_meta($ingredient_id, '_sff_brand_name', true) ?: get_the_title($ingredient_id),
+        'serving_size' => get_post_meta($ingredient_id, '_sff_serving_size', true),
+        'servings' => get_post_meta($ingredient_id, '_sff_servings', true),
+        'macros' => $macros,
+        'macro_source' => get_post_meta($ingredient_id, '_sff_macro_source', true),
+        'fdc_id' => get_post_meta($ingredient_id, '_sff_fdc_id', true),
+        'category_id' => $category_id,
+        'category_name' => $category_name,
+        'owner_id' => $owner_id,
+        'owner_type' => $is_personal ? 'personal' : ($is_general ? 'general' : 'restricted'),
+        'is_personal' => $is_personal,
+        'is_general' => $is_general,
+        'owner_badge' => $owner_badge,
+        'owner_badge_class' => $owner_badge_class,
+        'price' => floatval(get_post_meta($ingredient_id, '_sff_price', true)),
+    ];
+}
+
 function sff_generate_grocery_list($meal_plan) {
     if (empty($meal_plan) || !is_string($meal_plan)) {
         return '<p>No grocery list available.</p>';
@@ -289,17 +422,17 @@ function sff_render_ingredient_form($post_id = null) {
                 <p style="font-size:14px; color:#777;">Choose a source below to begin.</p>
 
                 <div class="sff-option">
-                    <h4 style="font-size:16px; color:#333; margin-bottom:8px;">Option 1: Search USDA Database</h4>
+                    <h4 style="font-size:16px; color:#333; margin-bottom:8px;">Option 1: Search Ingredient Database</h4>
+                    <p style="font-size:13px; color:#5f6f64; margin-top:0;">Browse shared ingredients from your dietitian and items you have already added.</p>
                     <div style="position:relative;">
                         <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="Start typing e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-                        <select id="usda-category-filter" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-                            <option value="">All Categories</option>
-                            <option value="Fruits">Fruits</option>
-                            <option value="Vegetables">Vegetables</option>
-                            <option value="Grains">Grains</option>
+                        <select id="sff-ingredient-scope" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                            <option value="all">All Ingredients</option>
+                            <option value="personal">My Ingredients</option>
+                            <option value="general">General Database</option>
                         </select>
-                        <button type="button" id="usda-search-button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-bottom:10px;">🔍 Search</button>
-                        <div id="usda-suggestions" style="display:none;"></div>
+                        <button type="button" id="sff-database-search-button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-bottom:10px;">🔍 Search Database</button>
+                        <div id="sff-ingredient-suggestions" class="sff-ingredient-suggestions" style="display:none;"></div>
                     </div>
                 </div>
 
@@ -338,6 +471,10 @@ function sff_render_ingredient_form($post_id = null) {
                 </div>
 
                 <input type="hidden" name="sff_fdc_id" id="sff_fdc_id" value="<?php echo esc_attr($fdc_id); ?>">
+                <input type="hidden" name="sff_source_ingredient" id="sff_source_ingredient" value="">
+                <input type="hidden" name="sff_selected_owner" id="sff_selected_owner" value="">
+
+                <div id="sff-ingredient-selection-note" style="display:none; margin-bottom:15px; padding:10px; background:#f2f9f3; border-radius:8px; font-size:0.95rem; color:#235d3a;"></div>
 
                 <?php
                 $show_category_dropdown = apply_filters('sff_show_category_dropdown', empty($fdc_id));
@@ -427,6 +564,8 @@ function sff_render_ingredient_meta_box($post) {
 function sff_save_ingredient_details($post_id) {
      if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 
+    sff_assign_ingredient_owner($post_id);
+
     if (isset($_POST['sff_quantity'])) {
         update_post_meta($post_id, '_sff_quantity', sanitize_text_field($_POST['sff_quantity']));
     }
@@ -485,6 +624,14 @@ function sff_save_ingredient_details($post_id) {
         } else {
             $wpdb->insert($table, $data, $formats);
         }
+    }
+
+    if (isset($_POST['sff_source_ingredient'])) {
+        update_post_meta($post_id, '_sff_source_ingredient', intval($_POST['sff_source_ingredient']));
+    }
+
+    if (isset($_POST['sff_selected_owner'])) {
+        update_post_meta($post_id, '_sff_selected_owner', sanitize_text_field($_POST['sff_selected_owner']));
     }
 }
 add_action('save_post', 'sff_save_ingredient_details');

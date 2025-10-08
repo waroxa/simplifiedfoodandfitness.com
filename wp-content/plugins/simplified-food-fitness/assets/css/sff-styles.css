@@ -184,31 +184,90 @@
     font-family: "Inter", sans-serif;
 }
 
-/* USDA Autocomplete Dropdown */
-#usda-suggestions {
+/* Ingredient Database Dropdown */
+#sff-ingredient-suggestions {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
     z-index: 1000;
-    max-height: 200px;
+    max-height: 240px;
     overflow-y: auto;
+    box-shadow: 0 8px 18px rgba(2, 52, 65, 0.12);
+    padding: 4px 0;
 }
-#usda-suggestions ul {
+#sff-ingredient-suggestions ul {
     list-style: none;
     margin: 0;
     padding: 0;
 }
-#usda-suggestions li {
-    padding: 8px 10px;
+#sff-ingredient-suggestions li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 14px;
     cursor: pointer;
+    border-bottom: 1px solid #eef2f3;
 }
-#usda-suggestions li:hover,
-#usda-suggestions li.active {
+#sff-ingredient-suggestions li:last-child {
+    border-bottom: none;
+}
+#sff-ingredient-suggestions li:hover,
+#sff-ingredient-suggestions li.active {
     background: #E9FAB0;
+}
+.sff-suggestion-name {
+    font-weight: 600;
+    color: #023441;
+}
+.sff-suggestion-meta {
+    font-size: 12px;
+    color: #5f6f64;
+}
+.sff-suggestion-badge {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    margin-top: 2px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+.sff-badge-personal {
+    background: #023441;
+    color: #E9FAB0;
+}
+.sff-badge-general {
+    background: #E9FAB0;
+    color: #023441;
+}
+.sff-suggestions-empty {
+    padding: 14px;
+    text-align: center;
+    color: #5f6f64;
+    font-size: 14px;
+}
+.sff-open-label-scan {
+    display: block;
+    width: calc(100% - 20px);
+    margin: 8px auto 10px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #023441;
+    color: #E9FAB0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.sff-open-label-scan:hover {
+    background: #03586a;
 }
 
 .usda-response-box {
