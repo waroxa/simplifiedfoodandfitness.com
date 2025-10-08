@@ -411,6 +411,12 @@ function sff_render_ingredient_form($post_id = null) {
     ob_start(); ?>
     <div class="sff-ingredient-form-card" style="background:#fff; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); padding:20px;">
         <h2 style="font-size:20px; color:#333; margin-bottom:15px;">Add Ingredient</h2>
+        <?php if (current_user_can('manage_options')) : ?>
+            <div style="background:#f2f9f3; border-left:4px solid #42b14c; padding:12px; border-radius:8px; margin-bottom:20px; color:#235d3a;">
+                <strong><?php esc_html_e('Admin quick tip:', 'simplified-food-fitness'); ?></strong>
+                <?php esc_html_e('Anything you submit here is saved to the shared ingredient database. Use the Ingredient Library in wp-admin to review client submissions and promote your favorites.', 'simplified-food-fitness'); ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Step 1: Product Name Extraction -->
         <form method="POST" action="<?php echo admin_url('admin-post.php'); ?>" enctype="multipart/form-data">
