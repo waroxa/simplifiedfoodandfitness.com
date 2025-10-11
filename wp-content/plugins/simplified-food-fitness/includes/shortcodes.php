@@ -254,6 +254,13 @@ function sff_personal_ingredients_shortcode() {
 
     $category_count = count($category_lookup);
 
+    $featured_categories = [];
+    if (!empty($category_lookup)) {
+        $category_names = array_keys($category_lookup);
+        natcasesort($category_names);
+        $featured_categories = array_slice(array_values($category_names), 0, 8);
+    }
+
     $latest_ingredient = get_posts([
         'post_type'      => 'ingredient',
         'post_status'    => 'publish',
@@ -306,6 +313,17 @@ function sff_personal_ingredients_shortcode() {
                     </div>
                 </div>
             </div>
+
+            <?php if (!empty($featured_categories)) : ?>
+                <div class="sff-personal-library-tags" aria-label="<?php esc_attr_e('Popular ingredient categories', 'simplified-food-fitness'); ?>">
+                    <span class="sff-personal-library-tags__label"><?php esc_html_e('Popular categories', 'simplified-food-fitness'); ?></span>
+                    <div class="sff-personal-library-tags__list" role="list">
+                        <?php foreach ($featured_categories as $featured_category) : ?>
+                            <span class="sff-personal-library-tag" role="listitem"><?php echo esc_html($featured_category); ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <form class="sff-personal-library-search" method="get" action="">
                 <label for="sff_ingredient_search" class="screen-reader-text"><?php esc_html_e('Search your ingredients', 'simplified-food-fitness'); ?></label>
@@ -369,12 +387,20 @@ function sff_personal_ingredients_shortcode() {
                         $unit_cost = get_post_meta($ingredient_id, '_sff_unit_cost', true);
                         $unit_cost = $unit_cost !== '' ? floatval($unit_cost) : null;
                         ?>
+                        <?php
+                        $title   = get_the_title();
+                        $initial = function_exists('mb_substr') ? mb_substr($title, 0, 1, get_bloginfo('charset')) : substr($title, 0, 1);
+                        $initial = $initial ? strtoupper($initial) : '#';
+                        ?>
                         <li class="sff-personal-library-item">
                             <div class="sff-ingredient-card">
                                 <div class="sff-ingredient-card__header">
-                                    <div>
-                                        <h3><?php the_title(); ?></h3>
-                                        <span class="sff-personal-library-category"><?php echo esc_html($category_name); ?></span>
+                                    <div class="sff-ingredient-card__identity">
+                                        <span class="sff-ingredient-avatar" aria-hidden="true"><?php echo esc_html($initial); ?></span>
+                                        <div class="sff-ingredient-card__titles">
+                                            <h3><?php the_title(); ?></h3>
+                                            <span class="sff-personal-library-category"><?php echo esc_html($category_name); ?></span>
+                                        </div>
                                     </div>
                                     <span class="sff-ingredient-updated"><?php printf(esc_html__('Updated %s', 'simplified-food-fitness'), esc_html($last_updated)); ?></span>
                                 </div>
@@ -396,11 +422,13 @@ function sff_personal_ingredients_shortcode() {
                                     <p class="sff-ingredient-cost"><?php printf(esc_html__('Unit cost: $%s', 'simplified-food-fitness'), esc_html(number_format_i18n($unit_cost, 2))); ?></p>
                                 <?php endif; ?>
 
-                                <div class="sff-personal-library-actions">
-                                    <?php if ($edit_link) : ?>
-                                        <a class="button" href="<?php echo esc_url($edit_link); ?>"><?php esc_html_e('Edit ingredient', 'simplified-food-fitness'); ?></a>
-                                    <?php endif; ?>
-                                    <a class="button button-secondary" href="<?php echo esc_url(get_permalink($ingredient_id)); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Preview details', 'simplified-food-fitness'); ?></a>
+                                <div class="sff-ingredient-card__footer">
+                                    <div class="sff-personal-library-actions">
+                                        <?php if ($edit_link) : ?>
+                                            <a class="button" href="<?php echo esc_url($edit_link); ?>"><?php esc_html_e('Edit ingredient', 'simplified-food-fitness'); ?></a>
+                                        <?php endif; ?>
+                                        <a class="button button-secondary" href="<?php echo esc_url(get_permalink($ingredient_id)); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Preview details', 'simplified-food-fitness'); ?></a>
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -429,11 +457,22 @@ function sff_personal_ingredients_shortcode() {
                 }
                 ?>
             <?php else : ?>
-                <div class="sff-personal-library-empty">
-                    <h3><?php esc_html_e('You haven’t added any ingredients yet.', 'simplified-food-fitness'); ?></h3>
-                    <p><?php esc_html_e('Start by scanning a label or entering details manually to build your personal ingredient library.', 'simplified-food-fitness'); ?></p>
-                    <a class="button button-primary" href="<?php echo esc_url( home_url( '/add-ingredient/' ) ); ?>"><?php esc_html_e('Add your first ingredient', 'simplified-food-fitness'); ?></a>
-                </div>
+                <?php if ($search_term) : ?>
+                    <div class="sff-personal-library-empty">
+                        <h3><?php printf(esc_html__('No matches for “%s”.', 'simplified-food-fitness'), esc_html($search_term)); ?></h3>
+                        <p><?php esc_html_e('Try adjusting your search or add a new ingredient to save it for future plans.', 'simplified-food-fitness'); ?></p>
+                        <div class="sff-personal-library-empty__actions">
+                            <a class="button button-secondary" href="<?php echo esc_url(remove_query_arg(['sff_ingredient_search', 'sff_page'])); ?>"><?php esc_html_e('Clear search', 'simplified-food-fitness'); ?></a>
+                            <a class="button button-primary" href="<?php echo esc_url(home_url('/add-ingredient/')); ?>"><?php esc_html_e('Add this ingredient', 'simplified-food-fitness'); ?></a>
+                        </div>
+                    </div>
+                <?php else : ?>
+                    <div class="sff-personal-library-empty">
+                        <h3><?php esc_html_e('You haven’t added any ingredients yet.', 'simplified-food-fitness'); ?></h3>
+                        <p><?php esc_html_e('Start by scanning a label or entering details manually to build your personal ingredient library.', 'simplified-food-fitness'); ?></p>
+                        <a class="button button-primary" href="<?php echo esc_url(home_url('/add-ingredient/')); ?>"><?php esc_html_e('Add your first ingredient', 'simplified-food-fitness'); ?></a>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </div>
