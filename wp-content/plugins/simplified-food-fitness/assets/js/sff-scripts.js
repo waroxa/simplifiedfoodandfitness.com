@@ -583,16 +583,14 @@ jQuery(document).ready(function($) {
             $('#scan_front_image_button').html('📷 Scan Product Name');
 
             if (response.success) {
-                const data = response.data;
+                const data = response.data || {};
                 console.log("✅ Scan Successful:", data);
 
-                if (data.exists) {
-                    $('#scan_front_results').html(`⚠️ Product "${data.product_name}" already exists.`);
-                    window.location.href = `/wp-admin/post.php?post=${data.existing_id}&action=edit`;
-                } else {
-                    $('#scan_front_results').html(`✅ Scan successful! Product name: ${data.product_name}`);
+                var duplicates = Array.isArray(data.duplicates) ? data.duplicates : [];
+                var canCreateNew = typeof data.can_create_new === 'undefined' ? true : !!data.can_create_new;
 
-                    // Store attachment ID in hidden field
+                // Store attachment ID in hidden field so the user can continue without rescanning.
+                if (data.attachment_id) {
                     if ($('#front_image_attachment_id').length) {
                         $('#front_image_attachment_id').val(data.attachment_id);
                     } else {
@@ -603,9 +601,65 @@ jQuery(document).ready(function($) {
                             value: data.attachment_id
                         }).appendTo('form');
                     }
+                }
 
+                if (data.notice) {
+                    console.log('ℹ️ ' + data.notice);
+                }
+
+                $('[name="sff_brand_name"]').val(data.product_name || '').trigger('change');
+
+                if (duplicates.length) {
+                    var listIntro = duplicates.length === 1 ? 'We found an ingredient with this name:' : 'We found ingredients with this name:';
+                    var duplicateHtml = '<div class="sff-duplicate-notice">';
+                    duplicateHtml += '<h4>' + sffEscapeHtml(listIntro) + '</h4>';
+                    duplicateHtml += '<ul class="sff-duplicate-list">';
+
+                    duplicates.forEach(function(duplicate) {
+                        var title = duplicate.title ? sffEscapeHtml(duplicate.title) : sffEscapeHtml(data.product_name || '');
+                        var badgeClass = 'general';
+                        if (duplicate.owner_type === 'personal') {
+                            badgeClass = 'personal';
+                        } else if (duplicate.owner_type === 'restricted') {
+                            badgeClass = 'restricted';
+                        }
+
+                        duplicateHtml += '<li>';
+                        duplicateHtml += '<div class="sff-duplicate-row">';
+                        duplicateHtml += '<span class="sff-duplicate-title">' + title + '</span>';
+                        if (duplicate.owner_label) {
+                            duplicateHtml += '<span class="sff-duplicate-badge sff-duplicate-badge-' + badgeClass + '">' + sffEscapeHtml(duplicate.owner_label) + '</span>';
+                        }
+                        duplicateHtml += '</div>';
+
+                        if ((duplicate.can_edit && duplicate.edit_url) || duplicate.view_url) {
+                            duplicateHtml += '<div class="sff-duplicate-actions">';
+                            if (duplicate.can_edit && duplicate.edit_url) {
+                                duplicateHtml += '<a class="button sff-duplicate-edit" href="' + duplicate.edit_url + '">Edit ingredient</a>';
+                            }
+                            if (duplicate.view_url) {
+                                duplicateHtml += '<a class="button sff-duplicate-view" href="' + duplicate.view_url + '" target="_blank" rel="noopener noreferrer">View details</a>';
+                            }
+                            duplicateHtml += '</div>';
+                        }
+
+                        duplicateHtml += '</li>';
+                    });
+
+                    duplicateHtml += '</ul>';
+
+                    if (canCreateNew) {
+                        duplicateHtml += '<button type="button" class="button button-primary sff-create-ingredient-copy" data-product-name="' + sffEscapeHtml(data.product_name || '') + '">Create a new ingredient with this name</button>';
+                    }
+
+                    duplicateHtml += '</div>';
+
+                    $('#scan_front_results').html(duplicateHtml);
                     $('#next_step_button').show();
-                    $('[name="sff_brand_name"]').val(data.product_name).trigger('change');
+                } else {
+                    var successMessage = data.product_name ? 'Scan successful! Product name: ' + sffEscapeHtml(data.product_name) : 'Scan successful!';
+                    $('#scan_front_results').html('<div class="sff-scan-success">✅ ' + successMessage + '</div>');
+                    $('#next_step_button').show();
                 }
             } else {
                 console.error("🚨 Scan Error:", response);
@@ -1231,6 +1285,14 @@ jQuery(document).ready(function($) {
     $('#sff-ingredient-selection-note').text(noteMessage).show();
 
     $('#usda-full-response').hide().empty();
+  });
+
+  $(document).on('click', '.sff-create-ingredient-copy', function(e) {
+    e.preventDefault();
+    var productName = $(this).data('product-name') || '';
+    var safeName = sffEscapeHtml(productName);
+    $('#scan_front_results').html('<div class="sff-duplicate-success">✅ Ready to create a new ingredient named <strong>' + safeName + '</strong>. Continue filling out the form below.</div>');
+    $('#next_step_button').show();
   });
 
   $(document).on('click', '.sff-open-label-scan', function(e) {
