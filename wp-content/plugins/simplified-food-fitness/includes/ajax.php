@@ -247,6 +247,7 @@ function sff_search_user_ingredients() {
     $term = isset($_POST['query']) ? sanitize_text_field(wp_unslash($_POST['query'])) : '';
     $term = trim($term);
     $scope = isset($_POST['scope']) ? sanitize_text_field(wp_unslash($_POST['scope'])) : 'all';
+    $allow_usda = isset($_POST['allow_usda']) && '1' === wp_unslash($_POST['allow_usda']);
 
     if (strlen($term) < 2) {
         wp_send_json_success([
@@ -256,7 +257,7 @@ function sff_search_user_ingredients() {
         ]);
     }
 
-    if (user_can($user_id, 'manage_options')) {
+    if ($allow_usda && user_can($user_id, 'manage_options')) {
         $items = [];
         $usda_items = sff_fetch_usda_search_items($term);
 

@@ -1006,6 +1006,8 @@ jQuery(document).ready(function($) {
   var sffLastDatabaseResults = [];
   var sffSettingProductName = false;
   var sffForceLabelScan = false;
+  var $allowUsdaField = $('#sff-allow-usda');
+  var sffAllowUsdaSearch = $allowUsdaField.length && $allowUsdaField.val() === '1';
 
   function sffClearIngredientSelectionMeta() {
     $('#sff_source_ingredient').val('');
@@ -1019,6 +1021,12 @@ jQuery(document).ready(function($) {
     if (!$container.length) {
       return;
     }
+    if (!sffAllowUsdaSearch && Array.isArray(items)) {
+      items = items.filter(function(item) {
+        return !item || !item.source || item.source.toLowerCase() !== 'usda';
+      });
+    }
+
     if (!items || !items.length) {
       var emptyHtml = '<div class="sff-suggestions-empty">No ingredients found in the selected database.</div>';
       emptyHtml += '<button type="button" class="sff-open-label-scan" data-query="' + sffEscapeHtml(query || '') + '">➕ Scan a label to add to My Ingredients</button>';
@@ -1075,7 +1083,8 @@ jQuery(document).ready(function($) {
         action: 'sff_search_user_ingredients',
         security: sff_ajax_obj.nonce,
         query: query,
-        scope: scope
+        scope: scope,
+        allow_usda: sffAllowUsdaSearch ? '1' : '0'
       },
       function(res) {
         if (res && res.success && res.data) {

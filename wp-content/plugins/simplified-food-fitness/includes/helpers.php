@@ -390,6 +390,8 @@ function sff_render_ingredient_form($post_id = null) {
     ];
     $macro_source = 'manual';
 
+    $allow_usda_search = current_user_can('manage_options') && is_admin();
+
     if ($post_id) {
         $brand_name = get_post_meta($post_id, '_sff_brand_name', true);
         $serving_size = get_post_meta($post_id, '_sff_serving_size', true);
@@ -434,16 +436,17 @@ function sff_render_ingredient_form($post_id = null) {
                         <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="Start typing e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
                         <?php
                         $is_admin_user = current_user_can('manage_options');
-                        $default_scope = $is_admin_user ? 'all' : 'general';
+                        $default_scope = $allow_usda_search && $is_admin_user ? 'all' : 'general';
                         $scope_options = [
                             'general'  => __('General Database', 'simplified-food-fitness'),
                             'personal' => __('My Ingredients', 'simplified-food-fitness'),
                         ];
 
-                        if ($is_admin_user) {
+                        if ($allow_usda_search && $is_admin_user) {
                             $scope_options = ['all' => __('All Ingredients', 'simplified-food-fitness')] + $scope_options;
                         }
                         ?>
+                        <input type="hidden" id="sff-allow-usda" value="<?php echo esc_attr($allow_usda_search ? '1' : '0'); ?>">
                         <select id="sff-ingredient-scope" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
                             <?php foreach ($scope_options as $value => $label) : ?>
                                 <option value="<?php echo esc_attr($value); ?>" <?php selected($value, $default_scope); ?>><?php echo esc_html($label); ?></option>
