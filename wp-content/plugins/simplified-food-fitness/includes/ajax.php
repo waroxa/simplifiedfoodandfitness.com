@@ -856,18 +856,50 @@ add_action('wp_ajax_sff_usda_macros', 'sff_usda_macros');
 
 function sff_recalc_recipe_nutrition() {
     check_ajax_referer('sff_scan_nonce', 'security');
+
     $ids = isset($_POST['ingredient_ids']) ? array_map('intval', (array) $_POST['ingredient_ids']) : [];
     $servings = max(1, intval($_POST['servings'] ?? 1));
-    $per_serving = sff_get_recipe_macros_from_ids($ids);
-    $totals      = [];
 
-    foreach ($per_serving as $key => $value) {
-        $totals[$key] = $value * $servings;
+    $raw_quantities = $_POST['ingredient_quantities'] ?? [];
+    if (is_string($raw_quantities)) {
+        $decoded = json_decode(wp_unslash($raw_quantities), true);
+        $raw_quantities = is_array($decoded) ? $decoded : [];
+    } elseif (!is_array($raw_quantities)) {
+        $raw_quantities = [];
+    }
+
+    $quantities = [];
+    foreach ($raw_quantities as $id => $amount) {
+        $id = intval($id);
+        if (!$id) {
+            continue;
+        }
+
+        $amount = floatval(str_replace(',', '.', wp_unslash($amount)));
+        if ($amount <= 0) {
+            continue;
+        }
+
+        $quantities[$id] = $amount;
+    }
+
+    if (empty($ids) && !empty($quantities)) {
+        $ids = array_map('intval', array_keys($quantities));
+    }
+
+    $totals     = sff_get_recipe_macros_from_ids($ids, $quantities);
+    $per_serving = [];
+    foreach ($totals as $key => $value) {
+        $per_serving[$key] = $value / $servings;
     }
 
     wp_send_json_success([
         'total'       => $totals,
         'per_serving' => $per_serving,
+        'summary'     => [
+            'ingredient_count' => count($quantities),
+            'total_cost'       => $totals['cost'] ?? 0,
+        ],
     ]);
 }
 add_action('wp_ajax_sff_recalc_recipe_nutrition', 'sff_recalc_recipe_nutrition');
