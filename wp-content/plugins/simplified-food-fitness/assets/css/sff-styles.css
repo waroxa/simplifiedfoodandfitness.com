@@ -936,3 +936,502 @@ body.sff-menu-open .sff-menu-items {
     }
 }
 
+
+/* --- Refined Personal Ingredient Library --- */
+.sff-personal-library {
+    background: linear-gradient(135deg, #ffffff 0%, #f6fbff 100%);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 28px 60px rgba(2, 52, 65, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.sff-personal-library-hero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.sff-personal-library-copy h2 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    color: #023441;
+}
+
+.sff-personal-library-copy p {
+    color: #475467;
+    margin: 0;
+    max-width: 420px;
+    line-height: 1.6;
+}
+
+.sff-personal-library-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    flex: 1;
+}
+
+.sff-personal-stat-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 18px 35px rgba(2, 52, 65, 0.08);
+    border: 1px solid rgba(2, 52, 65, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.sff-personal-stat-label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7a88;
+}
+
+.sff-personal-stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #023441;
+    line-height: 1.1;
+}
+
+.sff-personal-stat-hint {
+    font-size: 12px;
+    color: #7f8e9e;
+}
+
+.sff-personal-library-search {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sff-personal-library-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.sff-personal-library-search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(2, 52, 65, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(2, 52, 65, 0.03);
+    min-width: 260px;
+}
+
+.sff-personal-library-search-row span[aria-hidden="true"] {
+    font-size: 18px;
+}
+
+.sff-personal-library-search-row input[type="search"] {
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    flex: 1;
+    outline: none;
+    color: #023441;
+}
+
+.sff-personal-library-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.sff-personal-library-actions .button {
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-weight: 600;
+}
+
+.sff-personal-library-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    color: #5f6c7a;
+    font-size: 14px;
+    background: rgba(233, 250, 176, 0.35);
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.sff-personal-library-filter {
+    font-weight: 600;
+    color: #023441;
+}
+
+.sff-personal-library-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sff-personal-library-item {
+    margin: 0;
+}
+
+.sff-ingredient-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 16px 40px rgba(2, 52, 65, 0.12);
+    border: 1px solid rgba(2, 52, 65, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.sff-ingredient-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.sff-ingredient-card__header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #023441;
+}
+
+.sff-personal-library-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(2, 52, 65, 0.08);
+    color: #023441;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.sff-ingredient-updated {
+    font-size: 13px;
+    color: #6f7d8a;
+    background: rgba(111, 125, 138, 0.12);
+    border-radius: 999px;
+    padding: 6px 12px;
+}
+
+.sff-ingredient-card__macros {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.sff-ingredient-macro {
+    background: linear-gradient(135deg, rgba(2, 52, 65, 0.08), rgba(2, 52, 65, 0.02));
+    padding: 12px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sff-ingredient-macro-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7a88;
+}
+
+.sff-ingredient-macro-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #023441;
+}
+
+.sff-ingredient-macro-value span {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7a88;
+    margin-left: 4px;
+}
+
+.sff-ingredient-cost {
+    margin: 0;
+    font-size: 14px;
+    color: #475467;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(233, 250, 176, 0.35);
+    font-weight: 600;
+}
+
+.sff-personal-library-empty {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 22px;
+    padding: 40px;
+    box-shadow: 0 20px 45px rgba(2, 52, 65, 0.12);
+}
+
+.sff-personal-library-empty h3 {
+    margin-top: 0;
+    color: #023441;
+}
+
+.sff-personal-library-empty p {
+    color: #6b7a88;
+    margin-bottom: 24px;
+}
+
+/* --- Recipe Builder Enhancements --- */
+.sff-recipe-builder {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 24px 50px rgba(2, 52, 65, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 12px;
+}
+
+.sff-recipe-builder__intro h3 {
+    margin: 0 0 4px;
+    font-size: 24px;
+    color: #023441;
+}
+
+.sff-recipe-builder__intro p {
+    margin: 0;
+    color: #475467;
+    max-width: 540px;
+}
+
+.sff-recipe-builder__body {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+
+.sff-recipe-builder__ingredients {
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.sff-recipe-builder__summary {
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.sff-recipe-field-label {
+    font-weight: 700;
+    color: #023441;
+    font-size: 15px;
+}
+
+.sff-recipe-selected-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(233, 250, 176, 0.6);
+    font-weight: 600;
+    color: #023441;
+    width: fit-content;
+}
+
+.sff-recipe-ingredient-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f5faf7;
+    border-radius: 14px;
+    padding: 10px 16px;
+    border: 1px solid rgba(2, 52, 65, 0.1);
+}
+
+.sff-recipe-ingredient-search input[type="search"] {
+    border: none;
+    background: transparent;
+    flex: 1;
+    font-size: 15px;
+    color: #023441;
+    outline: none;
+}
+
+.sff-recipe-ingredient-select {
+    min-height: 260px;
+    border-radius: 16px;
+    border: 1px solid rgba(2, 52, 65, 0.18);
+    padding: 12px;
+    box-shadow: inset 0 2px 8px rgba(2, 52, 65, 0.08);
+    font-size: 15px;
+}
+
+.sff-recipe-ingredient-select option {
+    padding: 6px;
+}
+
+.sff-recipe-no-results {
+    margin: 0;
+    font-size: 13px;
+    color: #b42318;
+    font-weight: 600;
+}
+
+.sff-recipe-servings-card {
+    background: rgba(2, 52, 65, 0.05);
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sff-recipe-servings-input {
+    width: 120px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(2, 52, 65, 0.2);
+    font-size: 16px;
+}
+
+.sff-recipe-nutrition {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.sff-recipe-nutrition-section {
+    background: linear-gradient(135deg, rgba(2, 52, 65, 0.08), rgba(2, 52, 65, 0.02));
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sff-recipe-nutrition-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sff-recipe-nutrition-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #023441;
+    font-weight: 600;
+    font-size: 13px;
+    box-shadow: 0 6px 14px rgba(2, 52, 65, 0.08);
+}
+
+.sff-recipe-nutrition-pill--total {
+    background: #023441;
+    color: #e9fab0;
+}
+
+.sff-nutrient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.sff-nutrient-card {
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 90px;
+    color: #023441;
+}
+
+.sff-nutrient-card--macro {
+    background: rgba(233, 250, 176, 0.8);
+}
+
+.sff-nutrient-card--micro {
+    background: rgba(2, 52, 65, 0.08);
+}
+
+.sff-nutrient-card--cost {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px dashed rgba(2, 52, 65, 0.3);
+}
+
+.sff-nutrient-card--meta {
+    background: rgba(2, 52, 65, 0.06);
+}
+
+.sff-nutrient-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #516272;
+}
+
+.sff-nutrient-value {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.sff-nutrient-empty {
+    margin: 0;
+    font-size: 14px;
+    color: #5f6c7a;
+}
+
+@media (max-width: 960px) {
+    .sff-personal-library {
+        padding: 24px;
+    }
+
+    .sff-ingredient-card__macros {
+        grid-template-columns: 1fr;
+    }
+
+    .sff-personal-library-stats {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .sff-personal-library-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sff-personal-library-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .sff-personal-library-actions .button {
+        flex: 1;
+        text-align: center;
+    }
+}
+

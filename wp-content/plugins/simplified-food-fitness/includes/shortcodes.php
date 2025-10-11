@@ -222,30 +222,131 @@ function sff_personal_ingredients_shortcode() {
 
     $ingredient_query = new WP_Query($query_args);
 
+    $all_ingredient_ids = get_posts([
+        'post_type'      => 'ingredient',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_owner_id',
+                'value'   => $user_id,
+                'compare' => '=',
+                'type'    => 'NUMERIC',
+            ],
+        ],
+    ]);
+
+    $total_ingredients = is_array($all_ingredient_ids) ? count($all_ingredient_ids) : 0;
+
+    $category_lookup = [];
+    if (!empty($all_ingredient_ids)) {
+        foreach ($all_ingredient_ids as $ingredient_id) {
+            $terms = wp_get_post_terms($ingredient_id, 'ingredient_category', ['fields' => 'names']);
+            if (is_wp_error($terms)) {
+                continue;
+            }
+            foreach ($terms as $term_name) {
+                $category_lookup[$term_name] = true;
+            }
+        }
+    }
+
+    $category_count = count($category_lookup);
+
+    $latest_ingredient = get_posts([
+        'post_type'      => 'ingredient',
+        'post_status'    => 'publish',
+        'posts_per_page' => 1,
+        'orderby'        => 'modified',
+        'order'          => 'DESC',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_owner_id',
+                'value'   => $user_id,
+                'compare' => '=',
+                'type'    => 'NUMERIC',
+            ],
+        ],
+    ]);
+
+    $last_updated = '';
+    if (!empty($latest_ingredient)) {
+        $last_updated = get_post_modified_time(get_option('date_format') . ' ' . get_option('time_format'), false, $latest_ingredient[0], true);
+    }
+
     ob_start();
     ?>
-    <div class="dashboard-container" style="max-width:900px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
+    <div class="dashboard-container" style="max-width:1024px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
         <?php echo sff_render_header($username, $day_type); ?>
 
         <div class="sff-personal-library">
-            <div class="sff-personal-library-header">
-                <h2>My Ingredient Library</h2>
-                <p>Browse, search, and manage ingredients you've added to your personal database.</p>
+            <div class="sff-personal-library-hero">
+                <div class="sff-personal-library-copy">
+                    <h2><?php esc_html_e('My Ingredient Library', 'simplified-food-fitness'); ?></h2>
+                    <p><?php esc_html_e('Curate, refine, and reuse the ingredients that power every client recipe.', 'simplified-food-fitness'); ?></p>
+                </div>
+                <div class="sff-personal-library-stats">
+                    <div class="sff-personal-stat-card">
+                        <span class="sff-personal-stat-label"><?php esc_html_e('Saved Ingredients', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-personal-stat-value"><?php echo esc_html(number_format_i18n($total_ingredients)); ?></span>
+                        <span class="sff-personal-stat-hint"><?php esc_html_e('Unique entries in your library', 'simplified-food-fitness'); ?></span>
+                    </div>
+                    <div class="sff-personal-stat-card">
+                        <span class="sff-personal-stat-label"><?php esc_html_e('Active Categories', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-personal-stat-value"><?php echo esc_html(number_format_i18n($category_count)); ?></span>
+                        <span class="sff-personal-stat-hint"><?php esc_html_e('Organize ingredients by purpose', 'simplified-food-fitness'); ?></span>
+                    </div>
+                    <div class="sff-personal-stat-card">
+                        <span class="sff-personal-stat-label"><?php esc_html_e('Last Updated', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-personal-stat-value">
+                            <?php echo $last_updated ? esc_html($last_updated) : esc_html__('Not yet added', 'simplified-food-fitness'); ?>
+                        </span>
+                        <span class="sff-personal-stat-hint"><?php esc_html_e('Keep your nutrition data current', 'simplified-food-fitness'); ?></span>
+                    </div>
+                </div>
             </div>
 
             <form class="sff-personal-library-search" method="get" action="">
-                <label for="sff_ingredient_search" class="screen-reader-text">Search your ingredients</label>
-                <div class="sff-personal-library-search-row">
-                    <input type="search" id="sff_ingredient_search" name="sff_ingredient_search" value="<?php echo esc_attr($search_term); ?>" placeholder="Search by ingredient name" />
-                    <button type="submit" class="button">Search</button>
+                <label for="sff_ingredient_search" class="screen-reader-text"><?php esc_html_e('Search your ingredients', 'simplified-food-fitness'); ?></label>
+                <div class="sff-personal-library-toolbar">
+                    <div class="sff-personal-library-search-row">
+                        <span aria-hidden="true">🔍</span>
+                        <input type="search" id="sff_ingredient_search" name="sff_ingredient_search" value="<?php echo esc_attr($search_term); ?>" placeholder="<?php esc_attr_e('Search by ingredient name', 'simplified-food-fitness'); ?>" />
+                        <?php
+                        $current_page = get_queried_object();
+                        if ($current_page instanceof WP_Post) {
+                            echo '<input type="hidden" name="page_id" value="' . esc_attr($current_page->ID) . '">';
+                        }
+                        ?>
+                    </div>
+                    <div class="sff-personal-library-actions">
+                        <?php if ($search_term) : ?>
+                            <a class="button button-secondary" href="<?php echo esc_url(remove_query_arg(['sff_ingredient_search', 'sff_page'])); ?>"><?php esc_html_e('Clear search', 'simplified-food-fitness'); ?></a>
+                        <?php endif; ?>
+                        <a class="button button-primary" href="<?php echo esc_url(home_url('/add-ingredient/')); ?>"><?php esc_html_e('Add new ingredient', 'simplified-food-fitness'); ?></a>
+                    </div>
                 </div>
-                <?php
-                $current_page = get_queried_object();
-                if ($current_page instanceof WP_Post) {
-                    echo '<input type="hidden" name="page_id" value="' . esc_attr($current_page->ID) . '">';
-                }
-                ?>
             </form>
+
+            <?php if ($ingredient_query->found_posts > 0) : ?>
+                <?php
+                $range_start = ($paged - 1) * $ingredient_query->get('posts_per_page') + 1;
+                $range_end   = $range_start + $ingredient_query->post_count - 1;
+                $range_end   = min($range_end, $ingredient_query->found_posts);
+                ?>
+                <div class="sff-personal-library-meta">
+                    <span>
+                        <?php
+                        /* translators: 1: range start, 2: range end, 3: total ingredients */
+                        printf(esc_html__('Showing %1$s – %2$s of %3$s ingredients', 'simplified-food-fitness'), esc_html(number_format_i18n($range_start)), esc_html(number_format_i18n($range_end)), esc_html(number_format_i18n($ingredient_query->found_posts)));
+                        ?>
+                    </span>
+                    <?php if ($search_term) : ?>
+                        <span class="sff-personal-library-filter"><?php printf(esc_html__('Filtered by “%s”', 'simplified-food-fitness'), esc_html($search_term)); ?></span>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
 
             <?php if ($ingredient_query->have_posts()) : ?>
                 <ul class="sff-personal-library-list">
@@ -257,18 +358,50 @@ function sff_personal_ingredients_shortcode() {
                         $category_name = (!is_wp_error($terms) && !empty($terms)) ? $terms[0]->name : __('Uncategorized', 'simplified-food-fitness');
                         $last_updated  = get_the_modified_date(get_option('date_format') . ' ' . get_option('time_format'));
                         $edit_link     = current_user_can('edit_post', $ingredient_id) ? get_edit_post_link($ingredient_id, '') : '';
+                        $macro_snapshot = get_post_meta($ingredient_id, '_sff_macros', true);
+                        $macro_snapshot = is_array($macro_snapshot) ? $macro_snapshot : [];
+                        $highlight_fields = [
+                            'calories' => __('Calories', 'simplified-food-fitness'),
+                            'protein'  => __('Protein', 'simplified-food-fitness'),
+                            'carbs'    => __('Carbs', 'simplified-food-fitness'),
+                            'fat'      => __('Fat', 'simplified-food-fitness'),
+                        ];
+                        $unit_cost = get_post_meta($ingredient_id, '_sff_unit_cost', true);
+                        $unit_cost = $unit_cost !== '' ? floatval($unit_cost) : null;
                         ?>
                         <li class="sff-personal-library-item">
-                            <div class="sff-personal-library-item-top">
-                                <h3><?php the_title(); ?></h3>
-                                <span class="sff-personal-library-category"><?php echo esc_html($category_name); ?></span>
-                            </div>
-                            <p class="sff-personal-library-meta">Last updated <?php echo esc_html($last_updated); ?></p>
-                            <div class="sff-personal-library-actions">
-                                <?php if ($edit_link) : ?>
-                                    <a class="button" href="<?php echo esc_url($edit_link); ?>">Edit in dashboard</a>
+                            <div class="sff-ingredient-card">
+                                <div class="sff-ingredient-card__header">
+                                    <div>
+                                        <h3><?php the_title(); ?></h3>
+                                        <span class="sff-personal-library-category"><?php echo esc_html($category_name); ?></span>
+                                    </div>
+                                    <span class="sff-ingredient-updated"><?php printf(esc_html__('Updated %s', 'simplified-food-fitness'), esc_html($last_updated)); ?></span>
+                                </div>
+
+                                <div class="sff-ingredient-card__macros">
+                                    <?php foreach ($highlight_fields as $field => $label) :
+                                        $value = isset($macro_snapshot[$field]) ? floatval($macro_snapshot[$field]) : 0;
+                                        $unit  = $field === 'calories' ? __('kcal', 'simplified-food-fitness') : __('g', 'simplified-food-fitness');
+                                        $precision = $field === 'calories' ? 0 : 1;
+                                        ?>
+                                        <div class="sff-ingredient-macro">
+                                            <span class="sff-ingredient-macro-label"><?php echo esc_html($label); ?></span>
+                                            <span class="sff-ingredient-macro-value"><?php echo esc_html(number_format_i18n($value, $precision)); ?> <span><?php echo esc_html($unit); ?></span></span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <?php if ($unit_cost !== null) : ?>
+                                    <p class="sff-ingredient-cost"><?php printf(esc_html__('Unit cost: $%s', 'simplified-food-fitness'), esc_html(number_format_i18n($unit_cost, 2))); ?></p>
                                 <?php endif; ?>
-                                <a class="button button-secondary" href="<?php echo esc_url(get_permalink($ingredient_id)); ?>" target="_blank" rel="noopener noreferrer">View details</a>
+
+                                <div class="sff-personal-library-actions">
+                                    <?php if ($edit_link) : ?>
+                                        <a class="button" href="<?php echo esc_url($edit_link); ?>"><?php esc_html_e('Edit ingredient', 'simplified-food-fitness'); ?></a>
+                                    <?php endif; ?>
+                                    <a class="button button-secondary" href="<?php echo esc_url(get_permalink($ingredient_id)); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Preview details', 'simplified-food-fitness'); ?></a>
+                                </div>
                             </div>
                         </li>
                         <?php
@@ -297,9 +430,9 @@ function sff_personal_ingredients_shortcode() {
                 ?>
             <?php else : ?>
                 <div class="sff-personal-library-empty">
-                    <h3>You haven’t added any ingredients yet.</h3>
-                    <p>Start by scanning a label or entering details manually to build your personal ingredient library.</p>
-                    <a class="button button-primary" href="<?php echo esc_url( home_url( '/add-ingredient/' ) ); ?>">Add your first ingredient</a>
+                    <h3><?php esc_html_e('You haven’t added any ingredients yet.', 'simplified-food-fitness'); ?></h3>
+                    <p><?php esc_html_e('Start by scanning a label or entering details manually to build your personal ingredient library.', 'simplified-food-fitness'); ?></p>
+                    <a class="button button-primary" href="<?php echo esc_url( home_url( '/add-ingredient/' ) ); ?>"><?php esc_html_e('Add your first ingredient', 'simplified-food-fitness'); ?></a>
                 </div>
             <?php endif; ?>
         </div>

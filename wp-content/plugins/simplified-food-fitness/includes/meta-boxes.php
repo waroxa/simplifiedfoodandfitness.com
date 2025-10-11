@@ -3,6 +3,91 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+if (!function_exists('sff_get_nutrient_groups')) {
+    function sff_get_nutrient_groups() {
+        $macro_group_macros = [
+            'calories', 'carbs', 'protein', 'fat',
+            'saturated_fat', 'trans_fat', 'cholesterol', 'sodium',
+            'fiber', 'sugars', 'added_sugars',
+        ];
+
+        $macro_group_micros = array_values(array_diff(SFF_MACRO_FIELDS, $macro_group_macros));
+
+        return [
+            'macros' => $macro_group_macros,
+            'micros' => $macro_group_micros,
+        ];
+    }
+}
+
+if (!function_exists('sff_format_nutrient_label')) {
+    function sff_format_nutrient_label($field) {
+        $field = str_replace('_', ' ', $field);
+        $field = ucwords($field);
+        $field = str_replace(['B12', 'B6'], ['B12', 'B6'], $field);
+        return $field;
+    }
+}
+
+if (!function_exists('sff_format_nutrient_value')) {
+    function sff_format_nutrient_value($value, $field) {
+        if ($field === 'cost') {
+            return '$' . number_format_i18n(floatval($value), 2);
+        }
+
+        $number = floatval($value);
+
+        if ($field === 'calories') {
+            return number_format_i18n(round($number));
+        }
+
+        $precision = abs($number - round($number)) < 0.01 ? 0 : 2;
+
+        return number_format_i18n($number, $precision);
+    }
+}
+
+if (!function_exists('sff_render_nutrient_cards_html')) {
+    function sff_render_nutrient_cards_html($data) {
+        if (!is_array($data) || empty($data)) {
+            return '<p class="sff-nutrient-empty">' . esc_html__('Select ingredients to see nutrition details.', 'simplified-food-fitness') . '</p>';
+        }
+
+        $groups = sff_get_nutrient_groups();
+        $order  = array_merge($groups['macros'], $groups['micros']);
+
+        if (array_key_exists('cost', $data)) {
+            $order[] = 'cost';
+        }
+
+        $html = '';
+
+        foreach ($order as $field) {
+            if (!array_key_exists($field, $data)) {
+                continue;
+            }
+
+            $value = $data[$field];
+            if ($field === 'cost') {
+                $group = 'cost';
+            } else {
+                $group = in_array($field, $groups['macros'], true) ? 'macro' : (in_array($field, $groups['micros'], true) ? 'micro' : 'meta');
+            }
+
+            $html .= '<div class="sff-nutrient-card sff-nutrient-card--' . esc_attr($group) . '">';
+            $html .= '<span class="sff-nutrient-label">' . esc_html(sff_format_nutrient_label($field)) . '</span>';
+            $html .= '<span class="sff-nutrient-value">' . esc_html(sff_format_nutrient_value($value, $field)) . '</span>';
+            $html .= '</div>';
+        }
+
+        if ($html === '') {
+            $html = '<p class="sff-nutrient-empty">' . esc_html__('Select ingredients to see nutrition details.', 'simplified-food-fitness') . '</p>';
+        }
+
+        return $html;
+    }
+}
+
 // Macro Targets Meta Box
 function sff_add_macro_target_meta_boxes() {
     add_meta_box(
@@ -403,63 +488,119 @@ function sff_add_recipe_meta_boxes() {
 add_action('add_meta_boxes', 'sff_add_recipe_meta_boxes');
 
 function sff_render_recipe_meta_box($post) {
+    wp_nonce_field('sff_save_recipe_details', 'sff_recipe_details_nonce');
+
     $saved = get_post_meta($post->ID, '_sff_recipe_ingredients', true);
     if (!is_array($saved)) {
         $saved = [];
     }
 
-    $servings = get_post_meta($post->ID, '_sff_recipe_servings', true);
-    $ingredients = get_posts(['post_type' => 'ingredient', 'numberposts' => -1]);
-
-    echo '<label><strong>Ingredients:</strong></label>';
-    echo '<select name="sff_recipe_ingredients[]" multiple style="width:100%; height:150px;">';
-    foreach ($ingredients as $ingredient) {
-        $selected = in_array($ingredient->ID, $saved) ? 'selected' : '';
-        echo '<option value="' . esc_attr($ingredient->ID) . '" ' . $selected . '>' . esc_html($ingredient->post_title) . '</option>';
-    }
-    echo '</select>';
-
-    echo '<p><label><strong>Servings:</strong></label> <input type="number" name="sff_recipe_servings" value="' . esc_attr($servings) . '" min="1" style="width:80px;" /></p>';
+    $servings    = max(1, intval(get_post_meta($post->ID, '_sff_recipe_servings', true)));
+    $ingredients = get_posts([
+        'post_type'      => 'ingredient',
+        'numberposts'    => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'fields'         => 'all',
+        'suppress_filters' => false,
+    ]);
 
     $totals = get_post_meta($post->ID, '_sff_recipe_macros_total', true);
     $macros = get_post_meta($post->ID, '_sff_recipe_macros', true);
-    echo '<h4>Macros per serving</h4>';
-    echo '<div id="sff-recipe-nutrients-per-serving">';
-    if (is_array($macros)) {
-        foreach (SFF_MACRO_FIELDS as $field) {
-            echo '<p><strong>' . esc_html(ucwords(str_replace('_', ' ', $field))) . ':</strong> ' . esc_html($macros[$field] ?? 0) . '</p>';
-        }
-    }
+
+    $selected_count = count(array_filter($saved));
+    $selected_label = _n('ingredient selected', 'ingredients selected', $selected_count, 'simplified-food-fitness');
+
+    echo '<div class="sff-recipe-builder">';
+    echo '<div class="sff-recipe-builder__intro">';
+    echo '<h3>' . esc_html__('Build Your Recipe', 'simplified-food-fitness') . '</h3>';
+    echo '<p>' . esc_html__('Select ingredients from your library, then fine-tune the serving size to watch macros adjust instantly.', 'simplified-food-fitness') . '</p>';
     echo '</div>';
 
-    echo '<h4>Total for recipe</h4>';
-    echo '<div id="sff-recipe-nutrients-total">';
-    if (is_array($totals)) {
-        foreach (SFF_MACRO_FIELDS as $field) {
-            echo '<p><strong>' . esc_html(ucwords(str_replace('_', ' ', $field))) . ':</strong> ' . esc_html($totals[$field] ?? 0) . '</p>';
-        }
-    }
+    echo '<div class="sff-recipe-builder__body">';
+    echo '<div class="sff-recipe-builder__ingredients">';
+    echo '<input type="hidden" name="sff_recipe_ingredients_present" value="1" />';
+    echo '<label for="sff_recipe_ingredients" class="sff-recipe-field-label">' . esc_html__('Ingredient Library', 'simplified-food-fitness') . '</label>';
+    echo '<p class="description">' . esc_html__('Use the search to quickly find ingredients. Hold ⌘/Ctrl to multi-select items.', 'simplified-food-fitness') . '</p>';
+    echo '<div class="sff-recipe-selected-pill">';
+    echo '<span id="sff-recipe-selected-count">' . esc_html($selected_count) . '</span> ';
+    echo '<span id="sff-recipe-selected-label">' . esc_html($selected_label) . '</span>';
     echo '</div>';
+    echo '<div class="sff-recipe-ingredient-search">';
+    echo '<span aria-hidden="true">🔍</span>';
+    echo '<input type="search" id="sff-recipe-ingredient-filter" placeholder="' . esc_attr__('Search ingredients…', 'simplified-food-fitness') . '" />';
+    echo '</div>';
+    echo '<p id="sff-recipe-no-results" class="sff-recipe-no-results" style="display:none;">' . esc_html__('No ingredients match your search.', 'simplified-food-fitness') . '</p>';
+    echo '<select id="sff_recipe_ingredients" name="sff_recipe_ingredients[]" multiple class="sff-recipe-ingredient-select">';
+    foreach ($ingredients as $ingredient) {
+        $selected = in_array($ingredient->ID, $saved, true) ? 'selected' : '';
+        echo '<option value="' . esc_attr($ingredient->ID) . '" ' . $selected . '>' . esc_html($ingredient->post_title) . '</option>';
+    }
+    echo '</select>';
+    echo '</div>';
+
+    echo '<div class="sff-recipe-builder__summary">';
+    echo '<div class="sff-recipe-servings-card">';
+    echo '<label for="sff_recipe_servings" class="sff-recipe-field-label">' . esc_html__('Servings', 'simplified-food-fitness') . '</label>';
+    echo '<input type="number" min="1" id="sff_recipe_servings" name="sff_recipe_servings" value="' . esc_attr($servings) . '" class="sff-recipe-servings-input" />';
+    echo '<p class="description">' . esc_html__('Every nutrient automatically recalculates when servings change.', 'simplified-food-fitness') . '</p>';
+    echo '</div>';
+
+    echo '<div class="sff-recipe-nutrition">';
+    echo '<div class="sff-recipe-nutrition-section">';
+    echo '<div class="sff-recipe-nutrition-header">';
+    echo '<span class="sff-recipe-nutrition-pill">' . esc_html__('Per Serving', 'simplified-food-fitness') . '</span>';
+    echo '</div>';
+    echo '<div id="sff-recipe-nutrients-per-serving" class="sff-nutrient-grid">' . sff_render_nutrient_cards_html($macros) . '</div>';
+    echo '</div>';
+
+    echo '<div class="sff-recipe-nutrition-section">';
+    echo '<div class="sff-recipe-nutrition-header">';
+    echo '<span class="sff-recipe-nutrition-pill sff-recipe-nutrition-pill--total">' . esc_html__('Whole Recipe', 'simplified-food-fitness') . '</span>';
+    echo '</div>';
+    echo '<div id="sff-recipe-nutrients-total" class="sff-nutrient-grid">' . sff_render_nutrient_cards_html($totals) . '</div>';
+    echo '</div>';
+    echo '</div>'; // nutrition
+    echo '</div>'; // summary
+    echo '</div>'; // body
+    echo '</div>'; // builder wrapper
 }
 
 function sff_save_recipe_details($post_id) {
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-    if (!current_user_can('edit_post', $post_id)) return;
-    if (isset($_POST['sff_recipe_servings'])) {
-        update_post_meta($post_id, '_sff_recipe_servings', absint($_POST['sff_recipe_servings']));
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
     }
-    if (isset($_POST['sff_recipe_ingredients'])) {
-        $ingredient_ids = array_map('intval', (array) $_POST['sff_recipe_ingredients']);
-        update_post_meta($post_id, '_sff_recipe_ingredients', $ingredient_ids);
-        $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
-        update_post_meta($post_id, '_sff_recipe_macros_total', $totals);
-        $servings = max(1, intval(get_post_meta($post_id, '_sff_recipe_servings', true)));
-        $per_serving = [];
-        foreach ($totals as $key => $value) {
-            $per_serving[$key] = $value / $servings;
-        }
-        update_post_meta($post_id, '_sff_recipe_macros', $per_serving);
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
     }
+
+    if (!isset($_POST['sff_recipe_details_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['sff_recipe_details_nonce'])), 'sff_save_recipe_details')) {
+        return;
+    }
+
+    $servings = isset($_POST['sff_recipe_servings']) ? max(1, absint(wp_unslash($_POST['sff_recipe_servings']))) : max(1, intval(get_post_meta($post_id, '_sff_recipe_servings', true)));
+
+    $ingredient_ids = [];
+    if (isset($_POST['sff_recipe_ingredients_present'])) {
+        $raw = isset($_POST['sff_recipe_ingredients']) ? (array) wp_unslash($_POST['sff_recipe_ingredients']) : [];
+        $ingredient_ids = array_values(array_filter(array_map('intval', $raw))); // Remove empties and normalize indexes
+    } else {
+        $stored = get_post_meta($post_id, '_sff_recipe_ingredients', true);
+        $ingredient_ids = is_array($stored) ? array_map('intval', $stored) : [];
+    }
+
+    update_post_meta($post_id, '_sff_recipe_servings', $servings);
+    update_post_meta($post_id, '_sff_recipe_ingredients', $ingredient_ids);
+
+    $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
+    update_post_meta($post_id, '_sff_recipe_macros_total', $totals);
+
+    $per_serving = [];
+    foreach ($totals as $key => $value) {
+        $per_serving[$key] = $servings > 0 ? $value / $servings : 0;
+    }
+    update_post_meta($post_id, '_sff_recipe_macros', $per_serving);
 }
 add_action('save_post', 'sff_save_recipe_details');
 

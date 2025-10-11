@@ -41,6 +41,11 @@ function sff_enqueue_assets() {
             'macros' => $macro_group_macros,
             'micros' => $macro_group_micros,
         ],
+        'recipe_empty_text' => __('Select ingredients to see nutrition details.', 'simplified-food-fitness'),
+        'recipe_labels'     => [
+            'ingredient_single' => __('ingredient selected', 'simplified-food-fitness'),
+            'ingredient_plural' => __('ingredients selected', 'simplified-food-fitness'),
+        ],
         'show_usda_details' => current_user_can('manage_options'),
     ]);
 
@@ -59,7 +64,7 @@ function sff_enqueue_assets() {
     ]);
 
     // ✅ CSS
-    wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.2');
+    wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.3');
 }
 add_action('wp_enqueue_scripts', 'sff_enqueue_assets');
 
