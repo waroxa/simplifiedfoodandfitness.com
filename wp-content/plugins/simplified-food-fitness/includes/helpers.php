@@ -708,43 +708,76 @@ function sff_create_recipe_from_modal($name, $ingredient_ids) {
     $ingredient_ids = array_map('intval', (array) $ingredient_ids);
     update_post_meta($recipe_id, '_sff_recipe_ingredients', $ingredient_ids);
 
-    $base_macros = sff_get_recipe_macros_from_ids($ingredient_ids);
+    $ingredient_servings = [];
+    foreach ($ingredient_ids as $id) {
+        if ($id) {
+            $ingredient_servings[$id] = 1.0;
+        }
+    }
+
+    if (!empty($ingredient_servings)) {
+        update_post_meta($recipe_id, '_sff_recipe_ingredient_servings', $ingredient_servings);
+    }
+
+    $total_macros = sff_get_recipe_macros_from_ids($ingredient_ids, $ingredient_servings);
     update_post_meta($recipe_id, '_sff_recipe_servings', 1);
 
     if (!empty($ingredient_ids)) {
-        update_post_meta($recipe_id, '_sff_recipe_macros', $base_macros);
-        update_post_meta($recipe_id, '_sff_recipe_macros_total', $base_macros);
+        update_post_meta($recipe_id, '_sff_recipe_macros', $total_macros);
+        update_post_meta($recipe_id, '_sff_recipe_macros_total', $total_macros);
+        if (array_key_exists('cost', $total_macros)) {
+            update_post_meta($recipe_id, '_sff_recipe_cost', $total_macros['cost']);
+        }
     } else {
         delete_post_meta($recipe_id, '_sff_recipe_macros');
         delete_post_meta($recipe_id, '_sff_recipe_macros_total');
+        delete_post_meta($recipe_id, '_sff_recipe_cost');
     }
-
-    $cost = 0;
-    foreach ($ingredient_ids as $id) {
-        $cost += floatval(get_post_meta($id, '_sff_unit_cost', true));
-    }
-    update_post_meta($recipe_id, '_sff_recipe_cost', $cost);
 
     return $recipe_id;
 }
 
-function sff_get_recipe_macros_from_ids($ingredient_ids) {
+function sff_get_recipe_macros_from_ids($ingredient_ids, $serving_map = []) {
     $fields = array_merge(SFF_MACRO_FIELDS, ['cost']);
-    $totals = array_fill_keys($fields, 0);
+    $totals = array_fill_keys($fields, 0.0);
+
     if (!is_array($ingredient_ids) || empty($ingredient_ids)) {
         return $totals;
     }
 
+    $normalized = [];
+    foreach ((array) $ingredient_ids as $id) {
+        $id = intval($id);
+        if (!$id) {
+            continue;
+        }
+
+        $normalized[$id] = isset($serving_map[$id]) && floatval($serving_map[$id]) > 0
+            ? floatval($serving_map[$id])
+            : 1.0;
+    }
+
+    if (empty($normalized)) {
+        return $totals;
+    }
+
     global $wpdb;
-    $table = $wpdb->prefix . 'sff_ingredient_nutrition';
+    $table        = $wpdb->prefix . 'sff_ingredient_nutrition';
+    $ingredient_ids = array_keys($normalized);
     $placeholders = implode(',', array_fill(0, count($ingredient_ids), '%d'));
-    $select = implode(', ', $fields);
-    $query = $wpdb->prepare("SELECT $select FROM $table WHERE ingredient_id IN ($placeholders)", $ingredient_ids);
-    $results = $wpdb->get_results($query, ARRAY_A);
+    $select       = 'ingredient_id, ' . implode(', ', $fields);
+    $query        = $wpdb->prepare("SELECT $select FROM $table WHERE ingredient_id IN ($placeholders)", $ingredient_ids);
+    $results      = $wpdb->get_results($query, ARRAY_A);
 
     foreach ($results as $row) {
+        $id = intval($row['ingredient_id']);
+        if (!isset($normalized[$id])) {
+            continue;
+        }
+
+        $multiplier = max(0, floatval($normalized[$id]));
         foreach ($fields as $field) {
-            $totals[$field] += floatval($row[$field]);
+            $totals[$field] += floatval($row[$field]) * $multiplier;
         }
     }
 
@@ -752,20 +785,25 @@ function sff_get_recipe_macros_from_ids($ingredient_ids) {
 }
 
 function sff_get_recipe_macros($recipe_id, $per_serving = false) {
-    $ingredient_ids = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
-    $base_totals    = sff_get_recipe_macros_from_ids($ingredient_ids);
-    $servings       = max(1, (int) get_post_meta($recipe_id, '_sff_recipe_servings', true));
+    $ingredient_ids   = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
+    $ingredient_map   = get_post_meta($recipe_id, '_sff_recipe_ingredient_servings', true);
+    if (!is_array($ingredient_map)) {
+        $ingredient_map = [];
+    }
+
+    $base_totals = sff_get_recipe_macros_from_ids($ingredient_ids, $ingredient_map);
+    $servings    = max(1, (int) get_post_meta($recipe_id, '_sff_recipe_servings', true));
 
     if ($per_serving) {
-        return $base_totals;
+        $per_serving_totals = [];
+        foreach ($base_totals as $key => $value) {
+            $per_serving_totals[$key] = $value / $servings;
+        }
+
+        return $per_serving_totals;
     }
 
-    $scaled_totals = [];
-    foreach ($base_totals as $key => $value) {
-        $scaled_totals[$key] = $value * $servings;
-    }
-
-    return $scaled_totals;
+    return $base_totals;
 }
 
 function sff_admin_notice() {
