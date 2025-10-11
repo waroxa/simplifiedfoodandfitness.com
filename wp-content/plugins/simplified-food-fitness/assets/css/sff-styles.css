@@ -976,6 +976,42 @@ body.sff-menu-open .sff-menu-items {
     flex: 1;
 }
 
+.sff-personal-library-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    background: rgba(2, 52, 65, 0.06);
+    border-radius: 16px;
+    padding: 12px 16px;
+}
+
+.sff-personal-library-tags__label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #516272;
+    font-weight: 600;
+}
+
+.sff-personal-library-tags__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.sff-personal-library-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #023441;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 8px 14px rgba(2, 52, 65, 0.1);
+}
+
 .sff-personal-stat-card {
     background: #ffffff;
     border-radius: 18px;
@@ -1107,6 +1143,32 @@ body.sff-menu-open .sff-menu-items {
     gap: 12px;
 }
 
+.sff-ingredient-card__identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sff-ingredient-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #023441, #0a6a81);
+    color: #e9fab0;
+    font-weight: 700;
+    font-size: 20px;
+    box-shadow: 0 10px 24px rgba(2, 52, 65, 0.28);
+}
+
+.sff-ingredient-card__titles {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .sff-ingredient-card__header h3 {
     margin: 0;
     font-size: 20px;
@@ -1169,6 +1231,10 @@ body.sff-menu-open .sff-menu-items {
     margin-left: 4px;
 }
 
+.sff-ingredient-card__footer {
+    margin-top: auto;
+}
+
 .sff-ingredient-cost {
     margin: 0;
     font-size: 14px;
@@ -1177,6 +1243,14 @@ body.sff-menu-open .sff-menu-items {
     border-radius: 12px;
     background: rgba(233, 250, 176, 0.35);
     font-weight: 600;
+}
+
+.sff-personal-library-empty__actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
 }
 
 .sff-personal-library-empty {
@@ -1422,6 +1496,15 @@ body.sff-menu-open .sff-menu-items {
     .sff-personal-library-toolbar {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .sff-personal-library-tags {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sff-personal-library-tags__list {
+        justify-content: flex-start;
     }
 
     .sff-personal-library-actions {
