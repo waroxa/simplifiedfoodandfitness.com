@@ -175,6 +175,7 @@ function sff_render_header($username, $day_type) {
                 <ul>
                     <li><a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>">Dashboard</a></li>
                     <li><a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/my-ingredients/' ) ); ?>">My Ingredients</a></li>
                     <li><a href="<?php echo esc_url( home_url( '/add-ingredient/' ) ); ?>">Add Ingredient</a></li>
                     <li><a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>">Logout</a></li>
                 </ul>
@@ -184,6 +185,132 @@ function sff_render_header($username, $day_type) {
     <?php
     return ob_get_clean();
 }
+
+function sff_personal_ingredients_shortcode() {
+    if (!is_user_logged_in()) {
+        return sff_custom_login_form();
+    }
+
+    $user      = wp_get_current_user();
+    $username  = $user->display_name ?: $user->user_login;
+    $day_type  = 'Rest Day';
+    $user_id   = get_current_user_id();
+
+    $search_term = isset($_GET['sff_ingredient_search']) ? sanitize_text_field(wp_unslash($_GET['sff_ingredient_search'])) : '';
+    $paged       = isset($_GET['sff_page']) ? max(1, intval($_GET['sff_page'])) : 1;
+
+    $query_args = [
+        'post_type'      => 'ingredient',
+        'post_status'    => 'publish',
+        'posts_per_page' => 12,
+        'paged'          => $paged,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_owner_id',
+                'value'   => $user_id,
+                'compare' => '=',
+                'type'    => 'NUMERIC',
+            ],
+        ],
+    ];
+
+    if ($search_term) {
+        $query_args['s'] = $search_term;
+    }
+
+    $ingredient_query = new WP_Query($query_args);
+
+    ob_start();
+    ?>
+    <div class="dashboard-container" style="max-width:900px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
+        <?php echo sff_render_header($username, $day_type); ?>
+
+        <div class="sff-personal-library">
+            <div class="sff-personal-library-header">
+                <h2>My Ingredient Library</h2>
+                <p>Browse, search, and manage ingredients you've added to your personal database.</p>
+            </div>
+
+            <form class="sff-personal-library-search" method="get" action="">
+                <label for="sff_ingredient_search" class="screen-reader-text">Search your ingredients</label>
+                <div class="sff-personal-library-search-row">
+                    <input type="search" id="sff_ingredient_search" name="sff_ingredient_search" value="<?php echo esc_attr($search_term); ?>" placeholder="Search by ingredient name" />
+                    <button type="submit" class="button">Search</button>
+                </div>
+                <?php
+                $current_page = get_queried_object();
+                if ($current_page instanceof WP_Post) {
+                    echo '<input type="hidden" name="page_id" value="' . esc_attr($current_page->ID) . '">';
+                }
+                ?>
+            </form>
+
+            <?php if ($ingredient_query->have_posts()) : ?>
+                <ul class="sff-personal-library-list">
+                    <?php
+                    while ($ingredient_query->have_posts()) :
+                        $ingredient_query->the_post();
+                        $ingredient_id = get_the_ID();
+                        $terms         = wp_get_post_terms($ingredient_id, 'ingredient_category', ['number' => 1]);
+                        $category_name = (!is_wp_error($terms) && !empty($terms)) ? $terms[0]->name : __('Uncategorized', 'simplified-food-fitness');
+                        $last_updated  = get_the_modified_date(get_option('date_format') . ' ' . get_option('time_format'));
+                        $edit_link     = current_user_can('edit_post', $ingredient_id) ? get_edit_post_link($ingredient_id, '') : '';
+                        ?>
+                        <li class="sff-personal-library-item">
+                            <div class="sff-personal-library-item-top">
+                                <h3><?php the_title(); ?></h3>
+                                <span class="sff-personal-library-category"><?php echo esc_html($category_name); ?></span>
+                            </div>
+                            <p class="sff-personal-library-meta">Last updated <?php echo esc_html($last_updated); ?></p>
+                            <div class="sff-personal-library-actions">
+                                <?php if ($edit_link) : ?>
+                                    <a class="button" href="<?php echo esc_url($edit_link); ?>">Edit in dashboard</a>
+                                <?php endif; ?>
+                                <a class="button button-secondary" href="<?php echo esc_url(get_permalink($ingredient_id)); ?>" target="_blank" rel="noopener noreferrer">View details</a>
+                            </div>
+                        </li>
+                        <?php
+                    endwhile;
+                    ?>
+                </ul>
+
+                <?php
+                $total_pages = intval($ingredient_query->max_num_pages);
+                if ($total_pages > 1) {
+                    $base_url = remove_query_arg('sff_page');
+                    $base_url = add_query_arg('sff_page', '%#%', $base_url);
+                    $pagination = paginate_links([
+                        'base'      => esc_url_raw($base_url),
+                        'format'    => '',
+                        'current'   => $paged,
+                        'total'     => $total_pages,
+                        'type'      => 'list',
+                        'add_args'  => $search_term ? ['sff_ingredient_search' => $search_term] : [],
+                    ]);
+
+                    if ($pagination) {
+                        echo '<nav class="sff-personal-library-pagination" aria-label="Ingredient pagination">' . wp_kses_post($pagination) . '</nav>';
+                    }
+                }
+                ?>
+            <?php else : ?>
+                <div class="sff-personal-library-empty">
+                    <h3>You haven’t added any ingredients yet.</h3>
+                    <p>Start by scanning a label or entering details manually to build your personal ingredient library.</p>
+                    <a class="button button-primary" href="<?php echo esc_url( home_url( '/add-ingredient/' ) ); ?>">Add your first ingredient</a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+
+    wp_reset_postdata();
+
+    return ob_get_clean();
+}
+add_shortcode('sff_personal_ingredients', 'sff_personal_ingredients_shortcode');
 
 function sff_client_profile_shortcode() {
     if (!is_user_logged_in()) {

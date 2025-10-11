@@ -191,24 +191,48 @@ function sff_scan_product_name() {
 
     error_log("🔍 Extracted product name: $product_name");
 
-    // Check if product already exists
-    $existing = get_posts([
-        'post_type' => 'ingredient',
-        'title' => $product_name,
-        'post_status' => 'publish',
-        'fields' => 'ids',
-        'posts_per_page' => 1
+    $current_user_id = get_current_user_id();
+
+    $existing_posts = get_posts([
+        'post_type'      => 'ingredient',
+        'title'          => $product_name,
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'posts_per_page' => -1,
     ]);
 
-    if (!empty($existing)) {
-        // Product exists
-        error_log("⚠️ Product '$product_name' already exists. ID: " . $existing[0]);
-        wp_send_json_success([
-            'product_name' => $product_name,
-            'exists' => true,
-            'existing_id' => $existing[0],
-        ]);
-        return;
+    $duplicates           = [];
+    $personal_duplicates  = [];
+
+    if (!empty($existing_posts)) {
+        foreach ($existing_posts as $existing_id) {
+            if (!sff_user_can_access_ingredient($existing_id, $current_user_id)) {
+                continue;
+            }
+
+            $owner_id   = sff_get_ingredient_owner_id($existing_id);
+            $owner_type = 'restricted';
+            $owner_label = __('Dietitian Ingredient', 'simplified-food-fitness');
+
+            if ($owner_id === 0) {
+                $owner_type  = 'general';
+                $owner_label = __('Shared Ingredient', 'simplified-food-fitness');
+            } elseif ($owner_id === intval($current_user_id)) {
+                $owner_type  = 'personal';
+                $owner_label = __('My Ingredient', 'simplified-food-fitness');
+                $personal_duplicates[] = $existing_id;
+            }
+
+            $duplicates[] = [
+                'id'         => $existing_id,
+                'title'      => get_the_title($existing_id),
+                'owner_type' => $owner_type,
+                'owner_label'=> $owner_label,
+                'can_edit'   => current_user_can('edit_post', $existing_id),
+                'edit_url'   => current_user_can('edit_post', $existing_id) ? get_edit_post_link($existing_id, '') : '',
+                'view_url'   => get_permalink($existing_id),
+            ];
+        }
     }
 
     // Product does NOT exist, save the image permanently
@@ -224,12 +248,25 @@ function sff_scan_product_name() {
 
     error_log("🟢 Image saved with attachment ID: $attachment_id");
 
-    wp_send_json_success([
-        'product_name' => $product_name,
-        'exists' => false,
-        'attachment_id' => $attachment_id,
-        'image_url' => wp_get_attachment_url($attachment_id)
-    ]);
+    $response = [
+        'product_name'    => $product_name,
+        'exists'          => false,
+        'attachment_id'   => $attachment_id,
+        'image_url'       => wp_get_attachment_url($attachment_id),
+        'duplicates'      => $duplicates,
+        'has_duplicates'  => !empty($duplicates),
+        'can_create_new'  => true,
+    ];
+
+    if (!empty($personal_duplicates)) {
+        $response['personal_duplicate_ids'] = $personal_duplicates;
+    }
+
+    if (!empty($duplicates)) {
+        $response['notice'] = __('We found ingredients with this name. You can edit an existing record or continue to create a new one.', 'simplified-food-fitness');
+    }
+
+    wp_send_json_success($response);
 }
 
 add_action('wp_ajax_sff_scan_product_name', 'sff_scan_product_name');
