@@ -65,6 +65,59 @@ function sff_enqueue_assets() {
 
     // ✅ CSS
     wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.3');
+
+    if (is_admin() && function_exists('get_current_screen')) {
+        $screen = get_current_screen();
+
+        if ($screen && $screen->post_type === 'recipe') {
+            wp_enqueue_media();
+            wp_enqueue_script(
+                'sff-recipe-media',
+                SFF_PLUGIN_URL . 'assets/js/recipe-media.js',
+                ['jquery'],
+                '1.0.0',
+                true
+            );
+
+            $post_id = 0;
+            if (isset($_GET['post'])) {
+                $post_id = absint($_GET['post']);
+            } elseif (isset($_POST['post_ID'])) {
+                $post_id = absint($_POST['post_ID']);
+            }
+
+            $cover_id    = $post_id ? (int) get_post_meta($post_id, '_sff_recipe_cover_id', true) : 0;
+            $gallery_ids = $post_id ? get_post_meta($post_id, '_sff_recipe_gallery_ids', true) : [];
+            if (!is_array($gallery_ids)) {
+                $gallery_ids = array_filter(array_map('intval', (array) $gallery_ids));
+            }
+
+            $media_items = [];
+            $ids_to_prepare = array_unique(array_merge($cover_id ? [$cover_id] : [], $gallery_ids));
+            foreach ($ids_to_prepare as $media_id) {
+                $prepared = wp_prepare_attachment_for_js($media_id);
+                if ($prepared) {
+                    $media_items[$media_id] = $prepared;
+                }
+            }
+
+            wp_localize_script('sff-recipe-media', 'sffRecipeMediaData', [
+                'coverId'    => $cover_id,
+                'galleryIds' => $gallery_ids,
+                'items'      => $media_items,
+                'i18n'       => [
+                    'coverTitle'   => __('Choose cover image', 'simplified-food-fitness'),
+                    'coverButton'  => __('Use as cover', 'simplified-food-fitness'),
+                    'galleryTitle' => __('Add gallery images', 'simplified-food-fitness'),
+                    'galleryButton'=> __('Add images', 'simplified-food-fitness'),
+                    'noCover'      => __('No cover image selected.', 'simplified-food-fitness'),
+                    'noGallery'    => __('No gallery images selected.', 'simplified-food-fitness'),
+                    'remove'       => __('Remove image', 'simplified-food-fitness'),
+                    'imageFallback'=> __('Image', 'simplified-food-fitness'),
+                ],
+            ]);
+        }
+    }
 }
 add_action('wp_enqueue_scripts', 'sff_enqueue_assets');
 

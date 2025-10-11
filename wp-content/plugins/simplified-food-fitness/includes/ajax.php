@@ -858,12 +858,17 @@ function sff_recalc_recipe_nutrition() {
     check_ajax_referer('sff_scan_nonce', 'security');
     $ids = isset($_POST['ingredient_ids']) ? array_map('intval', (array) $_POST['ingredient_ids']) : [];
     $servings = max(1, intval($_POST['servings'] ?? 1));
-    $totals = sff_get_recipe_macros_from_ids($ids);
-    $per = [];
-    foreach ($totals as $k => $v) {
-        $per[$k] = $v / $servings;
+    $per_serving = sff_get_recipe_macros_from_ids($ids);
+    $totals      = [];
+
+    foreach ($per_serving as $key => $value) {
+        $totals[$key] = $value * $servings;
     }
-    wp_send_json_success(['total' => $totals, 'per_serving' => $per]);
+
+    wp_send_json_success([
+        'total'       => $totals,
+        'per_serving' => $per_serving,
+    ]);
 }
 add_action('wp_ajax_sff_recalc_recipe_nutrition', 'sff_recalc_recipe_nutrition');
 
