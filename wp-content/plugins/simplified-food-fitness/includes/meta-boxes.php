@@ -181,8 +181,8 @@ function sff_render_meal_plan_meta_box($post) {
     $recipes_data  = [];
     $recipe_macros = [];
     foreach ($recipes as $recipe) {
-        $recipes_data[]              = ['id' => $recipe->ID, 'title' => $recipe->post_title];
-        $recipe_macros[$recipe->ID]  = sff_get_recipe_macros($recipe->ID);
+        $recipes_data[]             = ['id' => $recipe->ID, 'title' => $recipe->post_title];
+        $recipe_macros[$recipe->ID] = sff_get_recipe_macros($recipe->ID, true);
     }
 
     // Pass data to JS
@@ -505,11 +505,27 @@ function sff_render_recipe_meta_box($post) {
         'suppress_filters' => false,
     ]);
 
-    $totals = get_post_meta($post->ID, '_sff_recipe_macros_total', true);
-    $macros = get_post_meta($post->ID, '_sff_recipe_macros', true);
+    $cover_id    = (int) get_post_meta($post->ID, '_sff_recipe_cover_id', true);
+    $gallery_ids = get_post_meta($post->ID, '_sff_recipe_gallery_ids', true);
+    if (!is_array($gallery_ids)) {
+        $gallery_ids = array_filter(array_map('intval', (array) $gallery_ids));
+    }
 
     $selected_count = count(array_filter($saved));
     $selected_label = _n('ingredient selected', 'ingredients selected', $selected_count, 'simplified-food-fitness');
+
+    if ($selected_count === 0) {
+        $macros = [];
+        $totals = [];
+    } else {
+        $macros_base = sff_get_recipe_macros_from_ids($saved);
+        $macros      = $macros_base;
+        $totals      = [];
+
+        foreach ($macros_base as $key => $value) {
+            $totals[$key] = $value * $servings;
+        }
+    }
 
     echo '<div class="sff-recipe-builder">';
     echo '<div class="sff-recipe-builder__intro">';
@@ -562,6 +578,68 @@ function sff_render_recipe_meta_box($post) {
     echo '</div>';
     echo '</div>'; // nutrition
     echo '</div>'; // summary
+
+    echo '<div class="sff-recipe-builder__media">';
+    echo '<h3>' . esc_html__('Recipe Media', 'simplified-food-fitness') . '</h3>';
+
+    echo '<div class="sff-recipe-media">';
+    echo '<div class="sff-recipe-media__section">';
+    echo '<label class="sff-recipe-field-label" for="sff_recipe_cover_id">' . esc_html__('Cover Image', 'simplified-food-fitness') . '</label>';
+    echo '<p class="description">' . esc_html__('Pick a hero image that represents the finished recipe.', 'simplified-food-fitness') . '</p>';
+    echo '<div id="sff-recipe-cover-preview" class="sff-recipe-media__preview">';
+    if ($cover_id) {
+        $cover_src = wp_get_attachment_image_src($cover_id, 'medium');
+        $cover_alt = get_post_meta($cover_id, '_wp_attachment_image_alt', true);
+        $cover_alt = $cover_alt ? $cover_alt : get_the_title($cover_id);
+        if ($cover_src) {
+            echo '<img src="' . esc_url($cover_src[0]) . '" alt="' . esc_attr($cover_alt) . '" />';
+        } else {
+            echo '<p class="sff-recipe-media__empty">' . esc_html__('Selected image is unavailable.', 'simplified-food-fitness') . '</p>';
+        }
+    } else {
+        echo '<p class="sff-recipe-media__empty">' . esc_html__('No cover image selected.', 'simplified-food-fitness') . '</p>';
+    }
+    echo '</div>';
+    echo '<input type="hidden" id="sff_recipe_cover_id" name="sff_recipe_cover_id" value="' . ($cover_id ? esc_attr($cover_id) : '') . '" />';
+    echo '<div class="sff-recipe-media__actions">';
+    echo '<button type="button" class="button sff-recipe-cover-select">' . esc_html__('Choose cover image', 'simplified-food-fitness') . '</button>';
+    $cover_remove_disabled = $cover_id ? '' : ' disabled';
+    echo '<button type="button" class="button-link-delete sff-recipe-cover-remove"' . $cover_remove_disabled . '>' . esc_html__('Remove', 'simplified-food-fitness') . '</button>';
+    echo '</div>';
+    echo '</div>'; // cover section
+
+    echo '<div class="sff-recipe-media__section">';
+    echo '<label class="sff-recipe-field-label" for="sff_recipe_gallery_ids">' . esc_html__('Gallery Images', 'simplified-food-fitness') . '</label>';
+    echo '<p class="description">' . esc_html__('Show different angles, steps, or ingredient close-ups.', 'simplified-food-fitness') . '</p>';
+    echo '<div id="sff-recipe-gallery-preview" class="sff-recipe-media__gallery">';
+    if (!empty($gallery_ids)) {
+        foreach ($gallery_ids as $gallery_id) {
+            $thumb_src = wp_get_attachment_image_src($gallery_id, 'thumbnail');
+            $thumb_alt = get_post_meta($gallery_id, '_wp_attachment_image_alt', true);
+            $thumb_alt = $thumb_alt ? $thumb_alt : get_the_title($gallery_id);
+            echo '<div class="sff-recipe-media__gallery-item" data-id="' . esc_attr($gallery_id) . '">';
+            if ($thumb_src) {
+                echo '<img src="' . esc_url($thumb_src[0]) . '" alt="' . esc_attr($thumb_alt) . '" />';
+            } else {
+                echo '<span class="sff-recipe-media__gallery-fallback">' . esc_html__('Image', 'simplified-food-fitness') . '</span>';
+            }
+            echo '<button type="button" class="sff-recipe-gallery-remove" aria-label="' . esc_attr__('Remove image', 'simplified-food-fitness') . '">&times;</button>';
+            echo '</div>';
+        }
+    } else {
+        echo '<p class="sff-recipe-media__empty">' . esc_html__('No gallery images selected.', 'simplified-food-fitness') . '</p>';
+    }
+    echo '</div>';
+    echo '<input type="hidden" id="sff_recipe_gallery_ids" name="sff_recipe_gallery_ids" value="' . esc_attr(implode(',', $gallery_ids)) . '" />';
+    echo '<div class="sff-recipe-media__actions">';
+    echo '<button type="button" class="button sff-recipe-gallery-add">' . esc_html__('Add gallery images', 'simplified-food-fitness') . '</button>';
+    $gallery_clear_disabled = empty($gallery_ids) ? ' disabled' : '';
+    echo '<button type="button" class="button-link-delete sff-recipe-gallery-clear"' . $gallery_clear_disabled . '>' . esc_html__('Remove all', 'simplified-food-fitness') . '</button>';
+    echo '</div>';
+    echo '</div>'; // gallery section
+    echo '</div>'; // media wrapper
+    echo '</div>'; // builder media
+
     echo '</div>'; // body
     echo '</div>'; // builder wrapper
 }
@@ -593,14 +671,44 @@ function sff_save_recipe_details($post_id) {
     update_post_meta($post_id, '_sff_recipe_servings', $servings);
     update_post_meta($post_id, '_sff_recipe_ingredients', $ingredient_ids);
 
-    $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
-    update_post_meta($post_id, '_sff_recipe_macros_total', $totals);
-
-    $per_serving = [];
-    foreach ($totals as $key => $value) {
-        $per_serving[$key] = $servings > 0 ? $value / $servings : 0;
+    $base_macros   = sff_get_recipe_macros_from_ids($ingredient_ids);
+    $total_macros  = [];
+    foreach ($base_macros as $key => $value) {
+        $total_macros[$key] = $value * $servings;
     }
-    update_post_meta($post_id, '_sff_recipe_macros', $per_serving);
+
+    if (!empty($ingredient_ids)) {
+        update_post_meta($post_id, '_sff_recipe_macros_total', $total_macros);
+        update_post_meta($post_id, '_sff_recipe_macros', $base_macros);
+    } else {
+        delete_post_meta($post_id, '_sff_recipe_macros_total');
+        delete_post_meta($post_id, '_sff_recipe_macros');
+    }
+
+    $cover_id = isset($_POST['sff_recipe_cover_id']) ? absint(wp_unslash($_POST['sff_recipe_cover_id'])) : 0;
+    if ($cover_id) {
+        update_post_meta($post_id, '_sff_recipe_cover_id', $cover_id);
+    } else {
+        delete_post_meta($post_id, '_sff_recipe_cover_id');
+    }
+
+    $gallery_ids = [];
+    if (isset($_POST['sff_recipe_gallery_ids'])) {
+        $raw_gallery = explode(',', sanitize_text_field(wp_unslash($_POST['sff_recipe_gallery_ids'])));
+        foreach ($raw_gallery as $gallery_id) {
+            $gallery_id = absint($gallery_id);
+            if ($gallery_id) {
+                $gallery_ids[] = $gallery_id;
+            }
+        }
+        $gallery_ids = array_values(array_unique($gallery_ids));
+    }
+
+    if (!empty($gallery_ids)) {
+        update_post_meta($post_id, '_sff_recipe_gallery_ids', $gallery_ids);
+    } else {
+        delete_post_meta($post_id, '_sff_recipe_gallery_ids');
+    }
 }
 add_action('save_post', 'sff_save_recipe_details');
 

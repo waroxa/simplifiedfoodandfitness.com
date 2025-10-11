@@ -1435,3 +1435,122 @@ body.sff-menu-open .sff-menu-items {
     }
 }
 
+
+.sff-recipe-builder__media {
+    margin-top: 32px;
+}
+
+.sff-recipe-builder__media h3 {
+    margin-bottom: 16px;
+}
+
+.sff-recipe-media {
+    display: grid;
+    gap: 24px;
+}
+
+@media (min-width: 900px) {
+    .sff-recipe-media {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.sff-recipe-media__section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.sff-recipe-media__preview {
+    margin-top: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px dashed #d4d4d8;
+    background: #f8fafc;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.sff-recipe-media__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sff-recipe-media__empty {
+    color: #475467;
+    font-style: italic;
+    padding: 20px 12px;
+}
+
+.sff-recipe-media__actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.sff-recipe-media__gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.sff-recipe-media__gallery-item {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sff-recipe-media__gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sff-recipe-media__gallery-fallback {
+    font-size: 13px;
+    color: #475467;
+    padding: 8px;
+    text-align: center;
+}
+
+.sff-recipe-gallery-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    border: none;
+    background: rgba(15, 23, 42, 0.75);
+    color: #ffffff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sff-recipe-gallery-remove:hover {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.sff-recipe-gallery-clear[disabled],
+.sff-recipe-cover-remove[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

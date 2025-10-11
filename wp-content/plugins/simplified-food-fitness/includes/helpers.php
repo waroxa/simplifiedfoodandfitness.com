@@ -708,8 +708,16 @@ function sff_create_recipe_from_modal($name, $ingredient_ids) {
     $ingredient_ids = array_map('intval', (array) $ingredient_ids);
     update_post_meta($recipe_id, '_sff_recipe_ingredients', $ingredient_ids);
 
-    $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
-    update_post_meta($recipe_id, '_sff_recipe_macros', $totals);
+    $base_macros = sff_get_recipe_macros_from_ids($ingredient_ids);
+    update_post_meta($recipe_id, '_sff_recipe_servings', 1);
+
+    if (!empty($ingredient_ids)) {
+        update_post_meta($recipe_id, '_sff_recipe_macros', $base_macros);
+        update_post_meta($recipe_id, '_sff_recipe_macros_total', $base_macros);
+    } else {
+        delete_post_meta($recipe_id, '_sff_recipe_macros');
+        delete_post_meta($recipe_id, '_sff_recipe_macros_total');
+    }
 
     $cost = 0;
     foreach ($ingredient_ids as $id) {
@@ -745,16 +753,19 @@ function sff_get_recipe_macros_from_ids($ingredient_ids) {
 
 function sff_get_recipe_macros($recipe_id, $per_serving = false) {
     $ingredient_ids = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
-    $totals = sff_get_recipe_macros_from_ids($ingredient_ids);
+    $base_totals    = sff_get_recipe_macros_from_ids($ingredient_ids);
+    $servings       = max(1, (int) get_post_meta($recipe_id, '_sff_recipe_servings', true));
+
     if ($per_serving) {
-        $servings = (int) get_post_meta($recipe_id, '_sff_recipe_servings', true);
-        if ($servings > 0) {
-            foreach ($totals as $key => $value) {
-                $totals[$key] = $value / $servings;
-            }
-        }
+        return $base_totals;
     }
-    return $totals;
+
+    $scaled_totals = [];
+    foreach ($base_totals as $key => $value) {
+        $scaled_totals[$key] = $value * $servings;
+    }
+
+    return $scaled_totals;
 }
 
 function sff_admin_notice() {
