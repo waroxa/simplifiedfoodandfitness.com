@@ -491,19 +491,18 @@ jQuery(document).ready(function($) {
         var hasImage = $('#front_image_attachment_id').val() ||
             ($('#sff_front_image_upload')[0] && $('#sff_front_image_upload')[0].files.length > 0);
 
-        if (sffForceLabelScan) {
-            $('#sff_scan_fields').show();
-        } else if (!hasImage) {
-            $('#sff_scan_fields').hide();
-        } else {
-            $('#sff_scan_fields').show();
-        }
-        sffForceLabelScan = false;
-
         var categorySelect = $('select[name="sff_ingredient_category"]');
         var fdc = $('#sff_fdc_id').val();
         var macroState = sffNormalizeMacroSource($('#sff_macro_source').val());
         var shouldFetchUsda = fdc && (!macroState || macroState === 'usda');
+        var shouldShowScanFields = sffForceLabelScan || !shouldFetchUsda || hasImage;
+
+        if (shouldShowScanFields) {
+            $('#sff_scan_fields').show();
+        } else {
+            $('#sff_scan_fields').hide();
+        }
+        sffForceLabelScan = false;
 
         if (shouldFetchUsda && categorySelect.length) {
             categorySelect.prop('disabled', true).hide();
@@ -1069,7 +1068,7 @@ jQuery(document).ready(function($) {
       $('#sff-ingredient-suggestions').hide().empty();
       return;
     }
-    var scope = $('#sff-ingredient-scope').val() || 'all';
+    var scope = $('#sff-ingredient-scope').val() || 'general';
     $.post(
       sff_ajax_obj.ajax_url,
       {

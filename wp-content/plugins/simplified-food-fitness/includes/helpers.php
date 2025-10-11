@@ -432,10 +432,22 @@ function sff_render_ingredient_form($post_id = null) {
                     <p style="font-size:13px; color:#5f6f64; margin-top:0;">Browse shared ingredients from your dietitian and items you have already added.</p>
                     <div style="position:relative;">
                         <input type="text" name="sff_brand_name" id="sff_product_name" value="<?php echo esc_attr($brand_name); ?>" placeholder="Start typing e.g., Banana" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
+                        <?php
+                        $is_admin_user = current_user_can('manage_options');
+                        $default_scope = $is_admin_user ? 'all' : 'general';
+                        $scope_options = [
+                            'general'  => __('General Database', 'simplified-food-fitness'),
+                            'personal' => __('My Ingredients', 'simplified-food-fitness'),
+                        ];
+
+                        if ($is_admin_user) {
+                            $scope_options = ['all' => __('All Ingredients', 'simplified-food-fitness')] + $scope_options;
+                        }
+                        ?>
                         <select id="sff-ingredient-scope" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; margin-bottom:10px;">
-                            <option value="all">All Ingredients</option>
-                            <option value="personal">My Ingredients</option>
-                            <option value="general">General Database</option>
+                            <?php foreach ($scope_options as $value => $label) : ?>
+                                <option value="<?php echo esc_attr($value); ?>" <?php selected($value, $default_scope); ?>><?php echo esc_html($label); ?></option>
+                            <?php endforeach; ?>
                         </select>
                         <button type="button" id="sff-database-search-button" style="background:#42b14c; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; font-size:14px; width:100%; margin-bottom:10px;">🔍 Search Database</button>
                         <div id="sff-ingredient-suggestions" class="sff-ingredient-suggestions" style="display:none;"></div>
