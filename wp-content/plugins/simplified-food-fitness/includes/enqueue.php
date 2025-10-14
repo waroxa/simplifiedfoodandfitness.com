@@ -64,7 +64,7 @@ function sff_enqueue_assets() {
     ]);
 
     // ✅ CSS
-    wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.3');
+    wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.4');
 
     if (is_admin() && function_exists('get_current_screen')) {
         $screen = get_current_screen();

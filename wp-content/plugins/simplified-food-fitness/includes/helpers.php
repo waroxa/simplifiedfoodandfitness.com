@@ -803,7 +803,448 @@ function sff_get_recipe_macros($recipe_id, $per_serving = false) {
         return $per_serving_totals;
     }
 
-    return $base_totals;
+return $base_totals;
+}
+
+function sff_get_user_assigned_recipe_ids($user_id) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return [];
+    }
+
+    $raw = get_user_meta($user_id, 'sff_assigned_recipes', true);
+    if (!is_array($raw)) {
+        $raw = [];
+    }
+
+    $ids = [];
+    foreach ($raw as $id) {
+        $id = intval($id);
+        if ($id) {
+            $ids[$id] = $id;
+        }
+    }
+
+    return array_values($ids);
+}
+
+function sff_save_user_assigned_recipe_ids($user_id, $ids) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return;
+    }
+
+    $normalized = [];
+    foreach ((array) $ids as $id) {
+        $id = intval($id);
+        if ($id) {
+            $normalized[$id] = $id;
+        }
+    }
+
+    update_user_meta($user_id, 'sff_assigned_recipes', array_values($normalized));
+}
+
+function sff_get_recipe_assigned_users($recipe_id) {
+    $recipe_id = intval($recipe_id);
+    if (!$recipe_id) {
+        return [];
+    }
+
+    $raw = get_post_meta($recipe_id, '_sff_assigned_users', true);
+    if (!is_array($raw)) {
+        $raw = [];
+    }
+
+    $ids = [];
+    foreach ($raw as $id) {
+        $id = intval($id);
+        if ($id) {
+            $ids[$id] = $id;
+        }
+    }
+
+    return array_values($ids);
+}
+
+function sff_save_recipe_assigned_users($recipe_id, $user_ids) {
+    $recipe_id = intval($recipe_id);
+    if (!$recipe_id) {
+        return;
+    }
+
+    $normalized = [];
+    foreach ((array) $user_ids as $user_id) {
+        $user_id = intval($user_id);
+        if ($user_id) {
+            $normalized[$user_id] = $user_id;
+        }
+    }
+
+    update_post_meta($recipe_id, '_sff_assigned_users', array_values($normalized));
+}
+
+function sff_add_recipe_to_user_bank($recipe_id, $user_id) {
+    $recipe_id = intval($recipe_id);
+    $user_id   = intval($user_id);
+
+    if (!$recipe_id || !$user_id) {
+        return false;
+    }
+
+    $assigned_users = sff_get_recipe_assigned_users($recipe_id);
+    if (!in_array($user_id, $assigned_users, true)) {
+        $assigned_users[] = $user_id;
+        sff_save_recipe_assigned_users($recipe_id, $assigned_users);
+    }
+
+    $user_recipes = sff_get_user_assigned_recipe_ids($user_id);
+    if (!in_array($recipe_id, $user_recipes, true)) {
+        $user_recipes[] = $recipe_id;
+        sff_save_user_assigned_recipe_ids($user_id, $user_recipes);
+    }
+
+    return true;
+}
+
+function sff_remove_recipe_from_user_bank($recipe_id, $user_id) {
+    $recipe_id = intval($recipe_id);
+    $user_id   = intval($user_id);
+
+    if (!$recipe_id || !$user_id) {
+        return false;
+    }
+
+    $assigned_users = sff_get_recipe_assigned_users($recipe_id);
+    if (in_array($user_id, $assigned_users, true)) {
+        $assigned_users = array_values(array_diff($assigned_users, [$user_id]));
+        sff_save_recipe_assigned_users($recipe_id, $assigned_users);
+    }
+
+    $user_recipes = sff_get_user_assigned_recipe_ids($user_id);
+    if (in_array($recipe_id, $user_recipes, true)) {
+        $user_recipes = array_values(array_diff($user_recipes, [$recipe_id]));
+        sff_save_user_assigned_recipe_ids($user_id, $user_recipes);
+    }
+
+    return true;
+}
+
+function sff_get_user_recipe_customizations($user_id) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return [];
+    }
+
+    $data = get_user_meta($user_id, 'sff_recipe_customizations', true);
+    return is_array($data) ? $data : [];
+}
+
+function sff_get_user_recipe_customization($user_id, $recipe_id) {
+    $user_id   = intval($user_id);
+    $recipe_id = intval($recipe_id);
+    if (!$user_id || !$recipe_id) {
+        return [];
+    }
+
+    $customizations = sff_get_user_recipe_customizations($user_id);
+    if (!isset($customizations[$recipe_id]) || !is_array($customizations[$recipe_id])) {
+        return [];
+    }
+
+    return $customizations[$recipe_id];
+}
+
+function sff_save_user_recipe_customizations($user_id, $customizations) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return;
+    }
+
+    $sanitized = [];
+    foreach ((array) $customizations as $recipe_id => $config) {
+        $recipe_id = intval($recipe_id);
+        if (!$recipe_id || !is_array($config)) {
+            continue;
+        }
+
+        $entry = [];
+        if (isset($config['ingredients']) && is_array($config['ingredients'])) {
+            foreach ($config['ingredients'] as $original_id => $replacement_id) {
+                $original_id    = intval($original_id);
+                $replacement_id = intval($replacement_id);
+                if ($original_id && $replacement_id) {
+                    $entry['ingredients'][$original_id] = $replacement_id;
+                }
+            }
+        }
+
+        if (!empty($entry)) {
+            $sanitized[$recipe_id] = $entry;
+        }
+    }
+
+    update_user_meta($user_id, 'sff_recipe_customizations', $sanitized);
+}
+
+function sff_clear_user_recipe_customization($user_id, $recipe_id) {
+    $user_id   = intval($user_id);
+    $recipe_id = intval($recipe_id);
+    if (!$user_id || !$recipe_id) {
+        return;
+    }
+
+    $customizations = sff_get_user_recipe_customizations($user_id);
+    if (isset($customizations[$recipe_id])) {
+        unset($customizations[$recipe_id]);
+        sff_save_user_recipe_customizations($user_id, $customizations);
+    }
+}
+
+function sff_get_user_personal_ingredients($user_id) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return [];
+    }
+
+    $posts = get_posts([
+        'post_type'      => 'ingredient',
+        'numberposts'    => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_owner_id',
+                'value'   => $user_id,
+                'compare' => '=',
+                'type'    => 'NUMERIC',
+            ],
+        ],
+        'suppress_filters' => false,
+    ]);
+
+    if (!$posts) {
+        return [];
+    }
+
+    $items = [];
+    foreach ($posts as $post) {
+        $items[] = [
+            'id'   => intval($post->ID),
+            'name' => $post->post_title,
+        ];
+    }
+
+    return $items;
+}
+
+function sff_get_recipe_ingredient_details_with_overrides($recipe_id, $overrides = []) {
+    $recipe_id = intval($recipe_id);
+    if (!$recipe_id) {
+        return [];
+    }
+
+    $ingredient_ids = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
+    if (!is_array($ingredient_ids)) {
+        return [];
+    }
+
+    $servings_map = get_post_meta($recipe_id, '_sff_recipe_ingredient_servings', true);
+    if (!is_array($servings_map)) {
+        $servings_map = [];
+    }
+
+    $details = [];
+
+    foreach ($ingredient_ids as $id) {
+        $id = intval($id);
+        if (!$id) {
+            continue;
+        }
+
+        $replacement_id = 0;
+        if (isset($overrides['ingredients'][$id])) {
+            $replacement_id = intval($overrides['ingredients'][$id]);
+        }
+
+        $display_id = $replacement_id ?: $id;
+
+        $serving_amount = isset($servings_map[$id]) ? floatval($servings_map[$id]) : 1.0;
+        $serving_amount = $serving_amount > 0 ? $serving_amount : 1.0;
+
+        $original_name  = get_the_title($id);
+        $display_name   = get_the_title($display_id);
+        $replacement_name = $replacement_id ? get_the_title($replacement_id) : '';
+
+        if ($original_name === '') {
+            $original_name = sprintf(__('Ingredient #%d', 'simplified-food-fitness'), $id);
+        }
+        if ($display_name === '') {
+            $display_name = $original_name;
+        }
+        if ($replacement_id && $replacement_name === '') {
+            $replacement_name = sprintf(__('Ingredient #%d', 'simplified-food-fitness'), $replacement_id);
+        }
+
+        $details[] = [
+            'original_id'      => $id,
+            'original_name'    => $original_name,
+            'display_id'       => $display_id,
+            'display_name'     => $display_name,
+            'serving_size'     => get_post_meta($display_id, '_sff_serving_size', true),
+            'servings'         => $serving_amount,
+            'is_custom'        => ($display_id !== $id),
+            'replacement_id'   => $replacement_id,
+            'replacement_name' => $replacement_name,
+        ];
+    }
+
+    return $details;
+}
+
+function sff_get_recipe_macros_with_overrides($recipe_id, $overrides = [], $per_serving = false) {
+    $recipe_id = intval($recipe_id);
+    if (!$recipe_id) {
+        return array_fill_keys(array_merge(SFF_MACRO_FIELDS, ['cost']), 0.0);
+    }
+
+    $ingredient_ids = get_post_meta($recipe_id, '_sff_recipe_ingredients', true);
+    if (!is_array($ingredient_ids)) {
+        $ingredient_ids = [];
+    }
+
+    $servings_map = get_post_meta($recipe_id, '_sff_recipe_ingredient_servings', true);
+    if (!is_array($servings_map)) {
+        $servings_map = [];
+    }
+
+    $custom_ids  = [];
+    $custom_map  = [];
+
+    foreach ($ingredient_ids as $id) {
+        $id = intval($id);
+        if (!$id) {
+            continue;
+        }
+
+        $replacement = isset($overrides['ingredients'][$id]) ? intval($overrides['ingredients'][$id]) : 0;
+        $display_id  = $replacement ?: $id;
+
+        $serving_amount = isset($servings_map[$id]) ? floatval($servings_map[$id]) : 1.0;
+        $serving_amount = $serving_amount > 0 ? $serving_amount : 1.0;
+
+        $custom_ids[] = $display_id;
+        if (isset($custom_map[$display_id])) {
+            $custom_map[$display_id] += $serving_amount;
+        } else {
+            $custom_map[$display_id] = $serving_amount;
+        }
+    }
+
+    $totals = sff_get_recipe_macros_from_ids($custom_ids, $custom_map);
+
+    if ($per_serving) {
+        $servings = max(1, (int) get_post_meta($recipe_id, '_sff_recipe_servings', true));
+        foreach ($totals as $key => $value) {
+            $totals[$key] = $servings > 0 ? $value / $servings : $value;
+        }
+    }
+
+    return $totals;
+}
+
+function sff_get_recipe_rating_data($recipe_id) {
+    $recipe_id = intval($recipe_id);
+    if (!$recipe_id) {
+        return [
+            'average'  => 0,
+            'count'    => 0,
+            'comments' => [],
+        ];
+    }
+
+    $comments = get_comments([
+        'post_id' => $recipe_id,
+        'status'  => 'approve',
+        'type'    => 'sff_recipe_rating',
+        'number'  => 0,
+    ]);
+
+    if (!$comments) {
+        return [
+            'average'  => 0,
+            'count'    => 0,
+            'comments' => [],
+        ];
+    }
+
+    $total    = 0;
+    $count    = 0;
+    $prepared = [];
+
+    foreach ($comments as $comment) {
+        $rating = intval(get_comment_meta($comment->comment_ID, '_sff_rating', true));
+        if ($rating < 1) {
+            continue;
+        }
+
+        $total += $rating;
+        $count++;
+
+        $prepared[] = [
+            'id'         => $comment->comment_ID,
+            'rating'     => $rating,
+            'content'    => $comment->comment_content,
+            'author'     => $comment->comment_author,
+            'date'       => mysql2date(get_option('date_format'), $comment->comment_date),
+        ];
+    }
+
+    $average = $count ? $total / $count : 0;
+
+    return [
+        'average'  => $average,
+        'count'    => $count,
+        'comments' => $prepared,
+    ];
+}
+
+function sff_get_user_recipe_rating_comment($recipe_id, $user_id) {
+    $recipe_id = intval($recipe_id);
+    $user_id   = intval($user_id);
+    if (!$recipe_id || !$user_id) {
+        return null;
+    }
+
+    $comments = get_comments([
+        'post_id' => $recipe_id,
+        'user_id' => $user_id,
+        'type'    => 'sff_recipe_rating',
+        'number'  => 1,
+        'status'  => 'approve',
+    ]);
+
+    return $comments ? $comments[0] : null;
+}
+
+function sff_render_star_display($rating) {
+    $rating = max(0, min(5, floatval($rating)));
+
+    $output = '<div class="sff-star-display" aria-label="' . esc_attr(sprintf(__('%1$s out of 5 stars', 'simplified-food-fitness'), number_format_i18n($rating, 1))) . '">';
+
+    for ($i = 1; $i <= 5; $i++) {
+        $class = 'sff-star-display__star';
+        if ($rating >= $i) {
+            $class .= ' is-filled';
+        } elseif ($rating > $i - 1) {
+            $class .= ' is-filled';
+        }
+        $output .= '<span class="' . esc_attr($class) . '">★</span>';
+    }
+
+    $output .= '</div>';
+
+    return $output;
 }
 
 function sff_admin_notice() {

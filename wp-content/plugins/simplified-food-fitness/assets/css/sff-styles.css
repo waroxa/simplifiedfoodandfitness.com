@@ -1387,26 +1387,21 @@ body.sff-menu-open .sff-menu-items {
 
 .sff-recipe-ingredient-add {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 12px;
     background: rgba(2, 52, 65, 0.05);
     border-radius: 16px;
     padding: 16px;
     border: 1px solid rgba(2, 52, 65, 0.08);
-}
-
-@media (min-width: 520px) {
-    .sff-recipe-ingredient-add {
-        flex-direction: row;
-        align-items: flex-end;
-    }
+    align-items: flex-end;
 }
 
 .sff-recipe-ingredient-add__amount {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    flex: 1;
+    flex: 1 1 160px;
+    min-width: 150px;
 }
 
 .sff-recipe-ingredient-add__input {
@@ -1418,15 +1413,9 @@ body.sff-menu-open .sff-menu-items {
 }
 
 .sff-recipe-ingredient-add .button {
-    width: 100%;
+    flex: 0 0 auto;
     font-weight: 600;
-}
-
-@media (min-width: 520px) {
-    .sff-recipe-ingredient-add .button {
-        width: auto;
-        white-space: nowrap;
-    }
+    white-space: nowrap;
 }
 
 .sff-recipe-ingredient-list-wrapper {
@@ -1468,6 +1457,7 @@ body.sff-menu-open .sff-menu-items {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex: 1 1 auto;
 }
 
 .sff-recipe-ingredient-item__name {
@@ -1503,6 +1493,11 @@ body.sff-menu-open .sff-menu-items {
 
 .sff-recipe-ingredient-remove {
     color: #b42318 !important;
+    padding-left: 0;
+}
+
+.sff-recipe-ingredient-remove::before {
+    display: none !important;
 }
 
 .sff-recipe-ingredient-empty {
@@ -1519,6 +1514,230 @@ body.sff-menu-open .sff-menu-items {
     border-radius: 16px;
     padding: 16px;
     border: 1px solid rgba(2, 52, 65, 0.08);
+}
+
+/* --------------------------------------------------------------
+   Client Recipe Bank & Ratings
+   -------------------------------------------------------------- */
+
+.sff-client-recipe-bank {
+    display: grid;
+    gap: 24px;
+}
+
+.sff-client-recipe-bank .notice {
+    margin: 0;
+    border-radius: 12px;
+    border-left-width: 4px;
+    padding: 12px 16px;
+    background: rgba(2, 52, 65, 0.04);
+    border-color: rgba(2, 52, 65, 0.4);
+    color: #023441;
+}
+
+.sff-client-recipe-bank .notice-success {
+    border-color: rgba(66, 177, 76, 0.8);
+    background: rgba(66, 177, 76, 0.12);
+}
+
+.sff-client-recipe-bank .notice-error {
+    border-color: rgba(180, 35, 24, 0.8);
+    background: rgba(180, 35, 24, 0.12);
+}
+
+.sff-client-recipe-bank .notice-warning {
+    border-color: rgba(245, 166, 35, 0.8);
+    background: rgba(245, 166, 35, 0.12);
+}
+
+.sff-client-recipe-card {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid rgba(2, 52, 65, 0.08);
+    box-shadow: 0 12px 30px -18px rgba(2, 52, 65, 0.45);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.sff-client-recipe-card h3 {
+    margin: 0;
+    font-size: 22px;
+    color: #023441;
+}
+
+.sff-client-recipe-macros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-weight: 600;
+    color: #0f5562;
+}
+
+.sff-client-recipe-ingredients {
+    margin: 0;
+    padding-left: 18px;
+    color: #22454c;
+}
+
+.sff-client-recipe-ingredients li {
+    margin-bottom: 6px;
+}
+
+.sff-client-recipe-ingredients li strong {
+    color: #023441;
+}
+
+.sff-client-recipe-ingredients .sff-recipe-ingredient-replacement {
+    display: block;
+    font-size: 13px;
+    color: #0f5562;
+    margin-top: 3px;
+}
+
+.sff-client-recipe-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.sff-client-recipe-actions details {
+    flex: 1 1 260px;
+}
+
+.sff-client-recipe-actions summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #0f5562;
+}
+
+.sff-recipe-customization-form {
+    margin-top: 12px;
+    display: grid;
+    gap: 12px;
+}
+
+.sff-recipe-customization-form__row {
+    display: grid;
+    gap: 6px;
+}
+
+.sff-recipe-customization-form__row label {
+    font-weight: 600;
+    color: #023441;
+}
+
+.sff-recipe-customization-form select,
+.sff-recipe-customization-form button,
+.sff-recipe-rating-form textarea {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(2, 52, 65, 0.2);
+    padding: 10px 12px;
+    font-size: 15px;
+}
+
+.sff-recipe-customization-form button {
+    background: #0f5562;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+.sff-recipe-customization-form button.secondary {
+    background: #ffffff;
+    color: #0f5562;
+    border: 1px solid rgba(2, 52, 65, 0.2);
+}
+
+.sff-recipe-customization-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.sff-star-display {
+    display: inline-flex;
+    gap: 2px;
+    font-size: 18px;
+}
+
+.sff-star-display__star {
+    color: #d6dde0;
+}
+
+.sff-star-display__star.is-filled {
+    color: #f5a623;
+}
+
+.sff-recipe-rating-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #0f5562;
+    font-weight: 600;
+}
+
+.sff-recipe-rating-form {
+    display: grid;
+    gap: 12px;
+}
+
+.sff-recipe-rating-stars {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 4px;
+    justify-content: flex-start;
+}
+
+.sff-recipe-rating-stars input[type="radio"] {
+    display: none;
+}
+
+.sff-recipe-rating-stars label {
+    font-size: 24px;
+    color: #d6dde0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.sff-recipe-rating-stars label:hover,
+.sff-recipe-rating-stars label:hover ~ label,
+.sff-recipe-rating-stars input[type="radio"]:checked ~ label {
+    color: #f5a623;
+}
+
+.sff-recipe-rating-comments {
+    border-top: 1px solid rgba(2, 52, 65, 0.12);
+    padding-top: 12px;
+    display: grid;
+    gap: 12px;
+}
+
+.sff-recipe-rating-comment {
+    background: rgba(2, 52, 65, 0.05);
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.sff-recipe-rating-comment header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.sff-recipe-rating-comment header strong {
+    color: #023441;
+}
+
+.sff-recipe-feedback-note {
+    font-size: 13px;
+    color: #4d6a72;
 }
 
 .sff-recipe-ingredient-summary__item {

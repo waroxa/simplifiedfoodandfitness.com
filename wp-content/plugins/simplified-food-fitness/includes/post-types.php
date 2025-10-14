@@ -46,7 +46,7 @@ function sff_register_custom_post_types() {
         ],
         'public' => false,
         'show_ui' => true,
-        'supports' => ['title', 'editor', 'thumbnail', 'custom-fields'],
+        'supports' => ['title', 'editor', 'thumbnail', 'custom-fields', 'comments'],
         'menu_icon' => 'dashicons-book-alt'
     ]);
 
