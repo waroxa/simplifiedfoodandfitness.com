@@ -825,6 +825,45 @@ function sff_get_user_assigned_recipe_ids($user_id) {
         }
     }
 
+    if (!empty($ids)) {
+        return array_values($ids);
+    }
+
+    $fallback_recipes = get_posts([
+        'post_type'      => 'recipe',
+        'post_status'    => 'any',
+        'fields'         => 'ids',
+        'nopaging'       => true,
+        'no_found_rows'  => true,
+        'meta_query'     => [
+            [
+                'key'     => '_sff_assigned_users',
+                'value'   => sprintf('i:%d;', $user_id),
+                'compare' => 'LIKE',
+            ],
+        ],
+    ]);
+
+    foreach ($fallback_recipes as $recipe_id) {
+        $recipe_id = intval($recipe_id);
+        if (!$recipe_id) {
+            continue;
+        }
+
+        $assigned_users = get_post_meta($recipe_id, '_sff_assigned_users', true);
+        if (!is_array($assigned_users)) {
+            continue;
+        }
+
+        if (in_array($user_id, array_map('intval', $assigned_users), true)) {
+            $ids[$recipe_id] = $recipe_id;
+        }
+    }
+
+    if (!empty($ids)) {
+        sff_save_user_assigned_recipe_ids($user_id, $ids);
+    }
+
     return array_values($ids);
 }
 
