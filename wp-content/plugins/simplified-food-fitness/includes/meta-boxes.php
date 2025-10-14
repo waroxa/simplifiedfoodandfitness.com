@@ -576,7 +576,7 @@ function sff_render_recipe_meta_box($post) {
     echo '</select>';
     echo '<div class="sff-recipe-ingredient-add">';
     echo '<div class="sff-recipe-ingredient-add__amount">';
-    echo '<label for="sff_recipe_ingredient_serving_amount">' . esc_html__('Servings', 'simplified-food-fitness') . '</label>';
+    echo '<label for="sff_recipe_ingredient_serving_amount">' . esc_html__('Servings to Add', 'simplified-food-fitness') . '</label>';
     echo '<input type="number" min="0.01" step="0.01" id="sff_recipe_ingredient_serving_amount" value="1" class="sff-recipe-ingredient-add__input" />';
     echo '</div>';
     echo '<button type="button" class="button button-primary sff-recipe-add-ingredient">' . esc_html__('Add to Recipe', 'simplified-food-fitness') . '</button>';
