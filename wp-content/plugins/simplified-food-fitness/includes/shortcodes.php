@@ -176,6 +176,7 @@ function sff_render_header($username, $day_type) {
                     <li><a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>">Dashboard</a></li>
                     <li><a href="<?php echo esc_url( home_url( '/my-profile/' ) ); ?>" id="sff-profile-link">Profile</a></li>
                     <li><a href="<?php echo esc_url( home_url( '/my-ingredients/' ) ); ?>">My Ingredients</a></li>
+                    <li><a href="<?php echo esc_url( home_url( '/my-recipes/' ) ); ?>">My Recipes</a></li>
                     <li><a href="<?php echo esc_url( home_url( '/add-ingredient/' ) ); ?>">Add Ingredient</a></li>
                     <li><a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>">Logout</a></li>
                 </ul>
@@ -2017,8 +2018,11 @@ function sff_client_recipe_bank_shortcode() {
         return sff_custom_login_form();
     }
 
-    $user_id       = get_current_user_id();
-    $assigned_ids  = sff_get_user_assigned_recipe_ids($user_id);
+    $user       = wp_get_current_user();
+    $username   = $user->display_name ? $user->display_name : $user->user_login;
+    $day_type   = 'Rest Day';
+    $user_id    = get_current_user_id();
+    $assigned_ids = sff_get_user_assigned_recipe_ids($user_id);
     $customizations = sff_get_user_recipe_customizations($user_id);
     $personal_items = sff_get_user_personal_ingredients($user_id);
 
@@ -2030,10 +2034,6 @@ function sff_client_recipe_bank_shortcode() {
     $rated_notice      = isset($_GET['sff_recipe_rated']) ? intval($_GET['sff_recipe_rated']) : 0;
     $error_flag        = !empty($_GET['sff_recipe_error']);
 
-    if (empty($assigned_ids)) {
-        return '<div class="sff-client-recipe-bank"><p>' . esc_html__('No recipes have been assigned to you yet. Your coach will add meals soon!', 'simplified-food-fitness') . '</p></div>';
-    }
-
     $personal_options = [];
     foreach ($personal_items as $item) {
         if (!empty($item['id'])) {
@@ -2041,234 +2041,363 @@ function sff_client_recipe_bank_shortcode() {
         }
     }
 
+    $recipes              = [];
+    $latest_timestamp     = 0;
+    $latest_display       = '';
+    $overall_rating_total = 0;
+    $overall_rating_count = 0;
+    $total_swaps          = 0;
+
+    foreach ($assigned_ids as $recipe_id) {
+        $recipe_id = intval($recipe_id);
+        if (!$recipe_id) {
+            continue;
+        }
+
+        $recipe = get_post($recipe_id);
+        if (!$recipe || $recipe->post_type !== 'recipe') {
+            continue;
+        }
+
+        $override        = isset($customizations[$recipe_id]) ? $customizations[$recipe_id] : [];
+        $ingredient_rows = sff_get_recipe_ingredient_details_with_overrides($recipe_id, $override);
+        $per_serving     = sff_get_recipe_macros_with_overrides($recipe_id, $override, true);
+        $rating_data     = sff_get_recipe_rating_data($recipe_id);
+        $user_comment    = sff_get_user_recipe_rating_comment($recipe_id, $user_id);
+        $user_rating     = $user_comment ? intval(get_comment_meta($user_comment->comment_ID, '_sff_rating', true)) : 0;
+
+        $macro_parts = [];
+        $macro_map   = [
+            'calories' => __('Calories', 'simplified-food-fitness'),
+            'carbs'    => __('Carbs', 'simplified-food-fitness'),
+            'protein'  => __('Protein', 'simplified-food-fitness'),
+            'fat'      => __('Fat', 'simplified-food-fitness'),
+        ];
+        foreach ($macro_map as $key => $label) {
+            $value = isset($per_serving[$key]) ? floatval($per_serving[$key]) : 0;
+            $precision = abs($value - round($value)) < 0.01 ? 0 : 1;
+            $macro_parts[] = [
+                'label'  => $label,
+                'value'  => number_format_i18n($value, $precision),
+                'suffix' => $key === 'calories' ? __('kcal', 'simplified-food-fitness') : __('g', 'simplified-food-fitness'),
+            ];
+        }
+
+        $override_ingredients = isset($override['ingredients']) && is_array($override['ingredients']) ? $override['ingredients'] : [];
+        $total_swaps         += count(array_filter($override_ingredients));
+
+        $modified_timestamp = get_post_modified_time('U', true, $recipe);
+        if ($modified_timestamp && $modified_timestamp > $latest_timestamp) {
+            $latest_timestamp = $modified_timestamp;
+            $latest_display   = get_post_modified_time(get_option('date_format') . ' ' . get_option('time_format'), false, $recipe, true);
+        }
+
+        if ($rating_data['count'] > 0) {
+            $overall_rating_total += $rating_data['average'] * $rating_data['count'];
+            $overall_rating_count += $rating_data['count'];
+        }
+
+        $title   = get_the_title($recipe);
+        $initial = function_exists('mb_substr') ? mb_substr($title, 0, 1, get_bloginfo('charset')) : substr($title, 0, 1);
+        $initial = $initial ? strtoupper($initial) : '#';
+
+        $cover_id   = (int) get_post_meta($recipe_id, '_sff_recipe_cover_id', true);
+        $cover_html = $cover_id ? wp_get_attachment_image($cover_id, 'medium', false, ['class' => 'sff-client-recipe-card__cover', 'alt' => esc_attr($title)]) : '';
+
+        $recipes[] = [
+            'id'                   => $recipe_id,
+            'title'                => $title,
+            'macro_parts'          => $macro_parts,
+            'ingredient_rows'      => $ingredient_rows,
+            'override_ingredients' => $override_ingredients,
+            'rating_data'          => $rating_data,
+            'user_comment'         => $user_comment,
+            'user_rating'          => $user_rating,
+            'cover_html'           => $cover_html,
+            'initial'              => $initial,
+            'last_updated'         => $modified_timestamp ? get_post_modified_time(get_option('date_format'), false, $recipe, true) : '',
+        ];
+    }
+
+    $total_recipes    = count($recipes);
+    $average_rating   = $overall_rating_count ? $overall_rating_total / $overall_rating_count : 0;
+    $average_display  = $overall_rating_count ? number_format_i18n($average_rating, 1) : __('Not yet rated', 'simplified-food-fitness');
+    $rating_hint      = $overall_rating_count ? sprintf(esc_html__('%d total reviews logged', 'simplified-food-fitness'), intval($overall_rating_count)) : esc_html__('Share feedback to build your favorites list.', 'simplified-food-fitness');
+    $latest_display   = $latest_display ? $latest_display : esc_html__('Not yet updated', 'simplified-food-fitness');
+    $swaps_display    = number_format_i18n($total_swaps);
+
     ob_start();
     ?>
-    <div class="sff-client-recipe-bank">
-        <?php if ($customized_notice) :
-            $title = get_the_title($customized_notice);
-            ?>
-            <div class="notice notice-success">
-                <p>
-                    <?php
-                    if ($title) {
-                        printf(
-                            esc_html__('Your changes to "%s" have been saved.', 'simplified-food-fitness'),
-                            esc_html($title)
-                        );
-                    } else {
-                        esc_html_e('Your recipe changes have been saved.', 'simplified-food-fitness');
-                    }
-                    ?>
-                </p>
-            </div>
-        <?php endif; ?>
+    <div class="dashboard-container" style="max-width:1024px; margin:auto; padding:20px; font-family:'Segoe UI', Arial, sans-serif;">
+        <?php echo sff_render_header($username, $day_type); ?>
 
-        <?php if ($rated_notice) :
-            $title = get_the_title($rated_notice);
-            ?>
-            <div class="notice notice-success">
-                <p>
-                    <?php
-                    if ($title) {
-                        printf(
-                            esc_html__('Thanks for rating "%s"!', 'simplified-food-fitness'),
-                            esc_html($title)
-                        );
-                    } else {
-                        esc_html_e('Thanks for sharing your feedback!', 'simplified-food-fitness');
-                    }
-                    ?>
-                </p>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($error_flag) : ?>
-            <div class="notice notice-error">
-                <p><?php esc_html_e('Something went wrong. Please try again.', 'simplified-food-fitness'); ?></p>
-            </div>
-        <?php endif; ?>
-
-        <?php
-        foreach ($assigned_ids as $recipe_id) {
-            $recipe_id = intval($recipe_id);
-            if (!$recipe_id) {
-                continue;
-            }
-
-            $recipe = get_post($recipe_id);
-            if (!$recipe || $recipe->post_type !== 'recipe') {
-                continue;
-            }
-
-            $override       = isset($customizations[$recipe_id]) ? $customizations[$recipe_id] : [];
-            $ingredient_rows = sff_get_recipe_ingredient_details_with_overrides($recipe_id, $override);
-            $per_serving     = sff_get_recipe_macros_with_overrides($recipe_id, $override, true);
-            $rating_data     = sff_get_recipe_rating_data($recipe_id);
-            $user_comment    = sff_get_user_recipe_rating_comment($recipe_id, $user_id);
-            $user_rating     = $user_comment ? intval(get_comment_meta($user_comment->comment_ID, '_sff_rating', true)) : 0;
-
-            $macro_parts = [];
-            $macro_map   = [
-                'calories' => __('Calories', 'simplified-food-fitness'),
-                'carbs'    => __('Carbs', 'simplified-food-fitness'),
-                'protein'  => __('Protein', 'simplified-food-fitness'),
-                'fat'      => __('Fat', 'simplified-food-fitness'),
-            ];
-            foreach ($macro_map as $key => $label) {
-                $value = isset($per_serving[$key]) ? floatval($per_serving[$key]) : 0;
-                $precision = abs($value - round($value)) < 0.01 ? 0 : 1;
-                $macro_parts[] = [
-                    'label'  => $label,
-                    'value'  => number_format_i18n($value, $precision),
-                    'suffix' => $key === 'calories' ? '' : 'g',
-                ];
-            }
-
-            $override_ingredients = isset($override['ingredients']) ? $override['ingredients'] : [];
-            ?>
-            <article class="sff-client-recipe-card">
-                <h3><?php echo esc_html(get_the_title($recipe)); ?></h3>
-
-                <?php if (!empty($macro_parts)) : ?>
-                    <div class="sff-client-recipe-macros">
-                        <?php foreach ($macro_parts as $part) :
-                            $macro_text = sprintf('%s: %s%s', $part['label'], $part['value'], $part['suffix']);
-                            ?>
-                            <span><?php echo esc_html($macro_text); ?></span>
-                        <?php endforeach; ?>
+        <div class="sff-personal-library sff-client-recipe-bank">
+            <div class="sff-personal-library-hero">
+                <div class="sff-personal-library-copy">
+                    <h2><?php esc_html_e('My Recipe Bank', 'simplified-food-fitness'); ?></h2>
+                    <p><?php esc_html_e('Discover every meal your coach has curated for you, track nutrition at a glance, and personalize each recipe with your ingredient bank.', 'simplified-food-fitness'); ?></p>
+                </div>
+                <div class="sff-personal-library-stats">
+                    <div class="sff-personal-stat-card">
+                        <span class="sff-personal-stat-label"><?php esc_html_e('Saved Recipes', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-personal-stat-value"><?php echo esc_html(number_format_i18n($total_recipes)); ?></span>
+                        <span class="sff-personal-stat-hint"><?php esc_html_e('Meals assigned to your plan', 'simplified-food-fitness'); ?></span>
                     </div>
-                <?php endif; ?>
+                    <div class="sff-personal-stat-card">
+                        <span class="sff-personal-stat-label"><?php esc_html_e('Average Rating', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-personal-stat-value">
+                            <?php if ($overall_rating_count) : ?>
+                                <?php echo esc_html($average_display); ?>★
+                            <?php else : ?>
+                                <?php echo esc_html($average_display); ?>
+                            <?php endif; ?>
+                        </span>
+                        <span class="sff-personal-stat-hint"><?php echo esc_html($rating_hint); ?></span>
+                    </div>
+                    <div class="sff-personal-stat-card">
+                        <span class="sff-personal-stat-label"><?php esc_html_e('Last Updated', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-personal-stat-value"><?php echo esc_html($latest_display); ?></span>
+                        <span class="sff-personal-stat-hint"><?php esc_html_e('Keep your nutrition data current', 'simplified-food-fitness'); ?></span>
+                    </div>
+                </div>
+            </div>
 
-                <?php if (!empty($ingredient_rows)) : ?>
-                    <ul class="sff-client-recipe-ingredients">
-                        <?php foreach ($ingredient_rows as $row) :
-                            $serving_amount = floatval($row['servings']);
-                            $serving_precision = abs($serving_amount - round($serving_amount)) < 0.01 ? 0 : 2;
-                            $servings_label = sprintf(
-                                /* translators: %s is the serving count */
-                                esc_html__('%s servings', 'simplified-food-fitness'),
-                                esc_html(number_format_i18n($serving_amount, $serving_precision))
-                            );
-                            ?>
-                            <li>
-                                <strong><?php echo esc_html($row['display_name']); ?></strong>
-                                <?php if (!empty($row['serving_size'])) : ?>
-                                    <span> • <?php echo esc_html($row['serving_size']); ?></span>
+            <?php if ($total_recipes > 0) : ?>
+                <div class="sff-client-recipe-meta">
+                    <span><?php esc_html_e('Personalized ingredient swaps applied', 'simplified-food-fitness'); ?></span>
+                    <strong><?php echo esc_html($swaps_display); ?></strong>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($customized_notice || $rated_notice || $error_flag) : ?>
+                <div class="sff-client-recipe-alerts">
+                    <?php if ($customized_notice) :
+                        $title = get_the_title($customized_notice);
+                        ?>
+                        <div class="sff-client-recipe-alert sff-client-recipe-alert--success">
+                            <p>
+                                <?php
+                                if ($title) {
+                                    printf(
+                                        esc_html__('Your changes to "%s" have been saved.', 'simplified-food-fitness'),
+                                        esc_html($title)
+                                    );
+                                } else {
+                                    esc_html_e('Your recipe changes have been saved.', 'simplified-food-fitness');
+                                }
+                                ?>
+                            </p>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($rated_notice) :
+                        $title = get_the_title($rated_notice);
+                        ?>
+                        <div class="sff-client-recipe-alert sff-client-recipe-alert--success">
+                            <p>
+                                <?php
+                                if ($title) {
+                                    printf(
+                                        esc_html__('Thanks for rating "%s"!', 'simplified-food-fitness'),
+                                        esc_html($title)
+                                    );
+                                } else {
+                                    esc_html_e('Thanks for sharing your feedback!', 'simplified-food-fitness');
+                                }
+                                ?>
+                            </p>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($error_flag) : ?>
+                        <div class="sff-client-recipe-alert sff-client-recipe-alert--error">
+                            <p><?php esc_html_e('Something went wrong. Please try again.', 'simplified-food-fitness'); ?></p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (empty($recipes)) : ?>
+                <div class="sff-personal-library-empty sff-client-recipe-empty">
+                    <h3><?php esc_html_e('No recipes assigned yet', 'simplified-food-fitness'); ?></h3>
+                    <p><?php esc_html_e('Your coach will begin adding meals soon. Check back shortly for personalized recipes tailored to your goals.', 'simplified-food-fitness'); ?></p>
+                    <div class="sff-personal-library-empty__actions">
+                        <a class="button button-primary" href="<?php echo esc_url(home_url('/dashboard/')); ?>"><?php esc_html_e('Return to dashboard', 'simplified-food-fitness'); ?></a>
+                    </div>
+                </div>
+            <?php else : ?>
+                <div class="sff-client-recipe-grid">
+                    <?php foreach ($recipes as $recipe) :
+                        $rating_data  = $recipe['rating_data'];
+                        $user_comment = $recipe['user_comment'];
+                        $user_rating  = $recipe['user_rating'];
+                        ?>
+                        <article class="sff-client-recipe-card" aria-labelledby="sff-recipe-title-<?php echo esc_attr($recipe['id']); ?>">
+                            <header class="sff-client-recipe-card__header">
+                                <div class="sff-client-recipe-card__identity">
+                                    <?php if ($recipe['cover_html']) : ?>
+                                        <?php echo $recipe['cover_html']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php else : ?>
+                                        <span class="sff-client-recipe-avatar" aria-hidden="true"><?php echo esc_html($recipe['initial']); ?></span>
+                                    <?php endif; ?>
+                                    <div>
+                                        <h3 id="sff-recipe-title-<?php echo esc_attr($recipe['id']); ?>"><?php echo esc_html($recipe['title']); ?></h3>
+                                        <?php if (!empty($recipe['last_updated'])) : ?>
+                                            <span class="sff-client-recipe-updated"><?php printf(esc_html__('Updated %s', 'simplified-food-fitness'), esc_html($recipe['last_updated'])); ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <?php if (!empty($recipe['macro_parts'])) : ?>
+                                    <div class="sff-client-recipe-macros">
+                                        <?php foreach ($recipe['macro_parts'] as $part) : ?>
+                                            <div class="sff-client-recipe-macro">
+                                                <span class="sff-client-recipe-macro-label"><?php echo esc_html($part['label']); ?></span>
+                                                <span class="sff-client-recipe-macro-value"><?php echo esc_html($part['value']); ?> <span><?php echo esc_html($part['suffix']); ?></span></span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
                                 <?php endif; ?>
-                                <span class="sff-recipe-feedback-note"><?php echo $servings_label; ?></span>
-                                <?php if (!empty($row['is_custom'])) : ?>
-                                    <span class="sff-recipe-ingredient-replacement">
-                                        <?php
-                                        printf(
-                                            esc_html__('Original: %s', 'simplified-food-fitness'),
-                                            esc_html($row['original_name'])
-                                        );
-                                        ?>
-                                    </span>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
+                            </header>
 
-                <div class="sff-client-recipe-actions">
-                    <details>
-                        <summary><?php esc_html_e('Customize using my ingredient bank', 'simplified-food-fitness'); ?></summary>
-                        <form method="post" class="sff-recipe-customization-form">
-                            <?php wp_nonce_field('sff_customize_recipe_' . $recipe_id, 'sff_customize_recipe_nonce'); ?>
-                            <input type="hidden" name="sff_recipe_id" value="<?php echo esc_attr($recipe_id); ?>">
-                            <input type="hidden" name="sff_redirect" value="<?php echo esc_url($redirect_url); ?>">
-
-                            <?php if (empty($personal_options)) : ?>
-                                <p class="sff-recipe-feedback-note">
-                                    <?php esc_html_e('Add ingredients to your personal bank to enable swaps.', 'simplified-food-fitness'); ?>
-                                </p>
+                            <?php if (!empty($recipe['ingredient_rows'])) : ?>
+                                <section class="sff-client-recipe-section">
+                                    <h4><?php esc_html_e('Ingredients', 'simplified-food-fitness'); ?></h4>
+                                    <ul class="sff-client-recipe-ingredients">
+                                        <?php foreach ($recipe['ingredient_rows'] as $row) :
+                                            $serving_amount    = floatval($row['servings']);
+                                            $serving_precision = abs($serving_amount - round($serving_amount)) < 0.01 ? 0 : 2;
+                                            $servings_label    = sprintf(
+                                                /* translators: %s is the serving count */
+                                                esc_html__('%s servings', 'simplified-food-fitness'),
+                                                esc_html(number_format_i18n($serving_amount, $serving_precision))
+                                            );
+                                            ?>
+                                            <li>
+                                                <div class="sff-client-recipe-ingredient-main">
+                                                    <strong><?php echo esc_html($row['display_name']); ?></strong>
+                                                    <?php if (!empty($row['serving_size'])) : ?>
+                                                        <span> • <?php echo esc_html($row['serving_size']); ?></span>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <span class="sff-recipe-feedback-note"><?php echo $servings_label; ?></span>
+                                                <?php if (!empty($row['is_custom'])) : ?>
+                                                    <span class="sff-recipe-ingredient-replacement">
+                                                        <?php
+                                                        printf(
+                                                            esc_html__('Original: %s', 'simplified-food-fitness'),
+                                                            esc_html($row['original_name'])
+                                                        );
+                                                        ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </section>
                             <?php endif; ?>
 
-                            <?php foreach ($ingredient_rows as $row) :
-                                $original_id = intval($row['original_id']);
-                                $selected_id = isset($override_ingredients[$original_id]) ? intval($override_ingredients[$original_id]) : 0;
-                                ?>
-                                <div class="sff-recipe-customization-form__row">
-                                    <label for="sff-recipe-swap-<?php echo esc_attr($recipe_id . '-' . $original_id); ?>">
-                                        <?php
-                                        printf(
-                                            esc_html__('Swap "%s" for:', 'simplified-food-fitness'),
-                                            esc_html($row['original_name'])
-                                        );
-                                        ?>
-                                    </label>
-                                    <select id="sff-recipe-swap-<?php echo esc_attr($recipe_id . '-' . $original_id); ?>" name="sff_recipe_swap[<?php echo esc_attr($original_id); ?>]">
-                                        <option value=""><?php esc_html_e('Keep original ingredient', 'simplified-food-fitness'); ?></option>
-                                        <?php foreach ($personal_options as $personal_id => $name) : ?>
-                                            <option value="<?php echo esc_attr($personal_id); ?>" <?php selected($selected_id, $personal_id); ?>>
-                                                <?php echo esc_html($name); ?>
-                                            </option>
+                            <section class="sff-client-recipe-section">
+                                <details class="sff-client-recipe-panel">
+                                    <summary><?php esc_html_e('Customize using my ingredient bank', 'simplified-food-fitness'); ?></summary>
+                                    <form method="post" class="sff-recipe-customization-form">
+                                        <?php wp_nonce_field('sff_customize_recipe_' . $recipe['id'], 'sff_customize_recipe_nonce'); ?>
+                                        <input type="hidden" name="sff_recipe_id" value="<?php echo esc_attr($recipe['id']); ?>">
+                                        <input type="hidden" name="sff_redirect" value="<?php echo esc_url($redirect_url); ?>">
+
+                                        <?php if (empty($personal_options)) : ?>
+                                            <p class="sff-recipe-feedback-note">
+                                                <?php esc_html_e('Add ingredients to your personal bank to enable swaps.', 'simplified-food-fitness'); ?>
+                                            </p>
+                                        <?php endif; ?>
+
+                                        <?php foreach ($recipe['ingredient_rows'] as $row) :
+                                            $original_id = intval($row['original_id']);
+                                            $selected_id = isset($recipe['override_ingredients'][$original_id]) ? intval($recipe['override_ingredients'][$original_id]) : 0;
+                                            ?>
+                                            <div class="sff-recipe-customization-form__row">
+                                                <label for="sff-recipe-swap-<?php echo esc_attr($recipe['id'] . '-' . $original_id); ?>">
+                                                    <?php
+                                                    printf(
+                                                        esc_html__('Swap "%s" for:', 'simplified-food-fitness'),
+                                                        esc_html($row['original_name'])
+                                                    );
+                                                    ?>
+                                                </label>
+                                                <select id="sff-recipe-swap-<?php echo esc_attr($recipe['id'] . '-' . $original_id); ?>" name="sff_recipe_swap[<?php echo esc_attr($original_id); ?>]">
+                                                    <option value=""><?php esc_html_e('Keep original ingredient', 'simplified-food-fitness'); ?></option>
+                                                    <?php foreach ($personal_options as $personal_id => $name) : ?>
+                                                        <option value="<?php echo esc_attr($personal_id); ?>" <?php selected($selected_id, $personal_id); ?>>
+                                                            <?php echo esc_html($name); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
                                         <?php endforeach; ?>
-                                    </select>
+
+                                        <div class="sff-recipe-customization-form__actions">
+                                            <button type="submit" class="button button-primary"><?php esc_html_e('Save Changes', 'simplified-food-fitness'); ?></button>
+                                            <button type="submit" name="sff_recipe_reset" value="1" class="button secondary"><?php esc_html_e('Reset to Original', 'simplified-food-fitness'); ?></button>
+                                        </div>
+                                    </form>
+                                </details>
+                            </section>
+
+                            <section class="sff-client-recipe-section sff-client-recipe-feedback">
+                                <div class="sff-recipe-rating-summary">
+                                    <?php if ($rating_data['count'] > 0) : ?>
+                                        <div class="sff-recipe-rating-stars-display"><?php echo wp_kses_post(sff_render_star_display($rating_data['average'])); ?></div>
+                                        <span>
+                                            <?php
+                                            printf(
+                                                esc_html__('%1$s average from %2$d ratings', 'simplified-food-fitness'),
+                                                esc_html(number_format_i18n($rating_data['average'], 1)),
+                                                esc_html($rating_data['count'])
+                                            );
+                                            ?>
+                                        </span>
+                                    <?php else : ?>
+                                        <span><?php esc_html_e('No ratings yet. Be the first to leave feedback!', 'simplified-food-fitness'); ?></span>
+                                    <?php endif; ?>
+                                    <span class="sff-recipe-feedback-note"><?php esc_html_e('Your rating helps your coach fine-tune future meals.', 'simplified-food-fitness'); ?></span>
                                 </div>
-                            <?php endforeach; ?>
 
-                            <div class="sff-recipe-customization-form__actions">
-                                <button type="submit" class="button button-primary"><?php esc_html_e('Save Changes', 'simplified-food-fitness'); ?></button>
-                                <button type="submit" name="sff_recipe_reset" value="1" class="button secondary"><?php esc_html_e('Reset to Original', 'simplified-food-fitness'); ?></button>
-                            </div>
-                        </form>
-                    </details>
-                </div>
+                                <form method="post" class="sff-recipe-rating-form">
+                                    <?php wp_nonce_field('sff_recipe_rating_' . $recipe['id'], 'sff_recipe_rating_nonce'); ?>
+                                    <input type="hidden" name="sff_recipe_id" value="<?php echo esc_attr($recipe['id']); ?>">
+                                    <input type="hidden" name="sff_redirect" value="<?php echo esc_url($redirect_url); ?>">
+                                    <div class="sff-recipe-rating-stars">
+                                        <?php for ($star = 5; $star >= 1; $star--) : ?>
+                                            <input type="radio" id="sff-rating-<?php echo esc_attr($recipe['id'] . '-' . $star); ?>" name="sff_recipe_rating" value="<?php echo esc_attr($star); ?>" <?php checked($user_rating, $star); ?> <?php echo $star === 5 ? 'required' : ''; ?>>
+                                            <label for="sff-rating-<?php echo esc_attr($recipe['id'] . '-' . $star); ?>">★</label>
+                                        <?php endfor; ?>
+                                    </div>
+                                    <label class="screen-reader-text" for="sff-rating-comment-<?php echo esc_attr($recipe['id']); ?>"><?php esc_html_e('Recipe feedback', 'simplified-food-fitness'); ?></label>
+                                    <textarea id="sff-rating-comment-<?php echo esc_attr($recipe['id']); ?>" name="sff_recipe_comment" rows="3" placeholder="<?php esc_attr_e('Share what you loved or what could improve…', 'simplified-food-fitness'); ?>"><?php echo esc_textarea($user_comment ? $user_comment->comment_content : ''); ?></textarea>
+                                    <button type="submit" class="button button-primary"><?php echo esc_html($user_comment ? __('Update Feedback', 'simplified-food-fitness') : __('Submit Feedback', 'simplified-food-fitness')); ?></button>
+                                </form>
 
-                <div class="sff-recipe-rating-summary">
-                    <?php if ($rating_data['count'] > 0) : ?>
-                        <div><?php echo wp_kses_post(sff_render_star_display($rating_data['average'])); ?></div>
-                        <span>
-                            <?php
-                            printf(
-                                esc_html__('%1$s average from %2$d ratings', 'simplified-food-fitness'),
-                                esc_html(number_format_i18n($rating_data['average'], 1)),
-                                esc_html($rating_data['count'])
-                            );
-                            ?>
-                        </span>
-                    <?php else : ?>
-                        <span><?php esc_html_e('No ratings yet. Be the first to leave feedback!', 'simplified-food-fitness'); ?></span>
-                    <?php endif; ?>
-                    <span class="sff-recipe-feedback-note"><?php esc_html_e('Your rating helps your coach fine-tune future meals.', 'simplified-food-fitness'); ?></span>
-                </div>
-
-                <form method="post" class="sff-recipe-rating-form">
-                    <?php wp_nonce_field('sff_recipe_rating_' . $recipe_id, 'sff_recipe_rating_nonce'); ?>
-                    <input type="hidden" name="sff_recipe_id" value="<?php echo esc_attr($recipe_id); ?>">
-                    <input type="hidden" name="sff_redirect" value="<?php echo esc_url($redirect_url); ?>">
-                    <div class="sff-recipe-rating-stars">
-                        <?php for ($star = 5; $star >= 1; $star--) : ?>
-                            <input type="radio" id="sff-rating-<?php echo esc_attr($recipe_id . '-' . $star); ?>" name="sff_recipe_rating" value="<?php echo esc_attr($star); ?>" <?php checked($user_rating, $star); ?> <?php echo $star === 5 ? 'required' : ''; ?>>
-                            <label for="sff-rating-<?php echo esc_attr($recipe_id . '-' . $star); ?>">★</label>
-                        <?php endfor; ?>
-                    </div>
-                    <label class="screen-reader-text" for="sff-rating-comment-<?php echo esc_attr($recipe_id); ?>"><?php esc_html_e('Recipe feedback', 'simplified-food-fitness'); ?></label>
-                    <textarea id="sff-rating-comment-<?php echo esc_attr($recipe_id); ?>" name="sff_recipe_comment" rows="3" placeholder="<?php esc_attr_e('Share what you loved or what could improve…', 'simplified-food-fitness'); ?>"><?php echo esc_textarea($user_comment ? $user_comment->comment_content : ''); ?></textarea>
-                    <button type="submit" class="button button-primary"><?php echo esc_html($user_comment ? __('Update Feedback', 'simplified-food-fitness') : __('Submit Feedback', 'simplified-food-fitness')); ?></button>
-                </form>
-
-                <?php if (!empty($rating_data['comments'])) : ?>
-                    <div class="sff-recipe-rating-comments">
-                        <?php foreach ($rating_data['comments'] as $comment) : ?>
-                            <div class="sff-recipe-rating-comment">
-                                <header>
-                                    <?php echo wp_kses_post(sff_render_star_display($comment['rating'])); ?>
-                                    <strong><?php echo esc_html($comment['author']); ?></strong>
-                                    <span class="sff-recipe-feedback-note"><?php echo esc_html($comment['date']); ?></span>
-                                </header>
-                                <?php if (!empty($comment['content'])) : ?>
-                                    <p><?php echo esc_html($comment['content']); ?></p>
+                                <?php if (!empty($rating_data['comments'])) : ?>
+                                    <div class="sff-recipe-rating-comments">
+                                        <?php foreach ($rating_data['comments'] as $comment) : ?>
+                                            <div class="sff-recipe-rating-comment">
+                                                <header>
+                                                    <?php echo wp_kses_post(sff_render_star_display($comment['rating'])); ?>
+                                                    <strong><?php echo esc_html($comment['author']); ?></strong>
+                                                    <span class="sff-recipe-feedback-note"><?php echo esc_html($comment['date']); ?></span>
+                                                </header>
+                                                <?php if (!empty($comment['content'])) : ?>
+                                                    <p><?php echo esc_html($comment['content']); ?></p>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
                                 <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </article>
-        <?php }
-        ?>
+                            </section>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
     <?php
     return ob_get_clean();
