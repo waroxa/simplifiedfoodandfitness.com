@@ -31,6 +31,15 @@ function sff_register_admin_pages() {
         'sff-add-general-ingredient',
         'sff_render_general_ingredient_add_page'
     );
+
+    add_submenu_page(
+        'sff-ingredient-library',
+        __('Recipe Bank', 'simplified-food-fitness'),
+        __('Recipe Bank', 'simplified-food-fitness'),
+        'manage_options',
+        'sff-recipe-bank',
+        'sff_render_recipe_bank_page'
+    );
 }
 add_action('admin_menu', 'sff_register_admin_pages');
 
@@ -318,3 +327,308 @@ function sff_render_ingredient_library_notices() {
     </div>
     <?php
 }
+
+function sff_render_recipe_bank_page() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    $search = isset($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
+    $paged  = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+
+    $query = new WP_Query([
+        'post_type'      => 'recipe',
+        'posts_per_page' => 20,
+        'paged'          => $paged,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        's'              => $search,
+    ]);
+
+    $clients = get_users([
+        'role__in' => ['client', 'customer', 'subscriber'],
+        'orderby'  => 'display_name',
+        'order'    => 'ASC',
+        'fields'   => ['ID', 'display_name', 'user_login'],
+    ]);
+
+    $client_options = [];
+    foreach ($clients as $client) {
+        $name = $client->display_name ? $client->display_name : $client->user_login;
+        $client_options[$client->ID] = $name;
+    }
+
+    $current_url = menu_page_url('sff-recipe-bank', false);
+    if ($search !== '') {
+        $current_url = add_query_arg('s', $search, $current_url);
+    }
+    if ($paged > 1) {
+        $current_url = add_query_arg('paged', $paged, $current_url);
+    }
+
+    $success_recipe_id = isset($_GET['sff_recipe_assigned']) ? intval($_GET['sff_recipe_assigned']) : 0;
+    $removed_recipe_id = isset($_GET['sff_recipe_removed']) ? intval($_GET['sff_recipe_removed']) : 0;
+    $error_flag        = !empty($_GET['sff_recipe_error']);
+
+    ?>
+    <div class="wrap sff-recipe-bank">
+        <h1><?php esc_html_e('Recipe Bank', 'simplified-food-fitness'); ?></h1>
+        <p class="description">
+            <?php esc_html_e('Review recipes, assign them to clients, and monitor feedback from their ratings.', 'simplified-food-fitness'); ?>
+        </p>
+
+        <?php if ($success_recipe_id) :
+            $title = get_the_title($success_recipe_id);
+            ?>
+            <div class="notice notice-success is-dismissible">
+                <p>
+                    <?php
+                    if ($title) {
+                        printf(
+                            esc_html__('"%s" has been assigned successfully.', 'simplified-food-fitness'),
+                            esc_html($title)
+                        );
+                    } else {
+                        esc_html_e('Recipe assignment saved.', 'simplified-food-fitness');
+                    }
+                    ?>
+                </p>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($removed_recipe_id) :
+            $title = get_the_title($removed_recipe_id);
+            ?>
+            <div class="notice notice-warning is-dismissible">
+                <p>
+                    <?php
+                    if ($title) {
+                        printf(
+                            esc_html__('"%s" has been removed from the selected client.', 'simplified-food-fitness'),
+                            esc_html($title)
+                        );
+                    } else {
+                        esc_html_e('Recipe unassigned from client.', 'simplified-food-fitness');
+                    }
+                    ?>
+                </p>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($error_flag) : ?>
+            <div class="notice notice-error is-dismissible">
+                <p><?php esc_html_e('We were unable to complete that action. Please try again.', 'simplified-food-fitness'); ?></p>
+            </div>
+        <?php endif; ?>
+
+        <form method="get" class="sff-recipe-bank__filter">
+            <input type="hidden" name="page" value="sff-recipe-bank">
+            <label class="screen-reader-text" for="sff-recipe-search"><?php esc_html_e('Search recipes', 'simplified-food-fitness'); ?></label>
+            <input type="search" id="sff-recipe-search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php esc_attr_e('Search recipes…', 'simplified-food-fitness'); ?>">
+            <button type="submit" class="button"><?php esc_html_e('Filter', 'simplified-food-fitness'); ?></button>
+        </form>
+
+        <?php if ($query->have_posts()) : ?>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th><?php esc_html_e('Recipe', 'simplified-food-fitness'); ?></th>
+                        <th><?php esc_html_e('Servings', 'simplified-food-fitness'); ?></th>
+                        <th><?php esc_html_e('Assigned Clients', 'simplified-food-fitness'); ?></th>
+                        <th><?php esc_html_e('Ratings', 'simplified-food-fitness'); ?></th>
+                        <th><?php esc_html_e('Assign to Client', 'simplified-food-fitness'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    while ($query->have_posts()) :
+                        $query->the_post();
+                        $recipe_id       = get_the_ID();
+                        $servings        = intval(get_post_meta($recipe_id, '_sff_recipe_servings', true));
+                        $servings_display = $servings > 0 ? number_format_i18n($servings) : '—';
+
+                        $assigned_users = sff_get_recipe_assigned_users($recipe_id);
+                        $rating_data    = sff_get_recipe_rating_data($recipe_id);
+
+                        $assigned_markup = '';
+                        if (!empty($assigned_users)) {
+                            $assigned_markup .= '<ul style="margin:0; padding-left:18px;">';
+                            foreach ($assigned_users as $assigned_user_id) {
+                                $user = get_user_by('id', $assigned_user_id);
+                                $name = $user ? ($user->display_name ?: $user->user_login) : sprintf(__('User #%d', 'simplified-food-fitness'), $assigned_user_id);
+                                $assigned_markup .= '<li>' . esc_html($name);
+                                $assigned_markup .= '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline;margin-left:8px;">';
+                                $assigned_markup .= wp_nonce_field('sff_unassign_recipe_' . $recipe_id . '_' . $assigned_user_id, '_wpnonce', true, false);
+                                $assigned_markup .= '<input type="hidden" name="action" value="sff_unassign_recipe" />';
+                                $assigned_markup .= '<input type="hidden" name="recipe_id" value="' . esc_attr($recipe_id) . '" />';
+                                $assigned_markup .= '<input type="hidden" name="user_id" value="' . esc_attr($assigned_user_id) . '" />';
+                                $assigned_markup .= '<input type="hidden" name="redirect" value="' . esc_url($current_url) . '" />';
+                                $assigned_markup .= '<button type="submit" class="button-link-delete" onclick="return confirm(\'' . esc_js(__('Remove this recipe from the client?', 'simplified-food-fitness')) . '\');">' . esc_html__('Remove', 'simplified-food-fitness') . '</button>';
+                                $assigned_markup .= '</form>';
+                                $assigned_markup .= '</li>';
+                            }
+                            $assigned_markup .= '</ul>';
+                        } else {
+                            $assigned_markup = '<em>' . esc_html__('No clients assigned yet.', 'simplified-food-fitness') . '</em>';
+                        }
+
+                        $available_clients = array_diff_key($client_options, array_flip($assigned_users));
+                        ?>
+                        <tr>
+                            <td>
+                                <strong><a href="<?php echo esc_url(get_edit_post_link($recipe_id)); ?>"><?php the_title(); ?></a></strong>
+                                <div class="row-actions">
+                                    <span class="edit"><a href="<?php echo esc_url(get_edit_post_link($recipe_id)); ?>"><?php esc_html_e('Edit', 'simplified-food-fitness'); ?></a></span>
+                                </div>
+                            </td>
+                            <td><?php echo esc_html($servings_display); ?></td>
+                            <td><?php echo wp_kses_post($assigned_markup); ?></td>
+                            <td>
+                                <?php if ($rating_data['count'] > 0) : ?>
+                                    <div><?php echo wp_kses_post(sff_render_star_display($rating_data['average'])); ?></div>
+                                    <div>
+                                        <?php
+                                        printf(
+                                            esc_html__('%1$s average from %2$d ratings', 'simplified-food-fitness'),
+                                            esc_html(number_format_i18n($rating_data['average'], 1)),
+                                            esc_html($rating_data['count'])
+                                        );
+                                        ?>
+                                    </div>
+                                <?php else : ?>
+                                    <em><?php esc_html_e('No ratings yet.', 'simplified-food-fitness'); ?></em>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if (!empty($client_options)) : ?>
+                                    <?php if (!empty($available_clients)) : ?>
+                                        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-assign-recipe-form">
+                                            <?php wp_nonce_field('sff_assign_recipe_' . $recipe_id); ?>
+                                            <input type="hidden" name="action" value="sff_assign_recipe">
+                                            <input type="hidden" name="recipe_id" value="<?php echo esc_attr($recipe_id); ?>">
+                                            <input type="hidden" name="redirect" value="<?php echo esc_url($current_url); ?>">
+                                            <label class="screen-reader-text" for="sff-assign-<?php echo esc_attr($recipe_id); ?>"><?php esc_html_e('Assign recipe to client', 'simplified-food-fitness'); ?></label>
+                                            <select id="sff-assign-<?php echo esc_attr($recipe_id); ?>" name="user_id">
+                                                <?php foreach ($available_clients as $client_id => $name) : ?>
+                                                    <option value="<?php echo esc_attr($client_id); ?>"><?php echo esc_html($name); ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <button type="submit" class="button button-primary" style="margin-top:6px;">
+                                                <?php esc_html_e('Assign', 'simplified-food-fitness'); ?>
+                                            </button>
+                                        </form>
+                                    <?php else : ?>
+                                        <em><?php esc_html_e('All clients already have this recipe.', 'simplified-food-fitness'); ?></em>
+                                    <?php endif; ?>
+                                <?php else : ?>
+                                    <em><?php esc_html_e('No clients available for assignment.', 'simplified-food-fitness'); ?></em>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+
+            <?php
+            $total_pages = $query->max_num_pages;
+            if ($total_pages > 1) {
+                $base_url = add_query_arg(
+                    [
+                        'page' => 'sff-recipe-bank',
+                        's'    => $search,
+                    ],
+                    admin_url('admin.php')
+                );
+
+                echo '<div class="tablenav"><div class="tablenav-pages">';
+                echo paginate_links([
+                    'base'      => esc_url_raw($base_url . '&paged=%#%'),
+                    'format'    => '',
+                    'current'   => $paged,
+                    'total'     => $total_pages,
+                    'prev_text' => __('&laquo;', 'simplified-food-fitness'),
+                    'next_text' => __('&raquo;', 'simplified-food-fitness'),
+                ]);
+                echo '</div></div>';
+            }
+            ?>
+        <?php else : ?>
+            <p><?php esc_html_e('No recipes found.', 'simplified-food-fitness'); ?></p>
+        <?php endif; ?>
+    </div>
+    <?php
+    wp_reset_postdata();
+}
+
+function sff_handle_recipe_assignment_request() {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have permission to perform this action.', 'simplified-food-fitness'));
+    }
+
+    $recipe_id = isset($_POST['recipe_id']) ? intval($_POST['recipe_id']) : 0;
+    $user_id   = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+    $redirect  = isset($_POST['redirect']) ? esc_url_raw(wp_unslash($_POST['redirect'])) : '';
+
+    if (!$redirect) {
+        $redirect = menu_page_url('sff-recipe-bank', false);
+        if (!$redirect) {
+            $redirect = admin_url('admin.php?page=sff-recipe-bank');
+        }
+    }
+
+    if (!$recipe_id || !$user_id) {
+        $redirect = add_query_arg('sff_recipe_error', 1, $redirect);
+        wp_safe_redirect($redirect);
+        exit;
+    }
+
+    check_admin_referer('sff_assign_recipe_' . $recipe_id);
+
+    $result = sff_add_recipe_to_user_bank($recipe_id, $user_id);
+    if ($result) {
+        $redirect = add_query_arg('sff_recipe_assigned', $recipe_id, $redirect);
+    } else {
+        $redirect = add_query_arg('sff_recipe_error', 1, $redirect);
+    }
+
+    wp_safe_redirect($redirect);
+    exit;
+}
+add_action('admin_post_sff_assign_recipe', 'sff_handle_recipe_assignment_request');
+
+function sff_handle_recipe_unassignment_request() {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have permission to perform this action.', 'simplified-food-fitness'));
+    }
+
+    $recipe_id = isset($_POST['recipe_id']) ? intval($_POST['recipe_id']) : 0;
+    $user_id   = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+    $redirect  = isset($_POST['redirect']) ? esc_url_raw(wp_unslash($_POST['redirect'])) : '';
+
+    if (!$redirect) {
+        $redirect = menu_page_url('sff-recipe-bank', false);
+        if (!$redirect) {
+            $redirect = admin_url('admin.php?page=sff-recipe-bank');
+        }
+    }
+
+    if (!$recipe_id || !$user_id) {
+        $redirect = add_query_arg('sff_recipe_error', 1, $redirect);
+        wp_safe_redirect($redirect);
+        exit;
+    }
+
+    check_admin_referer('sff_unassign_recipe_' . $recipe_id . '_' . $user_id);
+
+    $result = sff_remove_recipe_from_user_bank($recipe_id, $user_id);
+    if ($result) {
+        sff_clear_user_recipe_customization($user_id, $recipe_id);
+        $redirect = add_query_arg('sff_recipe_removed', $recipe_id, $redirect);
+    } else {
+        $redirect = add_query_arg('sff_recipe_error', 1, $redirect);
+    }
+
+    wp_safe_redirect($redirect);
+    exit;
+}
+add_action('admin_post_sff_unassign_recipe', 'sff_handle_recipe_unassignment_request');
