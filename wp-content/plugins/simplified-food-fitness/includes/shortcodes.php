@@ -125,6 +125,7 @@ function sff_meal_dashboard_shortcode() {
     <?php
     return ob_get_clean();
 }
+
 add_shortcode('sff_meal_dashboard', 'sff_meal_dashboard_shortcode');
 
 
@@ -187,6 +188,243 @@ function sff_render_header($username, $day_type) {
     return ob_get_clean();
 }
 
+function sff_get_preference_field_type($meta_key) {
+    static $map = null;
+
+    if ($map === null) {
+        $map = [
+            'liked'    => [
+                'sff_favorite_fruits',
+                'sff_favorite_fruits_other',
+                'sff_favorite_vegetables',
+                'sff_favorite_vegetables_other',
+                'sff_favorite_red_meat',
+                'sff_favorite_red_meat_other',
+                'sff_favorite_poultry',
+                'sff_favorite_poultry_other',
+                'sff_favorite_pork',
+                'sff_favorite_pork_other',
+                'sff_favorite_fish',
+                'sff_favorite_fish_other',
+                'sff_favorite_seafood',
+                'sff_favorite_seafood_other',
+            ],
+            'disliked' => [
+                'sff_disliked_fruits',
+                'sff_disliked_fruits_other',
+                'sff_disliked_vegetables',
+                'sff_disliked_vegetables_other',
+                'sff_disliked_red_meat',
+                'sff_disliked_red_meat_other',
+                'sff_disliked_poultry',
+                'sff_disliked_poultry_other',
+                'sff_disliked_pork',
+                'sff_disliked_pork_other',
+                'sff_disliked_fish',
+                'sff_disliked_fish_other',
+                'sff_disliked_seafood',
+                'sff_disliked_seafood_other',
+            ],
+        ];
+    }
+
+    foreach ($map as $type => $keys) {
+        if (in_array($meta_key, $keys, true)) {
+            return $type;
+        }
+    }
+
+    return '';
+}
+
+function sff_is_preference_placeholder($value) {
+    $normalized = sff_normalize_for_matching($value);
+
+    if ($normalized === '') {
+        return true;
+    }
+
+    $placeholders = ['none', 'na', 'n a', 'n/a', 'no preference', 'any', 'anything', 'all', 'not applicable'];
+    if (in_array($normalized, $placeholders, true)) {
+        return true;
+    }
+
+    return strpos($normalized, 'other') === 0;
+}
+
+function sff_normalize_for_matching($value) {
+    $value = wp_strip_all_tags($value);
+    $value = remove_accents($value);
+    $value = strtolower($value);
+    $value = str_replace(["'", '’'], '', $value);
+    $value = preg_replace('/[^a-z0-9]+/', ' ', $value);
+    $value = trim(preg_replace('/\s+/', ' ', $value));
+
+    return $value;
+}
+
+function sff_generate_preference_terms($value) {
+    $candidates = [$value];
+    $candidates[] = str_replace(["'", '’'], '', $value);
+    $candidates[] = preg_replace('/[^A-Za-z0-9\s]+/', ' ', $value);
+
+    $base = end($candidates);
+    if (!is_string($base)) {
+        $base = $value;
+    }
+
+    $base = trim($base);
+    if ($base !== '') {
+        $lower = strtolower($base);
+        if ($lower !== $base) {
+            $candidates[] = $lower;
+        }
+
+        if (strlen($lower) > 4 && substr($lower, -2) === 'es') {
+            $candidates[] = substr($lower, 0, -2);
+        }
+
+        if (strlen($lower) > 3 && substr($lower, -1) === 's') {
+            $candidates[] = substr($lower, 0, -1);
+        }
+    }
+
+    $terms = [];
+    foreach ($candidates as $candidate) {
+        if (!is_string($candidate) || $candidate === '') {
+            continue;
+        }
+
+        $normalized = sff_normalize_for_matching($candidate);
+        if ($normalized !== '') {
+            $terms[] = $normalized;
+        }
+    }
+
+    return array_values(array_unique($terms));
+}
+
+function sff_title_matches_preference_items($title, array $items) {
+    if (empty($items) || $title === '') {
+        return false;
+    }
+
+    $normalized_title = sff_normalize_for_matching($title);
+    if ($normalized_title === '') {
+        return false;
+    }
+
+    foreach ($items as $item) {
+        if (sff_is_preference_placeholder($item)) {
+            continue;
+        }
+
+        $terms = sff_generate_preference_terms($item);
+        foreach ($terms as $term) {
+            if (strlen($term) < 3) {
+                continue;
+            }
+
+            if ($normalized_title === $term || strpos($normalized_title, $term) !== false) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function sff_get_client_preference_items($client_id) {
+    $map = [
+        'liked'    => [
+            'sff_favorite_fruits',
+            'sff_favorite_fruits_other',
+            'sff_favorite_vegetables',
+            'sff_favorite_vegetables_other',
+            'sff_favorite_red_meat',
+            'sff_favorite_red_meat_other',
+            'sff_favorite_poultry',
+            'sff_favorite_poultry_other',
+            'sff_favorite_pork',
+            'sff_favorite_pork_other',
+            'sff_favorite_fish',
+            'sff_favorite_fish_other',
+            'sff_favorite_seafood',
+            'sff_favorite_seafood_other',
+        ],
+        'disliked' => [
+            'sff_disliked_fruits',
+            'sff_disliked_fruits_other',
+            'sff_disliked_vegetables',
+            'sff_disliked_vegetables_other',
+            'sff_disliked_red_meat',
+            'sff_disliked_red_meat_other',
+            'sff_disliked_poultry',
+            'sff_disliked_poultry_other',
+            'sff_disliked_pork',
+            'sff_disliked_pork_other',
+            'sff_disliked_fish',
+            'sff_disliked_fish_other',
+            'sff_disliked_seafood',
+            'sff_disliked_seafood_other',
+        ],
+    ];
+
+    $preferences = [
+        'liked'    => [],
+        'disliked' => [],
+    ];
+
+    foreach ($map as $type => $keys) {
+        foreach ($keys as $meta_key) {
+            $value = get_post_meta($client_id, $meta_key, true);
+            if ($value === '' || $value === null) {
+                continue;
+            }
+
+            $parts = array_map('trim', explode(',', $value));
+            foreach ($parts as $part) {
+                if ($part === '') {
+                    continue;
+                }
+                $preferences[$type][] = $part;
+            }
+        }
+
+        $preferences[$type] = array_values(array_unique($preferences[$type]));
+    }
+
+    return $preferences;
+}
+
+function sff_render_preference_value($meta_key, $value) {
+    $type = sff_get_preference_field_type($meta_key);
+    if ($type === '' || $value === '') {
+        return esc_html($value);
+    }
+
+    $items = array_map('trim', explode(',', $value));
+    $chips = [];
+
+    foreach ($items as $item) {
+        if ($item === '' || sff_is_preference_placeholder($item)) {
+            continue;
+        }
+
+        $chips[] = sprintf(
+            '<span class="sff-preference-chip sff-preference-chip--%1$s">%2$s</span>',
+            esc_attr($type),
+            esc_html($item)
+        );
+    }
+
+    if (empty($chips)) {
+        return esc_html($value);
+    }
+
+    return implode('', $chips);
+}
+
 function sff_personal_ingredients_shortcode() {
     if (!is_user_logged_in()) {
         return sff_custom_login_form();
@@ -196,6 +434,25 @@ function sff_personal_ingredients_shortcode() {
     $username  = $user->display_name ?: $user->user_login;
     $day_type  = 'Rest Day';
     $user_id   = get_current_user_id();
+
+    $client_id          = 0;
+    $client_preferences = [
+        'liked'    => [],
+        'disliked' => [],
+    ];
+
+    $linked_clients = get_posts([
+        'post_type'      => 'clients',
+        'numberposts'    => 1,
+        'fields'         => 'ids',
+        'meta_key'       => 'linked_user_id',
+        'meta_value'     => $user_id,
+    ]);
+
+    if (!empty($linked_clients)) {
+        $client_id          = intval($linked_clients[0]);
+        $client_preferences = sff_get_client_preference_items($client_id);
+    }
 
     $search_term = isset($_GET['sff_ingredient_search']) ? sanitize_text_field(wp_unslash($_GET['sff_ingredient_search'])) : '';
     $paged       = isset($_GET['sff_page']) ? max(1, intval($_GET['sff_page'])) : 1;
@@ -392,9 +649,38 @@ function sff_personal_ingredients_shortcode() {
                         $title   = get_the_title();
                         $initial = function_exists('mb_substr') ? mb_substr($title, 0, 1, get_bloginfo('charset')) : substr($title, 0, 1);
                         $initial = $initial ? strtoupper($initial) : '#';
+                        $preference_state = '';
+                        if ($client_id) {
+                            if (sff_title_matches_preference_items($title, $client_preferences['disliked'])) {
+                                $preference_state = 'disliked';
+                            } elseif (sff_title_matches_preference_items($title, $client_preferences['liked'])) {
+                                $preference_state = 'liked';
+                            }
+                        }
+                        $item_classes = 'sff-personal-library-item';
+                        if ($preference_state) {
+                            $item_classes .= ' sff-personal-library-item--' . $preference_state;
+                        }
+                        $card_classes = 'sff-ingredient-card';
+                        if ($preference_state) {
+                            $card_classes .= ' sff-ingredient-card--preference sff-ingredient-card--' . $preference_state;
+                        }
+                        $badge_markup = '';
+                        if ($preference_state === 'liked') {
+                            $badge_markup = sprintf(
+                                '<span class="sff-ingredient-preference-badge sff-ingredient-preference-badge--liked">%s</span>',
+                                esc_html__('Liked', 'simplified-food-fitness')
+                            );
+                        } elseif ($preference_state === 'disliked') {
+                            $badge_markup = sprintf(
+                                '<span class="sff-ingredient-preference-badge sff-ingredient-preference-badge--disliked">%s</span>',
+                                esc_html__('Disliked', 'simplified-food-fitness')
+                            );
+                        }
+                        $data_preference_attr = $preference_state ? sprintf(' data-preference="%s"', esc_attr($preference_state)) : '';
                         ?>
-                        <li class="sff-personal-library-item">
-                            <div class="sff-ingredient-card">
+                        <li class="<?php echo esc_attr($item_classes); ?>">
+                            <div class="<?php echo esc_attr($card_classes); ?>"<?php echo $data_preference_attr; ?>>
                                 <div class="sff-ingredient-card__header">
                                     <div class="sff-ingredient-card__identity">
                                         <span class="sff-ingredient-avatar" aria-hidden="true"><?php echo esc_html($initial); ?></span>
@@ -403,7 +689,12 @@ function sff_personal_ingredients_shortcode() {
                                             <span class="sff-personal-library-category"><?php echo esc_html($category_name); ?></span>
                                         </div>
                                     </div>
-                                    <span class="sff-ingredient-updated"><?php printf(esc_html__('Updated %s', 'simplified-food-fitness'), esc_html($last_updated)); ?></span>
+                                    <div class="sff-ingredient-card__meta">
+                                        <?php if ($badge_markup) : ?>
+                                            <?php echo wp_kses_post($badge_markup); ?>
+                                        <?php endif; ?>
+                                        <span class="sff-ingredient-updated"><?php printf(esc_html__('Updated %s', 'simplified-food-fitness'), esc_html($last_updated)); ?></span>
+                                    </div>
                                 </div>
 
                                 <div class="sff-ingredient-card__macros">
@@ -607,10 +898,18 @@ function sff_client_profile_shortcode() {
                 <?php foreach ($fields as $meta_key => $label) :
                     $value = get_post_meta($client_id, $meta_key, true);
                     if (empty($value)) { continue; }
+
+                    $field_type    = sff_get_preference_field_type($meta_key);
+                    $field_classes = 'sff-profile-field';
+                    if ($field_type) {
+                        $field_classes .= ' sff-profile-field--preference sff-profile-field--' . $field_type;
+                    }
+
+                    $formatted_value = sff_render_preference_value($meta_key, $value);
                 ?>
-                    <div class="sff-profile-field">
+                    <div class="<?php echo esc_attr($field_classes); ?>">
                         <label><?php echo esc_html($label); ?>:</label>
-                        <span><?php echo esc_html($value); ?></span>
+                        <span class="sff-profile-field__value"><?php echo wp_kses_post($formatted_value); ?></span>
                     </div>
                 <?php endforeach; ?>
             <?php endforeach; ?>

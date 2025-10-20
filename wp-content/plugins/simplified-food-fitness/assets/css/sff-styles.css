@@ -703,6 +703,23 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
+.sff-profile-field--preference {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.sff-profile-field--liked {
+    background: #eef9f0;
+    border-left: 4px solid #32a14c;
+}
+
+.sff-profile-field--disliked {
+    background: #fdf2f2;
+    border-left: 4px solid #d92d20;
+}
+
 /* Recipe Modal */
 #sff-recipe-modal {
     position: fixed;
@@ -739,8 +756,59 @@
     margin-right: 8px;
 }
 
-.sff-profile-field span {
+.sff-profile-field__value {
     color: #1f1f1f;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.sff-profile-field--preference .sff-profile-field__value {
+    width: 100%;
+    color: inherit;
+}
+
+.sff-preference-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    background: #eef2ff;
+    border: 1px solid #d9e2ff;
+    color: #1d2939;
+}
+
+.sff-preference-chip--liked {
+    background: #e7f6ed;
+    border-color: #abdfc6;
+    color: #1f5130;
+}
+
+.sff-preference-chip--disliked {
+    background: #fdecec;
+    border-color: #f5b1b0;
+    color: #7f1d1d;
+}
+
+.sff-profile-field--liked label {
+    color: #1f5130;
+}
+
+.sff-profile-field--disliked label {
+    color: #7f1d1d;
+}
+
+.sff-profile-field--liked label::before {
+    content: "✅";
+    color: #1f5130;
+}
+
+.sff-profile-field--disliked label::before {
+    content: "🚫";
+    color: #7f1d1d;
 }
 
 /* Dashboard Hamburger Menu */
@@ -1136,11 +1204,33 @@ body.sff-menu-open .sff-menu-items {
     height: 100%;
 }
 
+.sff-ingredient-card--preference {
+    border-width: 2px;
+}
+
+.sff-ingredient-card--liked {
+    border-color: rgba(50, 161, 76, 0.45);
+    box-shadow: 0 18px 44px rgba(50, 161, 76, 0.18);
+}
+
+.sff-ingredient-card--disliked {
+    border-color: rgba(217, 45, 32, 0.45);
+    box-shadow: 0 18px 44px rgba(217, 45, 32, 0.16);
+    background: linear-gradient(180deg, rgba(253, 242, 242, 0.85) 0%, #ffffff 45%);
+}
+
 .sff-ingredient-card__header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 12px;
+}
+
+.sff-ingredient-card__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
 }
 
 .sff-ingredient-card__identity {
@@ -1194,6 +1284,30 @@ body.sff-menu-open .sff-menu-items {
     background: rgba(111, 125, 138, 0.12);
     border-radius: 999px;
     padding: 6px 12px;
+}
+
+.sff-ingredient-preference-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.sff-ingredient-preference-badge--liked {
+    background: #e7f6ed;
+    color: #1f5130;
+    border: 1px solid #abdfc6;
+}
+
+.sff-ingredient-preference-badge--disliked {
+    background: #fdecec;
+    color: #7f1d1d;
+    border: 1px solid #f5b1b0;
 }
 
 .sff-ingredient-card__macros {
