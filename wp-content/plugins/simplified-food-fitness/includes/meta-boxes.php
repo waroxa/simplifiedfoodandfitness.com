@@ -195,71 +195,92 @@ function sff_render_meal_plan_meta_box($post) {
     ]);
     ?>
 
-    <!-- Top: Quick Meal editor (UI only) -->
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; max-width:1000px; margin-bottom:16px;">
-        <div>
-            <label><strong>Meal Time:</strong></label>
-            <input type="text" name="sff_meal_meta[time]" value="<?php echo esc_attr($meal_data['time'] ?? ''); ?>" style="width:100%; padding:8px;">
+    <div class="sff-meal-plan-admin">
+        <div class="sff-card sff-quick-meal">
+            <div class="sff-card__header">
+                <h3><?php esc_html_e('Quick Meal Details', 'simplified-food-fitness'); ?></h3>
+                <p><?php esc_html_e('Optional reference details you can use while planning the week.', 'simplified-food-fitness'); ?></p>
+            </div>
+
+            <div class="sff-field-grid">
+                <div class="sff-field">
+                    <label for="sff_meal_meta_time"><?php esc_html_e('Meal Time', 'simplified-food-fitness'); ?></label>
+                    <input type="text" id="sff_meal_meta_time" name="sff_meal_meta[time]" value="<?php echo esc_attr($meal_data['time'] ?? ''); ?>">
+                </div>
+
+                <div class="sff-field">
+                    <label for="sff_meal_meta_calories"><?php esc_html_e('Calories', 'simplified-food-fitness'); ?></label>
+                    <input type="number" id="sff_meal_meta_calories" name="sff_meal_meta[calories]" value="<?php echo esc_attr($meal_data['calories'] ?? ''); ?>">
+                </div>
+
+                <div class="sff-field sff-field--wide">
+                    <label for="sff_meal_meta_title"><?php esc_html_e('Meal Title', 'simplified-food-fitness'); ?></label>
+                    <input type="text" id="sff_meal_meta_title" name="sff_meal_meta[title]" value="<?php echo esc_attr($meal_data['title'] ?? ''); ?>">
+                </div>
+
+                <div class="sff-field sff-field--wide">
+                    <label for="sff_meal_meta_description"><?php esc_html_e('Description', 'simplified-food-fitness'); ?></label>
+                    <textarea id="sff_meal_meta_description" name="sff_meal_meta[description]" rows="4"><?php echo esc_textarea($meal_data['description'] ?? ''); ?></textarea>
+                </div>
+
+                <div class="sff-field sff-field--wide">
+                    <label for="sff_meal_meta_recipe"><?php esc_html_e('Recipe', 'simplified-food-fitness'); ?></label>
+                    <select id="sff_meal_meta_recipe" name="sff_meal_meta[recipe_id]">
+                        <option value=""><?php esc_html_e('-- Select Recipe --', 'simplified-food-fitness'); ?></option>
+                        <?php foreach ($recipes as $recipe) :
+                            $selected = ((int)($meal_data['recipe_id'] ?? 0) === $recipe->ID) ? 'selected' : '';
+                        ?>
+                            <option value="<?php echo esc_attr($recipe->ID); ?>" <?php echo $selected; ?>>
+                                <?php echo esc_html($recipe->post_title); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button type="button" id="sff-open-recipe-modal" class="button button-secondary sff-inline-button">
+                        <?php esc_html_e('Add New Recipe', 'simplified-food-fitness'); ?>
+                    </button>
+                </div>
+
+                <div class="sff-field">
+                    <label for="sff_meal_meta_servings"><?php esc_html_e('Servings', 'simplified-food-fitness'); ?></label>
+                    <input type="number" id="sff_meal_meta_servings" name="sff_meal_meta[servings]" value="<?php echo esc_attr($meal_data['servings'] ?? ''); ?>">
+                </div>
+
+                <div class="sff-field">
+                    <label for="sff_meal_meta_serving_size"><?php esc_html_e('Serving Size (g)', 'simplified-food-fitness'); ?></label>
+                    <input type="number" id="sff_meal_meta_serving_size" name="sff_meal_meta[serving_size]" value="<?php echo esc_attr($meal_data['serving_size'] ?? ''); ?>">
+                </div>
+            </div>
         </div>
 
-        <div>
-            <label><strong>Calories:</strong></label>
-            <input type="number" name="sff_meal_meta[calories]" value="<?php echo esc_attr($meal_data['calories'] ?? ''); ?>" style="width:100%; padding:8px;">
+        <div class="sff-meal-plan-body">
+            <div class="sff-card sff-meal-plan-sidebar">
+                <div class="sff-panel-header">
+                    <h3><?php esc_html_e('Recipes', 'simplified-food-fitness'); ?></h3>
+                    <p><?php esc_html_e('Drag recipes from your library into the calendar.', 'simplified-food-fitness'); ?></p>
+                </div>
+                <div id="sff-recipe-list" class="sff-recipe-pool" aria-live="polite"></div>
+            </div>
+
+            <div class="sff-card sff-meal-plan-calendar">
+                <div class="sff-panel-header">
+                    <h3><?php esc_html_e('Weekly Meal Plan', 'simplified-food-fitness'); ?></h3>
+                    <p><?php esc_html_e('Drop recipes into each day and reorder them to match your plan.', 'simplified-food-fitness'); ?></p>
+                </div>
+                <div id="sff-meal-calendar" class="sff-calendar-grid" aria-live="polite"></div>
+            </div>
         </div>
 
-        <div style="grid-column: span 2;">
-            <label><strong>Meal Title:</strong></label>
-            <input type="text" name="sff_meal_meta[title]" value="<?php echo esc_attr($meal_data['title'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-
-        <div style="grid-column: span 2;">
-            <label><strong>Description:</strong></label>
-            <textarea name="sff_meal_meta[description]" style="width:100%; height:80px; padding:8px;"><?php echo esc_textarea($meal_data['description'] ?? ''); ?></textarea>
-        </div>
-
-        <div style="grid-column: span 2;">
-            <label><strong>Recipe:</strong></label>
-            <select name="sff_meal_meta[recipe_id]" style="width:100%; padding:8px;">
-                <option value="">-- Select Recipe --</option>
-                <?php foreach ($recipes as $recipe) : 
-                    $selected = ((int)($meal_data['recipe_id'] ?? 0) === $recipe->ID) ? 'selected' : '';
-                ?>
-                    <option value="<?php echo esc_attr($recipe->ID); ?>" <?php echo $selected; ?>>
-                        <?php echo esc_html($recipe->post_title); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <button type="button" id="sff-open-recipe-modal" class="button" style="margin-top:8px;">
-                <?php esc_html_e('Add New Recipe'); ?>
-            </button>
-        </div>
-
-        <div>
-            <label><strong>Servings:</strong></label>
-            <input type="number" name="sff_meal_meta[servings]" value="<?php echo esc_attr($meal_data['servings'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-
-        <div>
-            <label><strong>Serving Size (g):</strong></label>
-            <input type="number" name="sff_meal_meta[serving_size]" value="<?php echo esc_attr($meal_data['serving_size'] ?? ''); ?>" style="width:100%; padding:8px;">
-        </div>
-    </div>
-
-    <!-- Middle: Recipes list + Weekly calendar -->
-    <div id="sff-meal-plan-container" style="display:flex; gap:20px;">
-        <div style="flex:1;">
-            <h3><?php esc_html_e('Recipes'); ?></h3>
-            <div id="sff-recipe-list" style="border:1px solid #ccc; padding:10px; min-height:200px;"></div>
-        </div>
-        <div style="flex:2;">
-            <h3><?php esc_html_e('Weekly Meal Plan'); ?></h3>
-            <div id="sff-meal-calendar" style="display:grid; grid-template-columns:repeat(7,1fr); gap:10px;"></div>
+        <div id="sff-macro-totals" class="sff-card sff-macro-summary" aria-live="polite">
+            <div class="sff-macro-summary__header">
+                <h3><?php esc_html_e('Daily Nutrition Snapshot', 'simplified-food-fitness'); ?></h3>
+                <p><?php esc_html_e('Nutrition totals update automatically as meals are assigned.', 'simplified-food-fitness'); ?></p>
+            </div>
+            <div class="sff-macro-summary__grid"></div>
         </div>
     </div>
 
     <!-- Hidden JSON the saver expects -->
     <input type="hidden" name="sff_meal_data" id="sff_meal_data" value="<?php echo esc_attr($schedule_json); ?>">
-    <div id="sff-macro-totals" style="margin-top:20px;"></div>
 
     <!-- Modal: Create Recipe -->
     <div id="sff-recipe-modal" style="display:none;">
