@@ -1227,11 +1227,7 @@ function sff_get_recipe_macros_with_overrides($recipe_id, $overrides = [], $per_
 function sff_get_recipe_rating_data($recipe_id) {
     $recipe_id = intval($recipe_id);
     if (!$recipe_id) {
-        return [
-            'average'  => 0,
-            'count'    => 0,
-            'comments' => [],
-        ];
+        return sff_prepare_recipe_rating_response($recipe_id, 0, 0, 0, 0, []);
     }
 
     $comments = get_comments([
@@ -1242,21 +1238,26 @@ function sff_get_recipe_rating_data($recipe_id) {
     ]);
 
     if (!$comments) {
-        return [
-            'average'  => 0,
-            'count'    => 0,
-            'comments' => [],
-        ];
+        return sff_prepare_recipe_rating_response($recipe_id, 0, 0, 0, 0, []);
     }
 
-    $total    = 0;
-    $count    = 0;
-    $prepared = [];
+    $total      = 0;
+    $count      = 0;
+    $thumbs_up  = 0;
+    $thumbs_down = 0;
+    $prepared   = [];
 
     foreach ($comments as $comment) {
         $rating = intval(get_comment_meta($comment->comment_ID, '_sff_rating', true));
         if ($rating < 1) {
             continue;
+        }
+
+        $preference = sanitize_key(get_comment_meta($comment->comment_ID, '_sff_preference', true));
+        if ($preference === 'up') {
+            $thumbs_up++;
+        } elseif ($preference === 'down') {
+            $thumbs_down++;
         }
 
         $total += $rating;
@@ -1265,6 +1266,7 @@ function sff_get_recipe_rating_data($recipe_id) {
         $prepared[] = [
             'id'         => $comment->comment_ID,
             'rating'     => $rating,
+            'preference' => in_array($preference, ['up', 'down'], true) ? $preference : '',
             'content'    => $comment->comment_content,
             'author'     => $comment->comment_author,
             'date'       => mysql2date(get_option('date_format'), $comment->comment_date),
@@ -1273,11 +1275,35 @@ function sff_get_recipe_rating_data($recipe_id) {
 
     $average = $count ? $total / $count : 0;
 
-    return [
-        'average'  => $average,
-        'count'    => $count,
-        'comments' => $prepared,
+    return sff_prepare_recipe_rating_response($recipe_id, $average, $count, $thumbs_up, $thumbs_down, $prepared);
+}
+
+function sff_prepare_recipe_rating_response($recipe_id, $average, $count, $thumbs_up, $thumbs_down, $comments) {
+    $response = [
+        'average'     => $average,
+        'count'       => $count,
+        'thumbs_up'   => $thumbs_up,
+        'thumbs_down' => $thumbs_down,
+        'comments'    => $comments,
     ];
+
+    if ($recipe_id) {
+        update_post_meta($recipe_id, '_sff_rating_average', $average);
+        update_post_meta($recipe_id, '_sff_rating_count', $count);
+        update_post_meta($recipe_id, '_sff_rating_thumbs_up', $thumbs_up);
+        update_post_meta($recipe_id, '_sff_rating_thumbs_down', $thumbs_down);
+    }
+
+    return $response;
+}
+
+function sff_update_recipe_feedback_meta($recipe_id) {
+    $recipe_id = intval($recipe_id);
+    if (!$recipe_id) {
+        return;
+    }
+
+    sff_get_recipe_rating_data($recipe_id);
 }
 
 function sff_get_user_recipe_rating_comment($recipe_id, $user_id) {

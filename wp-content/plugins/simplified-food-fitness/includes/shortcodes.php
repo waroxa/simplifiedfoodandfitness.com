@@ -2075,6 +2075,10 @@ function sff_client_recipe_bank_shortcode() {
         $rating_data     = sff_get_recipe_rating_data($recipe_id);
         $user_comment    = sff_get_user_recipe_rating_comment($recipe_id, $user_id);
         $user_rating     = $user_comment ? intval(get_comment_meta($user_comment->comment_ID, '_sff_rating', true)) : 0;
+        $user_preference = $user_comment ? sanitize_key(get_comment_meta($user_comment->comment_ID, '_sff_preference', true)) : '';
+        if (!in_array($user_preference, ['up', 'down'], true)) {
+            $user_preference = '';
+        }
 
         $ingredient_keywords = [];
         foreach ($ingredient_rows as $row_data) {
@@ -2135,6 +2139,7 @@ function sff_client_recipe_bank_shortcode() {
             'rating_data'          => $rating_data,
             'user_comment'         => $user_comment,
             'user_rating'          => $user_rating,
+            'user_preference'      => $user_preference,
             'cover_html'           => $cover_html,
             'initial'              => $initial,
             'last_updated'         => $modified_timestamp ? get_post_modified_time(get_option('date_format'), false, $recipe, true) : '',
@@ -2145,6 +2150,8 @@ function sff_client_recipe_bank_shortcode() {
             'rating_average'       => isset($rating_data['average']) ? floatval($rating_data['average']) : 0.0,
             'rating_count'         => isset($rating_data['count']) ? intval($rating_data['count']) : 0,
             'has_user_rating'      => $user_rating > 0,
+            'thumbs_up'            => isset($rating_data['thumbs_up']) ? intval($rating_data['thumbs_up']) : 0,
+            'thumbs_down'          => isset($rating_data['thumbs_down']) ? intval($rating_data['thumbs_down']) : 0,
         ];
     }
 
@@ -2354,7 +2361,7 @@ function sff_client_recipe_bank_shortcode() {
                                         $user_rating  = $recipe['user_rating'];
                                         $keywords     = trim($recipe['ingredient_keywords'] . ' ' . $recipe['title']);
                                         ?>
-                                        <article class="sff-client-recipe-card" aria-labelledby="sff-recipe-title-<?php echo esc_attr($recipe['id']); ?>" data-title="<?php echo esc_attr($recipe['title']); ?>" data-initial="<?php echo esc_attr($recipe['initial']); ?>" data-rating="<?php echo esc_attr(number_format((float) $recipe['rating_average'], 2, '.', '')); ?>" data-rating-count="<?php echo esc_attr($recipe['rating_count']); ?>" data-rated="<?php echo $recipe['has_user_rating'] ? '1' : '0'; ?>" data-customized="<?php echo $recipe['is_customized'] ? '1' : '0'; ?>" data-updated="<?php echo esc_attr($recipe['updated_timestamp']); ?>" data-keywords="<?php echo esc_attr($keywords); ?>">
+                                        <article class="sff-client-recipe-card" aria-labelledby="sff-recipe-title-<?php echo esc_attr($recipe['id']); ?>" data-title="<?php echo esc_attr($recipe['title']); ?>" data-initial="<?php echo esc_attr($recipe['initial']); ?>" data-rating="<?php echo esc_attr(number_format((float) $recipe['rating_average'], 2, '.', '')); ?>" data-rating-count="<?php echo esc_attr($recipe['rating_count']); ?>" data-rated="<?php echo $recipe['has_user_rating'] ? '1' : '0'; ?>" data-customized="<?php echo $recipe['is_customized'] ? '1' : '0'; ?>" data-updated="<?php echo esc_attr($recipe['updated_timestamp']); ?>" data-keywords="<?php echo esc_attr($keywords); ?>" data-preference="<?php echo esc_attr($recipe['user_preference']); ?>" data-thumbs-up="<?php echo esc_attr($recipe['thumbs_up']); ?>" data-thumbs-down="<?php echo esc_attr($recipe['thumbs_down']); ?>">
                             <header class="sff-client-recipe-card__header">
                                 <div class="sff-client-recipe-card__identity">
                                     <?php if ($recipe['cover_html']) : ?>
@@ -2494,6 +2501,26 @@ function sff_client_recipe_bank_shortcode() {
                                             );
                                             ?>
                                         </span>
+                                        <div class="sff-recipe-preference-summary" role="status">
+                                            <span class="sff-recipe-preference-summary__item">
+                                                <span aria-hidden="true">👍</span>
+                                                <?php
+                                                printf(
+                                                    esc_html__('%s yes votes', 'simplified-food-fitness'),
+                                                    esc_html(number_format_i18n($rating_data['thumbs_up']))
+                                                );
+                                                ?>
+                                            </span>
+                                            <span class="sff-recipe-preference-summary__item">
+                                                <span aria-hidden="true">👎</span>
+                                                <?php
+                                                printf(
+                                                    esc_html__('%s no votes', 'simplified-food-fitness'),
+                                                    esc_html(number_format_i18n($rating_data['thumbs_down']))
+                                                );
+                                                ?>
+                                            </span>
+                                        </div>
                                     <?php else : ?>
                                         <span><?php esc_html_e('No ratings yet. Be the first to leave feedback!', 'simplified-food-fitness'); ?></span>
                                     <?php endif; ?>
@@ -2510,6 +2537,19 @@ function sff_client_recipe_bank_shortcode() {
                                             <label for="sff-rating-<?php echo esc_attr($recipe['id'] . '-' . $star); ?>">★</label>
                                         <?php endfor; ?>
                                     </div>
+                                    <fieldset class="sff-recipe-preference" aria-labelledby="sff-preference-label-<?php echo esc_attr($recipe['id']); ?>">
+                                        <legend id="sff-preference-label-<?php echo esc_attr($recipe['id']); ?>"><?php esc_html_e('Would you like to see this recipe again?', 'simplified-food-fitness'); ?></legend>
+                                        <div class="sff-recipe-preference__options">
+                                            <label class="sff-recipe-preference__option">
+                                                <input type="radio" name="sff_recipe_preference" value="up" <?php checked($recipe['user_preference'], 'up'); ?> required>
+                                                <span class="sff-recipe-preference__label">👍 <?php esc_html_e('Yes, keep it in my rotation', 'simplified-food-fitness'); ?></span>
+                                            </label>
+                                            <label class="sff-recipe-preference__option">
+                                                <input type="radio" name="sff_recipe_preference" value="down" <?php checked($recipe['user_preference'], 'down'); ?>>
+                                                <span class="sff-recipe-preference__label">👎 <?php esc_html_e('No, please skip this one', 'simplified-food-fitness'); ?></span>
+                                            </label>
+                                        </div>
+                                    </fieldset>
                                     <label class="screen-reader-text" for="sff-rating-comment-<?php echo esc_attr($recipe['id']); ?>"><?php esc_html_e('Recipe feedback', 'simplified-food-fitness'); ?></label>
                                     <textarea id="sff-rating-comment-<?php echo esc_attr($recipe['id']); ?>" name="sff_recipe_comment" rows="3" placeholder="<?php esc_attr_e('Share what you loved or what could improve…', 'simplified-food-fitness'); ?>"><?php echo esc_textarea($user_comment ? $user_comment->comment_content : ''); ?></textarea>
                                     <button type="submit" class="button button-primary"><?php echo esc_html($user_comment ? __('Update Feedback', 'simplified-food-fitness') : __('Submit Feedback', 'simplified-food-fitness')); ?></button>
@@ -2521,6 +2561,11 @@ function sff_client_recipe_bank_shortcode() {
                                             <div class="sff-recipe-rating-comment">
                                                 <header>
                                                     <?php echo wp_kses_post(sff_render_star_display($comment['rating'])); ?>
+                                                    <?php if ($comment['preference'] === 'up') : ?>
+                                                        <span class="sff-recipe-rating-preference is-up">👍 <?php esc_html_e('Requested again', 'simplified-food-fitness'); ?></span>
+                                                    <?php elseif ($comment['preference'] === 'down') : ?>
+                                                        <span class="sff-recipe-rating-preference is-down">👎 <?php esc_html_e('Prefer to skip', 'simplified-food-fitness'); ?></span>
+                                                    <?php endif; ?>
                                                     <strong><?php echo esc_html($comment['author']); ?></strong>
                                                     <span class="sff-recipe-feedback-note"><?php echo esc_html($comment['date']); ?></span>
                                                 </header>
@@ -2640,15 +2685,19 @@ function sff_handle_recipe_rating_submission() {
         return;
     }
 
-    $rating  = isset($_POST['sff_recipe_rating']) ? intval($_POST['sff_recipe_rating']) : 0;
-    $comment = isset($_POST['sff_recipe_comment']) ? wp_kses_post(wp_unslash($_POST['sff_recipe_comment'])) : '';
+    $rating     = isset($_POST['sff_recipe_rating']) ? intval($_POST['sff_recipe_rating']) : 0;
+    $comment    = isset($_POST['sff_recipe_comment']) ? wp_kses_post(wp_unslash($_POST['sff_recipe_comment'])) : '';
+    $preference = isset($_POST['sff_recipe_preference']) ? sanitize_key(wp_unslash($_POST['sff_recipe_preference'])) : '';
+    if (!in_array($preference, ['up', 'down'], true)) {
+        $preference = '';
+    }
 
     $redirect = isset($_POST['sff_redirect']) ? esc_url_raw(wp_unslash($_POST['sff_redirect'])) : '';
     if (!$redirect) {
         $redirect = home_url('/');
     }
 
-    if ($rating < 1 || $rating > 5) {
+    if ($rating < 1 || $rating > 5 || $preference === '') {
         $redirect = add_query_arg('sff_recipe_error', 1, $redirect);
         wp_safe_redirect($redirect);
         exit;
@@ -2663,6 +2712,7 @@ function sff_handle_recipe_rating_submission() {
             'comment_content' => $comment,
         ]);
         update_comment_meta($existing_vote->comment_ID, '_sff_rating', $rating);
+        update_comment_meta($existing_vote->comment_ID, '_sff_preference', $preference);
     } else {
         $comment_id = wp_insert_comment([
             'comment_post_ID'      => $recipe_id,
@@ -2676,8 +2726,11 @@ function sff_handle_recipe_rating_submission() {
 
         if ($comment_id) {
             update_comment_meta($comment_id, '_sff_rating', $rating);
+            update_comment_meta($comment_id, '_sff_preference', $preference);
         }
     }
+
+    sff_update_recipe_feedback_meta($recipe_id);
 
     $redirect = add_query_arg('sff_recipe_rated', $recipe_id, $redirect);
     wp_safe_redirect($redirect);
