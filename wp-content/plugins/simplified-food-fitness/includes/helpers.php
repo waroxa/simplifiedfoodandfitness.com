@@ -1077,6 +1077,38 @@ function sff_get_user_personal_ingredients($user_id) {
     return $items;
 }
 
+function sff_get_general_ingredients() {
+    $posts = get_posts([
+        'post_type'      => 'ingredient',
+        'numberposts'    => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_owner_id',
+                'value'   => 0,
+                'compare' => '=',
+                'type'    => 'NUMERIC',
+            ],
+        ],
+        'suppress_filters' => false,
+    ]);
+
+    if (!$posts) {
+        return [];
+    }
+
+    $items = [];
+    foreach ($posts as $post) {
+        $items[] = [
+            'id'   => intval($post->ID),
+            'name' => $post->post_title,
+        ];
+    }
+
+    return $items;
+}
+
 function sff_get_recipe_ingredient_details_with_overrides($recipe_id, $overrides = []) {
     $recipe_id = intval($recipe_id);
     if (!$recipe_id) {

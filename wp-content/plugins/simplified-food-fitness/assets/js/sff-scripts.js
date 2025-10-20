@@ -43,6 +43,20 @@ jQuery(document).ready(function($) {
         return source;
     }
 
+    function sffDebounce(callback, delay) {
+        var timer = null;
+        return function() {
+            var context = this;
+            var args = arguments;
+            if (timer) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function() {
+                callback.apply(context, args);
+            }, delay);
+        };
+    }
+
     function sffBuildGroupGrid(fields, map, usedRegistry) {
         var html = '';
         var hasEntries = false;
@@ -1152,6 +1166,124 @@ jQuery(document).ready(function($) {
       }
     );
   }
+
+  (function initRecipeBankEnhancements() {
+    var $bank = $('.sff-client-recipe-bank');
+    if (!$bank.length) {
+      return;
+    }
+
+    var $results = $bank.find('.sff-client-recipe-results');
+    var $groups = $results.find('.sff-client-recipe-group');
+    var $cards = $results.find('.sff-client-recipe-card');
+    if (!$results.length || !$groups.length || !$cards.length) {
+      return;
+    }
+
+    var $search = $('#sff-recipe-bank-search');
+    var $filters = $bank.find('.sff-recipe-bank-filter');
+    var $letters = $bank.find('.sff-recipe-bank-letter');
+
+    function getBooleanData($element, key) {
+      var value = $element.data(key);
+      if (value === undefined) {
+        return false;
+      }
+      if (typeof value === 'string') {
+        return value === '1' || value.toLowerCase() === 'true';
+      }
+      return Boolean(value);
+    }
+
+    function matchesFilter($card, filterKey) {
+      if (filterKey === 'customized') {
+        return getBooleanData($card, 'customized');
+      }
+      if (filterKey === 'rated') {
+        return getBooleanData($card, 'rated');
+      }
+      if (filterKey === 'not-rated') {
+        return !getBooleanData($card, 'rated');
+      }
+      return true;
+    }
+
+    function matchesQuery($card, query) {
+      if (!query) {
+        return true;
+      }
+      var haystack = '';
+      var title = $card.data('title') || '';
+      var keywords = $card.data('keywords') || '';
+      haystack = (title + ' ' + keywords).toString().toLowerCase();
+      return haystack.indexOf(query) !== -1;
+    }
+
+    function applyFilters() {
+      var activeFilter = $filters.filter('.is-active').data('filter') || 'all';
+      var query = ($search.val() || '').toString().toLowerCase();
+      var hasVisible = false;
+
+      $groups.each(function() {
+        var $group = $(this);
+        var groupVisible = false;
+
+        $group.find('.sff-client-recipe-card').each(function() {
+          var $card = $(this);
+          var isMatch = matchesFilter($card, activeFilter) && matchesQuery($card, query);
+          $card.toggleClass('is-hidden', !isMatch);
+          if (isMatch) {
+            groupVisible = true;
+            hasVisible = true;
+          }
+        });
+
+        if (groupVisible) {
+          $group.removeClass('is-hidden');
+          if (!$group.prop('open')) {
+            $group.prop('open', true);
+          }
+        } else {
+          $group.addClass('is-hidden').prop('open', false);
+        }
+      });
+
+      $results.toggleClass('is-empty', !hasVisible);
+    }
+
+    var debouncedFilter = sffDebounce(applyFilters, 120);
+
+    if ($search.length) {
+      $search.on('input', debouncedFilter);
+    }
+
+    $filters.on('click', function() {
+      var $button = $(this);
+      if ($button.hasClass('is-active')) {
+        return;
+      }
+      $filters.removeClass('is-active');
+      $button.addClass('is-active');
+      applyFilters();
+    });
+
+    $letters.on('click', function() {
+      var target = $(this).data('target');
+      if (!target) {
+        return;
+      }
+      var $targetGroup = $('#sff-recipe-group-' + target);
+      if ($targetGroup.length) {
+        $targetGroup.prop('open', true);
+        var element = $targetGroup.get(0);
+        if (element && element.scrollIntoView) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+
+    applyFilters();
+  })();
 
   $ingredientNameField.on('input', function() {
     if (sffSettingProductName) {

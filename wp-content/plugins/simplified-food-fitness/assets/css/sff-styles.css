@@ -1541,6 +1541,208 @@ body.sff-menu-open .sff-menu-items {
     color: #0f5562;
 }
 
+.sff-client-recipe-bank__layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 300px) 1fr;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.sff-client-recipe-bank__filters {
+    background: rgba(2, 52, 65, 0.05);
+    border-radius: 22px;
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+    position: sticky;
+    top: 20px;
+}
+
+.sff-recipe-bank-filter-block {
+    display: grid;
+    gap: 10px;
+}
+
+.sff-recipe-bank-filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #023441;
+}
+
+.sff-recipe-bank-search {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgba(2, 52, 65, 0.2);
+    padding: 10px 14px;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sff-recipe-bank-search:focus {
+    outline: none;
+    border-color: #0f5562;
+    box-shadow: 0 0 0 3px rgba(15, 85, 98, 0.18);
+}
+
+.sff-recipe-bank-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sff-recipe-bank-filter {
+    border: 1px solid rgba(2, 52, 65, 0.18);
+    background: #ffffff;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #023441;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sff-recipe-bank-filter:hover,
+.sff-recipe-bank-filter:focus {
+    outline: none;
+    border-color: #0f5562;
+    color: #0f5562;
+}
+
+.sff-recipe-bank-filter.is-active {
+    background: #0f5562;
+    border-color: #0f5562;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(15, 85, 98, 0.18);
+}
+
+.sff-recipe-bank-letter-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.sff-recipe-bank-letter {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(2, 52, 65, 0.16);
+    background: #ffffff;
+    color: #023441;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sff-recipe-bank-letter:hover,
+.sff-recipe-bank-letter:focus {
+    outline: none;
+    background: #0f5562;
+    color: #ffffff;
+    border-color: #0f5562;
+}
+
+.sff-client-recipe-results {
+    display: grid;
+    gap: 24px;
+}
+
+.sff-client-recipe-results__empty {
+    display: none;
+    padding: 28px;
+    border-radius: 20px;
+    background: rgba(2, 52, 65, 0.05);
+    text-align: center;
+    color: #023441;
+    font-weight: 600;
+}
+
+.sff-client-recipe-results.is-empty .sff-client-recipe-results__empty {
+    display: block;
+}
+
+.sff-client-recipe-card.is-hidden {
+    display: none !important;
+}
+
+.sff-client-recipe-group {
+    border: 1px solid rgba(2, 52, 65, 0.08);
+    border-radius: 22px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.sff-client-recipe-group.is-hidden {
+    display: none;
+}
+
+.sff-client-recipe-group summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 24px;
+    background: rgba(2, 52, 65, 0.06);
+    font-weight: 600;
+    color: #023441;
+    cursor: pointer;
+}
+
+.sff-client-recipe-group summary::-webkit-details-marker {
+    display: none;
+}
+
+.sff-client-recipe-group[open] summary {
+    border-bottom: 1px solid rgba(2, 52, 65, 0.08);
+    background: rgba(2, 52, 65, 0.08);
+}
+
+.sff-client-recipe-group summary::after {
+    content: '+';
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f5562;
+}
+
+.sff-client-recipe-group[open] summary::after {
+    content: '–';
+}
+
+.sff-client-recipe-group__label {
+    font-size: 18px;
+}
+
+.sff-client-recipe-group__count {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #5f6c7a;
+}
+
+.sff-client-recipe-group .sff-client-recipe-grid {
+    padding: 24px;
+}
+
+@media (max-width: 960px) {
+    .sff-client-recipe-bank__layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sff-client-recipe-bank__filters {
+        position: static;
+    }
+
+    .sff-client-recipe-group .sff-client-recipe-grid {
+        padding: 20px;
+    }
+}
+
 .sff-client-recipe-alerts {
     display: grid;
     gap: 12px;
