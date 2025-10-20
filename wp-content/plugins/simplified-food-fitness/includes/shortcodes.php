@@ -2025,6 +2025,7 @@ function sff_client_recipe_bank_shortcode() {
     $assigned_ids = sff_get_user_assigned_recipe_ids($user_id);
     $customizations = sff_get_user_recipe_customizations($user_id);
     $personal_items = sff_get_user_personal_ingredients($user_id);
+    $general_items  = sff_get_general_ingredients();
 
     $request_uri  = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
     $clean_uri    = $request_uri ? remove_query_arg(['sff_recipe_customized', 'sff_recipe_rated', 'sff_recipe_error'], $request_uri) : '';
@@ -2040,6 +2041,15 @@ function sff_client_recipe_bank_shortcode() {
             $personal_options[intval($item['id'])] = $item['name'];
         }
     }
+
+    $general_options = [];
+    foreach ($general_items as $item) {
+        if (!empty($item['id'])) {
+            $general_options[intval($item['id'])] = $item['name'];
+        }
+    }
+
+    $has_swap_options = !empty($personal_options) || !empty($general_options);
 
     $recipes              = [];
     $latest_timestamp     = 0;
@@ -2066,6 +2076,17 @@ function sff_client_recipe_bank_shortcode() {
         $user_comment    = sff_get_user_recipe_rating_comment($recipe_id, $user_id);
         $user_rating     = $user_comment ? intval(get_comment_meta($user_comment->comment_ID, '_sff_rating', true)) : 0;
 
+        $ingredient_keywords = [];
+        foreach ($ingredient_rows as $row_data) {
+            if (!empty($row_data['display_name'])) {
+                $ingredient_keywords[] = $row_data['display_name'];
+            }
+            if (!empty($row_data['original_name'])) {
+                $ingredient_keywords[] = $row_data['original_name'];
+            }
+        }
+        $ingredient_keywords = array_unique(array_filter(array_map('trim', $ingredient_keywords)));
+
         $macro_parts = [];
         $macro_map   = [
             'calories' => __('Calories', 'simplified-food-fitness'),
@@ -2084,7 +2105,8 @@ function sff_client_recipe_bank_shortcode() {
         }
 
         $override_ingredients = isset($override['ingredients']) && is_array($override['ingredients']) ? $override['ingredients'] : [];
-        $total_swaps         += count(array_filter($override_ingredients));
+        $active_overrides    = array_filter($override_ingredients);
+        $total_swaps        += count($active_overrides);
 
         $modified_timestamp = get_post_modified_time('U', true, $recipe);
         if ($modified_timestamp && $modified_timestamp > $latest_timestamp) {
@@ -2116,6 +2138,13 @@ function sff_client_recipe_bank_shortcode() {
             'cover_html'           => $cover_html,
             'initial'              => $initial,
             'last_updated'         => $modified_timestamp ? get_post_modified_time(get_option('date_format'), false, $recipe, true) : '',
+            'updated_timestamp'    => $modified_timestamp ? intval($modified_timestamp) : 0,
+            'ingredient_keywords'  => implode(' ', $ingredient_keywords),
+            'is_customized'        => !empty($active_overrides),
+            'customized_count'     => count($active_overrides),
+            'rating_average'       => isset($rating_data['average']) ? floatval($rating_data['average']) : 0.0,
+            'rating_count'         => isset($rating_data['count']) ? intval($rating_data['count']) : 0,
+            'has_user_rating'      => $user_rating > 0,
         ];
     }
 
@@ -2125,6 +2154,44 @@ function sff_client_recipe_bank_shortcode() {
     $rating_hint      = $overall_rating_count ? sprintf(esc_html__('%d total reviews logged', 'simplified-food-fitness'), intval($overall_rating_count)) : esc_html__('Share feedback to build your favorites list.', 'simplified-food-fitness');
     $latest_display   = $latest_display ? $latest_display : esc_html__('Not yet updated', 'simplified-food-fitness');
     $swaps_display    = number_format_i18n($total_swaps);
+
+    if (!empty($recipes)) {
+        usort($recipes, function ($a, $b) {
+            return strcasecmp($a['title'], $b['title']);
+        });
+
+        $grouped_recipes = [];
+        foreach ($recipes as $recipe) {
+            $initial = preg_match('/^[A-Z]/iu', $recipe['initial']) ? $recipe['initial'] : '#';
+            if (!isset($grouped_recipes[$initial])) {
+                $grouped_recipes[$initial] = [];
+            }
+            $grouped_recipes[$initial][] = $recipe;
+        }
+
+        $initials = array_keys($grouped_recipes);
+        usort($initials, function ($a, $b) {
+            if ($a === $b) {
+                return 0;
+            }
+            if ($a === '#') {
+                return 1;
+            }
+            if ($b === '#') {
+                return -1;
+            }
+            return strcmp($a, $b);
+        });
+
+        $ordered_groups = [];
+        foreach ($initials as $initial) {
+            $ordered_groups[$initial] = $grouped_recipes[$initial];
+        }
+        $grouped_recipes = $ordered_groups;
+    } else {
+        $grouped_recipes = [];
+        $initials        = [];
+    }
 
     ob_start();
     ?>
@@ -2226,13 +2293,68 @@ function sff_client_recipe_bank_shortcode() {
                     </div>
                 </div>
             <?php else : ?>
-                <div class="sff-client-recipe-grid">
-                    <?php foreach ($recipes as $recipe) :
-                        $rating_data  = $recipe['rating_data'];
-                        $user_comment = $recipe['user_comment'];
-                        $user_rating  = $recipe['user_rating'];
-                        ?>
-                        <article class="sff-client-recipe-card" aria-labelledby="sff-recipe-title-<?php echo esc_attr($recipe['id']); ?>">
+                <div class="sff-client-recipe-bank__layout">
+                    <aside class="sff-client-recipe-bank__filters" aria-label="<?php esc_attr_e('Recipe filters', 'simplified-food-fitness'); ?>">
+                        <div class="sff-recipe-bank-filter-block">
+                            <label for="sff-recipe-bank-search" class="sff-recipe-bank-filter-label"><?php esc_html_e('Search recipes', 'simplified-food-fitness'); ?></label>
+                            <input type="search" id="sff-recipe-bank-search" class="sff-recipe-bank-search" placeholder="<?php esc_attr_e('Search by recipe or ingredient…', 'simplified-food-fitness'); ?>" autocomplete="off">
+                        </div>
+                        <div class="sff-recipe-bank-filter-block">
+                            <span class="sff-recipe-bank-filter-label"><?php esc_html_e('Quick filters', 'simplified-food-fitness'); ?></span>
+                            <div class="sff-recipe-bank-filter-chips" role="group" aria-label="<?php esc_attr_e('Filter recipes', 'simplified-food-fitness'); ?>">
+                                <button type="button" class="sff-recipe-bank-filter is-active" data-filter="all"><?php esc_html_e('All recipes', 'simplified-food-fitness'); ?></button>
+                                <button type="button" class="sff-recipe-bank-filter" data-filter="customized"><?php esc_html_e('Customized', 'simplified-food-fitness'); ?></button>
+                                <button type="button" class="sff-recipe-bank-filter" data-filter="rated"><?php esc_html_e('Rated', 'simplified-food-fitness'); ?></button>
+                                <button type="button" class="sff-recipe-bank-filter" data-filter="not-rated"><?php esc_html_e('Not yet rated', 'simplified-food-fitness'); ?></button>
+                            </div>
+                        </div>
+                        <?php if (!empty($initials)) : ?>
+                            <div class="sff-recipe-bank-filter-block">
+                                <span class="sff-recipe-bank-filter-label"><?php esc_html_e('Jump to a letter', 'simplified-food-fitness'); ?></span>
+                                <div class="sff-recipe-bank-letter-nav" role="navigation" aria-label="<?php esc_attr_e('Recipe initials', 'simplified-food-fitness'); ?>">
+                                    <?php foreach ($initials as $initial) :
+                                        $initial_slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $initial));
+                                        if ($initial_slug === '') {
+                                            $initial_slug = 'symbol';
+                                        }
+                                        ?>
+                                        <button type="button" class="sff-recipe-bank-letter" data-target="<?php echo esc_attr($initial_slug); ?>"><?php echo esc_html($initial); ?></button>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </aside>
+                    <section class="sff-client-recipe-results" data-empty-message="<?php esc_attr_e('No recipes match your filters yet.', 'simplified-food-fitness'); ?>">
+                        <div class="sff-client-recipe-results__empty" role="status" aria-live="polite">
+                            <p><?php esc_html_e('No recipes match your current filters. Try adjusting your search or filter selections.', 'simplified-food-fitness'); ?></p>
+                        </div>
+                        <?php foreach ($grouped_recipes as $initial => $group) :
+                            $initial_slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $initial));
+                            if ($initial_slug === '') {
+                                $initial_slug = 'symbol';
+                            }
+                            $group_count = count($group);
+                            ?>
+                            <details class="sff-client-recipe-group" data-initial="<?php echo esc_attr($initial); ?>" data-target="<?php echo esc_attr($initial_slug); ?>" id="sff-recipe-group-<?php echo esc_attr($initial_slug); ?>" open>
+                                <summary>
+                                    <span class="sff-client-recipe-group__label"><?php echo esc_html($initial); ?></span>
+                                    <span class="sff-client-recipe-group__count">
+                                        <?php
+                                        printf(
+                                            esc_html(_n('%d recipe', '%d recipes', $group_count, 'simplified-food-fitness')),
+                                            intval($group_count)
+                                        );
+                                        ?>
+                                    </span>
+                                </summary>
+                                <div class="sff-client-recipe-grid">
+                                    <?php foreach ($group as $recipe) :
+                                        $rating_data  = $recipe['rating_data'];
+                                        $user_comment = $recipe['user_comment'];
+                                        $user_rating  = $recipe['user_rating'];
+                                        $keywords     = trim($recipe['ingredient_keywords'] . ' ' . $recipe['title']);
+                                        ?>
+                                        <article class="sff-client-recipe-card" aria-labelledby="sff-recipe-title-<?php echo esc_attr($recipe['id']); ?>" data-title="<?php echo esc_attr($recipe['title']); ?>" data-initial="<?php echo esc_attr($recipe['initial']); ?>" data-rating="<?php echo esc_attr(number_format((float) $recipe['rating_average'], 2, '.', '')); ?>" data-rating-count="<?php echo esc_attr($recipe['rating_count']); ?>" data-rated="<?php echo $recipe['has_user_rating'] ? '1' : '0'; ?>" data-customized="<?php echo $recipe['is_customized'] ? '1' : '0'; ?>" data-updated="<?php echo esc_attr($recipe['updated_timestamp']); ?>" data-keywords="<?php echo esc_attr($keywords); ?>">
                             <header class="sff-client-recipe-card__header">
                                 <div class="sff-client-recipe-card__identity">
                                     <?php if ($recipe['cover_html']) : ?>
@@ -2304,9 +2426,13 @@ function sff_client_recipe_bank_shortcode() {
                                         <input type="hidden" name="sff_recipe_id" value="<?php echo esc_attr($recipe['id']); ?>">
                                         <input type="hidden" name="sff_redirect" value="<?php echo esc_url($redirect_url); ?>">
 
-                                        <?php if (empty($personal_options)) : ?>
+                                        <?php if (!$has_swap_options) : ?>
                                             <p class="sff-recipe-feedback-note">
                                                 <?php esc_html_e('Add ingredients to your personal bank to enable swaps.', 'simplified-food-fitness'); ?>
+                                            </p>
+                                        <?php elseif (empty($personal_options)) : ?>
+                                            <p class="sff-recipe-feedback-note">
+                                                <?php esc_html_e('Swap from the general database below or add favorites to your personal bank for quicker access.', 'simplified-food-fitness'); ?>
                                             </p>
                                         <?php endif; ?>
 
@@ -2325,11 +2451,24 @@ function sff_client_recipe_bank_shortcode() {
                                                 </label>
                                                 <select id="sff-recipe-swap-<?php echo esc_attr($recipe['id'] . '-' . $original_id); ?>" name="sff_recipe_swap[<?php echo esc_attr($original_id); ?>]">
                                                     <option value=""><?php esc_html_e('Keep original ingredient', 'simplified-food-fitness'); ?></option>
-                                                    <?php foreach ($personal_options as $personal_id => $name) : ?>
-                                                        <option value="<?php echo esc_attr($personal_id); ?>" <?php selected($selected_id, $personal_id); ?>>
-                                                            <?php echo esc_html($name); ?>
-                                                        </option>
-                                                    <?php endforeach; ?>
+                                                    <?php if (!empty($personal_options)) : ?>
+                                                        <optgroup label="<?php echo esc_attr__('My ingredients', 'simplified-food-fitness'); ?>">
+                                                            <?php foreach ($personal_options as $personal_id => $name) : ?>
+                                                                <option value="<?php echo esc_attr($personal_id); ?>" <?php selected($selected_id, $personal_id); ?>>
+                                                                    <?php echo esc_html($name); ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </optgroup>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($general_options)) : ?>
+                                                        <optgroup label="<?php echo esc_attr__('General database', 'simplified-food-fitness'); ?>">
+                                                            <?php foreach ($general_options as $general_id => $name) : ?>
+                                                                <option value="<?php echo esc_attr($general_id); ?>" <?php selected($selected_id, $general_id); ?>>
+                                                                    <?php echo esc_html($name); ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </optgroup>
+                                                    <?php endif; ?>
                                                 </select>
                                             </div>
                                         <?php endforeach; ?>
@@ -2394,7 +2533,11 @@ function sff_client_recipe_bank_shortcode() {
                                 <?php endif; ?>
                             </section>
                         </article>
-                    <?php endforeach; ?>
+                                    <?php endforeach; ?>
+                                </div>
+                            </details>
+                        <?php endforeach; ?>
+                    </section>
                 </div>
             <?php endif; ?>
         </div>
@@ -2453,7 +2596,7 @@ function sff_handle_recipe_customization_submission() {
             continue;
         }
 
-        if (!sff_user_can_access_ingredient($replacement_id, $user_id) || sff_get_ingredient_owner_id($replacement_id) !== $user_id) {
+        if (!sff_user_can_access_ingredient($replacement_id, $user_id)) {
             continue;
         }
 
