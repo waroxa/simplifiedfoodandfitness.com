@@ -364,6 +364,418 @@
     background: #d3f188;
     color: #012a33;
 }
+
+/* Meal Plan Builder */
+.sff-meal-plan-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    font-family: "Inter", sans-serif;
+    color: #1d2939;
+}
+
+.sff-card {
+    background: #ffffff;
+    border: 1px solid #d9e7df;
+    border-radius: 18px;
+    padding: 26px;
+    box-shadow: 0 14px 34px rgba(2, 52, 65, 0.08);
+}
+
+.sff-card__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 22px;
+}
+
+.sff-card__header h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #023441;
+}
+
+.sff-card__header p {
+    margin: 0;
+    color: #5f6f64;
+    font-size: 14px;
+}
+
+.sff-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+}
+
+.sff-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sff-field--wide {
+    grid-column: span 2;
+}
+
+.sff-field label {
+    font-weight: 600;
+    color: #023441;
+    font-size: 14px;
+}
+
+.sff-field input,
+.sff-field select,
+.sff-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #c7d8cf;
+    border-radius: 10px;
+    background: #f6fbf9;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sff-field textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.sff-field input:focus,
+.sff-field select:focus,
+.sff-field textarea:focus {
+    outline: none;
+    border-color: #48a698;
+    box-shadow: 0 0 0 3px rgba(72, 166, 152, 0.2);
+    background: #ffffff;
+}
+
+.sff-inline-button {
+    margin-top: 10px;
+}
+
+.sff-meal-plan-body {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 26px;
+    align-items: flex-start;
+}
+
+.sff-panel-header {
+    margin: -26px -26px 24px;
+    padding: 20px 26px;
+    border-bottom: 1px solid #dbe8e2;
+    border-radius: 18px 18px 0 0;
+    background: linear-gradient(135deg, rgba(233, 250, 176, 0.55), rgba(233, 250, 176, 0));
+}
+
+.sff-panel-header h3 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    color: #023441;
+}
+
+.sff-panel-header p {
+    margin: 0;
+    color: #5f6f64;
+    font-size: 13px;
+}
+
+.sff-recipe-pool {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sff-recipe-pool__empty {
+    border: 1px dashed #cbdacd;
+    border-radius: 14px;
+    padding: 30px 18px;
+    text-align: center;
+    color: #7c8b82;
+    background: #f8fcf9;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.sff-recipe-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid #d3e4dd;
+    background: linear-gradient(135deg, rgba(233, 250, 176, 0.35), rgba(255, 255, 255, 0.95));
+    cursor: grab;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sff-recipe-item__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.sff-recipe-item__title {
+    font-weight: 600;
+    color: #023441;
+    font-size: 15px;
+}
+
+.sff-recipe-item__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(2, 52, 65, 0.08);
+    color: #023441;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sff-recipe-item__remove:hover {
+    background: #023441;
+    color: #e9fab0;
+}
+
+.sff-recipe-item__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: #4b5a53;
+}
+
+.sff-recipe-item__macro--split {
+    display: flex;
+    gap: 12px;
+    color: #365148;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.sff-recipe-item__macro--empty {
+    color: #94a597;
+    font-weight: 500;
+}
+
+.sff-recipe-item--ghost {
+    opacity: 0.6;
+    border-style: dashed;
+}
+
+.sff-recipe-item--chosen {
+    box-shadow: 0 12px 20px rgba(2, 52, 65, 0.16);
+    transform: scale(1.02);
+}
+
+.sff-recipe-item--missing {
+    border-color: #f9d6d5;
+    background: linear-gradient(135deg, rgba(254, 226, 226, 0.55), rgba(255, 255, 255, 0.95));
+}
+
+.sff-meal-plan-sidebar .sff-recipe-item__remove {
+    display: none;
+}
+
+.sff-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(180px, 1fr));
+    gap: 18px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.sff-calendar-day {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #d3e4dd;
+    border-radius: 16px;
+    min-height: 320px;
+    box-shadow: inset 0 0 0 1px rgba(233, 250, 176, 0.35);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.sff-calendar-day__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 1px solid #dbe8e2;
+    border-radius: 16px 16px 0 0;
+    background: linear-gradient(135deg, rgba(233, 250, 176, 0.65), rgba(233, 250, 176, 0.15));
+}
+
+.sff-calendar-day__title {
+    font-weight: 700;
+    color: #023441;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.sff-calendar-day__count {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #023441;
+    background: rgba(2, 52, 65, 0.08);
+}
+
+.sff-calendar-day.is-empty .sff-calendar-day__count {
+    color: #6b7a72;
+    background: rgba(2, 52, 65, 0.05);
+}
+
+.sff-calendar-day__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 18px 20px;
+}
+
+.sff-calendar-day__empty {
+    margin: 18px;
+    padding: 18px 14px;
+    border: 2px dashed #c8dacf;
+    border-radius: 14px;
+    color: #8a9a91;
+    font-size: 13px;
+    text-align: center;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sff-calendar-day:not(.is-empty) .sff-calendar-day__empty {
+    display: none;
+}
+
+.sff-calendar-day__body .sff-recipe-item__remove {
+    display: inline-flex;
+}
+
+.sff-calendar-day__body .sff-recipe-item {
+    cursor: grab;
+}
+
+.sff-calendar-day:hover {
+    box-shadow: 0 18px 32px rgba(2, 52, 65, 0.12);
+    transform: translateY(-2px);
+}
+
+.sff-macro-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sff-macro-summary__header h3 {
+    margin: 0 0 6px;
+    color: #023441;
+    font-size: 20px;
+}
+
+.sff-macro-summary__header p {
+    margin: 0;
+    color: #5f6f64;
+    font-size: 13px;
+}
+
+.sff-macro-summary__grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.sff-macro-card {
+    border: 1px solid #d3e4dd;
+    border-radius: 14px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, rgba(2, 52, 65, 0.06), rgba(233, 250, 176, 0.25));
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sff-macro-card__day {
+    font-weight: 700;
+    font-size: 16px;
+    color: #023441;
+}
+
+.sff-macro-card__metrics {
+    display: grid;
+    gap: 8px;
+    font-size: 13px;
+    color: #4b5a53;
+}
+
+.sff-macro-card__metrics span {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+}
+
+.sff-macro-card__metrics strong {
+    font-size: 16px;
+    color: #023441;
+}
+
+.sff-macro-empty {
+    padding: 28px;
+    border-radius: 14px;
+    border: 1px dashed #cbdacd;
+    background: #f8fcf9;
+    text-align: center;
+    color: #7c8b82;
+    font-size: 14px;
+}
+
+.sff-macro-summary.is-empty .sff-macro-summary__grid {
+    grid-template-columns: 1fr;
+}
+
+@media (max-width: 1200px) {
+    .sff-meal-plan-body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sff-calendar-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 782px) {
+    .sff-field-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sff-field--wide {
+        grid-column: span 1;
+    }
+
+    .sff-card {
+        padding: 22px;
+    }
+
+    .sff-panel-header {
+        margin: -22px -22px 22px;
+        padding: 18px 22px;
+    }
+}
 .sff-create-ingredient-copy.button-primary {
     margin-top: 12px;
     border-radius: 10px;
