@@ -2028,6 +2028,25 @@ body.sff-menu-open .sff-menu-items {
     font-weight: 600;
 }
 
+.sff-recipe-preference-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.sff-recipe-preference-summary__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(15, 85, 98, 0.08);
+    color: #023441;
+    font-size: 13px;
+}
+
 .sff-client-recipe-feedback .sff-recipe-rating-summary {
     background: rgba(2, 52, 65, 0.04);
     border-radius: 16px;
@@ -2071,6 +2090,54 @@ body.sff-menu-open .sff-menu-items {
     color: #f5a623;
 }
 
+.sff-recipe-preference {
+    margin: 4px 0;
+    border: 1px solid rgba(2, 52, 65, 0.15);
+    border-radius: 14px;
+    padding: 12px 14px;
+}
+
+.sff-recipe-preference legend {
+    font-weight: 600;
+    color: #023441;
+    padding: 0 4px;
+}
+
+.sff-recipe-preference__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.sff-recipe-preference__option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(2, 52, 65, 0.2);
+    background: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sff-recipe-preference__option:hover {
+    border-color: #0f5562;
+    box-shadow: 0 8px 16px rgba(2, 52, 65, 0.08);
+}
+
+.sff-recipe-preference__option input[type="radio"] {
+    accent-color: #0f5562;
+}
+
+.sff-recipe-preference__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
 .sff-recipe-rating-comments {
     border-top: 1px solid rgba(2, 52, 65, 0.12);
     padding-top: 12px;
@@ -2090,6 +2157,27 @@ body.sff-menu-open .sff-menu-items {
     gap: 8px;
     align-items: center;
     margin-bottom: 6px;
+}
+
+.sff-recipe-rating-preference {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.sff-recipe-rating-preference.is-up {
+    background: rgba(29, 129, 72, 0.12);
+    color: #1d8148;
+}
+
+.sff-recipe-rating-preference.is-down {
+    background: rgba(196, 30, 58, 0.12);
+    color: #c41e3a;
 }
 
 .sff-recipe-rating-comment header strong {
@@ -2393,4 +2481,95 @@ body.sff-menu-open .sff-menu-items {
 .sff-recipe-cover-remove[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.sff-recipe-feedback-overview {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin: 18px 0;
+}
+
+.sff-recipe-feedback-card {
+    background: #ffffff;
+    border: 1px solid rgba(2, 52, 65, 0.12);
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 12px 24px rgba(2, 52, 65, 0.06);
+}
+
+.sff-recipe-feedback-card h2 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #023441;
+}
+
+.sff-recipe-feedback-card ol {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 8px;
+}
+
+.sff-recipe-feedback-card__meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: 6px;
+    font-size: 13px;
+    color: #4d6a72;
+}
+
+.sff-recipe-feedback-tally {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+    font-weight: 600;
+    color: #023441;
+}
+
+.sff-recipe-feedback-details {
+    margin-top: 10px;
+}
+
+.sff-recipe-feedback-details summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #0f5562;
+}
+
+.sff-recipe-feedback-details ul {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 12px;
+}
+
+.sff-recipe-feedback-details__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: #023441;
+}
+
+.sff-recipe-feedback-details__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.sff-recipe-feedback-details__tag--up {
+    background: rgba(29, 129, 72, 0.12);
+    color: #1d8148;
+}
+
+.sff-recipe-feedback-details__tag--down {
+    background: rgba(196, 30, 58, 0.12);
+    color: #c41e3a;
 }

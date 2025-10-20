@@ -333,17 +333,39 @@ function sff_render_recipe_bank_page() {
         return;
     }
 
-    $search = isset($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
-    $paged  = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+    $search        = isset($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
+    $paged         = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+    $rating_filter = isset($_GET['rating_filter']) ? sanitize_text_field(wp_unslash($_GET['rating_filter'])) : 'all';
 
-    $query = new WP_Query([
+    $allowed_filters = ['all', '5', '4', '3', '2', '1'];
+    if (!in_array($rating_filter, $allowed_filters, true)) {
+        $rating_filter = 'all';
+    }
+
+    $meta_query = [];
+    if ($rating_filter !== 'all') {
+        $meta_query[] = [
+            'key'     => '_sff_rating_average',
+            'value'   => floatval($rating_filter),
+            'compare' => '>=',
+            'type'    => 'NUMERIC',
+        ];
+    }
+
+    $query_args = [
         'post_type'      => 'recipe',
         'posts_per_page' => 20,
         'paged'          => $paged,
         'orderby'        => 'title',
         'order'          => 'ASC',
         's'              => $search,
-    ]);
+    ];
+
+    if (!empty($meta_query)) {
+        $query_args['meta_query'] = $meta_query;
+    }
+
+    $query = new WP_Query($query_args);
 
     $clients = get_users([
         'role__in' => ['client', 'customer', 'subscriber'],
@@ -365,10 +387,47 @@ function sff_render_recipe_bank_page() {
     if ($paged > 1) {
         $current_url = add_query_arg('paged', $paged, $current_url);
     }
+    if ($rating_filter !== 'all') {
+        $current_url = add_query_arg('rating_filter', $rating_filter, $current_url);
+    }
 
     $success_recipe_id = isset($_GET['sff_recipe_assigned']) ? intval($_GET['sff_recipe_assigned']) : 0;
     $removed_recipe_id = isset($_GET['sff_recipe_removed']) ? intval($_GET['sff_recipe_removed']) : 0;
     $error_flag        = !empty($_GET['sff_recipe_error']);
+
+    $top_loved_recipes = get_posts([
+        'post_type'      => 'recipe',
+        'post_status'    => 'publish',
+        'posts_per_page' => 3,
+        'meta_key'       => '_sff_rating_thumbs_up',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'DESC',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_rating_thumbs_up',
+                'value'   => 0,
+                'compare' => '>',
+                'type'    => 'NUMERIC',
+            ],
+        ],
+    ]);
+
+    $needs_attention_recipes = get_posts([
+        'post_type'      => 'recipe',
+        'post_status'    => 'publish',
+        'posts_per_page' => 3,
+        'meta_key'       => '_sff_rating_thumbs_down',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'DESC',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_rating_thumbs_down',
+                'value'   => 0,
+                'compare' => '>',
+                'type'    => 'NUMERIC',
+            ],
+        ],
+    ]);
 
     ?>
     <div class="wrap sff-recipe-bank">
@@ -376,6 +435,63 @@ function sff_render_recipe_bank_page() {
         <p class="description">
             <?php esc_html_e('Review recipes, assign them to clients, and monitor feedback from their ratings.', 'simplified-food-fitness'); ?>
         </p>
+
+        <div class="sff-recipe-feedback-overview">
+            <div class="sff-recipe-feedback-card">
+                <h2><?php esc_html_e('Most loved', 'simplified-food-fitness'); ?></h2>
+                <ol>
+                    <?php if (!empty($top_loved_recipes)) : ?>
+                        <?php foreach ($top_loved_recipes as $loved_recipe) :
+                            $thumbs_up_count   = intval(get_post_meta($loved_recipe->ID, '_sff_rating_thumbs_up', true));
+                            $thumbs_down_count = intval(get_post_meta($loved_recipe->ID, '_sff_rating_thumbs_down', true));
+                            $average_rating    = floatval(get_post_meta($loved_recipe->ID, '_sff_rating_average', true));
+                            ?>
+                            <li>
+                                <a href="<?php echo esc_url(get_edit_post_link($loved_recipe->ID)); ?>"><?php echo esc_html(get_the_title($loved_recipe)); ?></a>
+                                <span class="sff-recipe-feedback-card__meta">
+                                    <span>👍 <?php echo esc_html(number_format_i18n($thumbs_up_count)); ?></span>
+                                    <?php if ($thumbs_down_count > 0) : ?>
+                                        <span>· 👎 <?php echo esc_html(number_format_i18n($thumbs_down_count)); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($average_rating > 0) : ?>
+                                        <span>· <?php printf(esc_html__('%s★ avg', 'simplified-food-fitness'), esc_html(number_format_i18n($average_rating, 1))); ?></span>
+                                    <?php endif; ?>
+                                </span>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <li><em><?php esc_html_e('No positive feedback collected yet.', 'simplified-food-fitness'); ?></em></li>
+                    <?php endif; ?>
+                </ol>
+            </div>
+            <div class="sff-recipe-feedback-card">
+                <h2><?php esc_html_e('Needs attention', 'simplified-food-fitness'); ?></h2>
+                <ol>
+                    <?php if (!empty($needs_attention_recipes)) : ?>
+                        <?php foreach ($needs_attention_recipes as $flagged_recipe) :
+                            $thumbs_down_count = intval(get_post_meta($flagged_recipe->ID, '_sff_rating_thumbs_down', true));
+                            $thumbs_up_count   = intval(get_post_meta($flagged_recipe->ID, '_sff_rating_thumbs_up', true));
+                            $average_rating    = floatval(get_post_meta($flagged_recipe->ID, '_sff_rating_average', true));
+                            ?>
+                            <li>
+                                <a href="<?php echo esc_url(get_edit_post_link($flagged_recipe->ID)); ?>"><?php echo esc_html(get_the_title($flagged_recipe)); ?></a>
+                                <span class="sff-recipe-feedback-card__meta">
+                                    <span>👎 <?php echo esc_html(number_format_i18n($thumbs_down_count)); ?></span>
+                                    <?php if ($thumbs_up_count > 0) : ?>
+                                        <span>· 👍 <?php echo esc_html(number_format_i18n($thumbs_up_count)); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($average_rating > 0) : ?>
+                                        <span>· <?php printf(esc_html__('%s★ avg', 'simplified-food-fitness'), esc_html(number_format_i18n($average_rating, 1))); ?></span>
+                                    <?php endif; ?>
+                                </span>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <li><em><?php esc_html_e('No recipes have been flagged yet.', 'simplified-food-fitness'); ?></em></li>
+                    <?php endif; ?>
+                </ol>
+            </div>
+        </div>
 
         <?php if ($success_recipe_id) :
             $title = get_the_title($success_recipe_id);
@@ -425,6 +541,15 @@ function sff_render_recipe_bank_page() {
             <input type="hidden" name="page" value="sff-recipe-bank">
             <label class="screen-reader-text" for="sff-recipe-search"><?php esc_html_e('Search recipes', 'simplified-food-fitness'); ?></label>
             <input type="search" id="sff-recipe-search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php esc_attr_e('Search recipes…', 'simplified-food-fitness'); ?>">
+            <label class="screen-reader-text" for="sff-rating-filter"><?php esc_html_e('Filter by rating', 'simplified-food-fitness'); ?></label>
+            <select id="sff-rating-filter" name="rating_filter">
+                <option value="all" <?php selected('all', $rating_filter); ?>><?php esc_html_e('All ratings', 'simplified-food-fitness'); ?></option>
+                <option value="5" <?php selected('5', $rating_filter); ?>><?php esc_html_e('5 stars and up', 'simplified-food-fitness'); ?></option>
+                <option value="4" <?php selected('4', $rating_filter); ?>><?php esc_html_e('4 stars and up', 'simplified-food-fitness'); ?></option>
+                <option value="3" <?php selected('3', $rating_filter); ?>><?php esc_html_e('3 stars and up', 'simplified-food-fitness'); ?></option>
+                <option value="2" <?php selected('2', $rating_filter); ?>><?php esc_html_e('2 stars and up', 'simplified-food-fitness'); ?></option>
+                <option value="1" <?php selected('1', $rating_filter); ?>><?php esc_html_e('At least 1 star', 'simplified-food-fitness'); ?></option>
+            </select>
             <button type="submit" class="button"><?php esc_html_e('Filter', 'simplified-food-fitness'); ?></button>
         </form>
 
@@ -495,8 +620,36 @@ function sff_render_recipe_bank_page() {
                                         );
                                         ?>
                                     </div>
+                                    <div class="sff-recipe-feedback-tally">
+                                        <span>👍 <?php echo esc_html(number_format_i18n($rating_data['thumbs_up'])); ?></span>
+                                        <span>👎 <?php echo esc_html(number_format_i18n($rating_data['thumbs_down'])); ?></span>
+                                    </div>
                                 <?php else : ?>
                                     <em><?php esc_html_e('No ratings yet.', 'simplified-food-fitness'); ?></em>
+                                <?php endif; ?>
+                                <?php if (!empty($rating_data['comments'])) : ?>
+                                    <details class="sff-recipe-feedback-details">
+                                        <summary><?php esc_html_e('View client feedback', 'simplified-food-fitness'); ?></summary>
+                                        <ul>
+                                            <?php foreach ($rating_data['comments'] as $comment) : ?>
+                                                <li>
+                                                    <div class="sff-recipe-feedback-details__meta">
+                                                        <?php echo wp_kses_post(sff_render_star_display($comment['rating'])); ?>
+                                                        <strong><?php echo esc_html($comment['author']); ?></strong>
+                                                        <span><?php echo esc_html($comment['date']); ?></span>
+                                                        <?php if ($comment['preference'] === 'up') : ?>
+                                                            <span class="sff-recipe-feedback-details__tag sff-recipe-feedback-details__tag--up">👍 <?php esc_html_e('Loved it', 'simplified-food-fitness'); ?></span>
+                                                        <?php elseif ($comment['preference'] === 'down') : ?>
+                                                            <span class="sff-recipe-feedback-details__tag sff-recipe-feedback-details__tag--down">👎 <?php esc_html_e('Skip it', 'simplified-food-fitness'); ?></span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <?php if (!empty($comment['content'])) : ?>
+                                                        <p><?php echo esc_html($comment['content']); ?></p>
+                                                    <?php endif; ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </details>
                                 <?php endif; ?>
                             </td>
                             <td>
