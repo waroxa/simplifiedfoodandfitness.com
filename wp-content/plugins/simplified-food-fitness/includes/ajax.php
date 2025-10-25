@@ -854,6 +854,89 @@ function sff_usda_macros() {
 }
 add_action('wp_ajax_sff_usda_macros', 'sff_usda_macros');
 
+function sff_ajax_update_recipe_swaps() {
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => __('You need to be logged in to personalize meals.', 'simplified-food-fitness')], 403);
+    }
+
+    $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+    if (!$nonce || !wp_verify_nonce($nonce, 'sff_meal_plan_preview')) {
+        wp_send_json_error(['message' => __('Invalid request. Please refresh and try again.', 'simplified-food-fitness')], 400);
+    }
+
+    $recipe_id = isset($_POST['recipe_id']) ? intval($_POST['recipe_id']) : 0;
+    if (!$recipe_id) {
+        wp_send_json_error(['message' => __('Missing recipe information.', 'simplified-food-fitness')], 400);
+    }
+
+    $user_id = get_current_user_id();
+    $assigned_ids = sff_get_user_assigned_recipe_ids($user_id);
+    if (!in_array($recipe_id, $assigned_ids, true)) {
+        wp_send_json_error(['message' => __('This recipe is not part of your plan.', 'simplified-food-fitness')], 403);
+    }
+
+    if (!empty($_POST['reset'])) {
+        sff_clear_user_recipe_customization($user_id, $recipe_id);
+    } else {
+        $raw_swaps = [];
+        if (isset($_POST['swaps'])) {
+            $raw_swaps = wp_unslash($_POST['swaps']);
+        } elseif (isset($_POST['sff_recipe_swap'])) {
+            $raw_swaps = wp_unslash($_POST['sff_recipe_swap']);
+        }
+
+        if (is_string($raw_swaps)) {
+            $decoded = json_decode($raw_swaps, true);
+            $raw_swaps = is_array($decoded) ? $decoded : [];
+        }
+
+        $normalized = [];
+        foreach ((array) $raw_swaps as $original_id => $replacement_value) {
+            $original_id = intval($original_id);
+            $replacement_id = intval($replacement_value);
+            if (!$original_id || !$replacement_id) {
+                continue;
+            }
+
+            if (!sff_user_can_access_ingredient($replacement_id, $user_id)) {
+                continue;
+            }
+
+            $normalized[$original_id] = $replacement_id;
+        }
+
+        $customizations = sff_get_user_recipe_customizations($user_id);
+        if (!empty($normalized)) {
+            $customizations[$recipe_id] = ['ingredients' => $normalized];
+        } else {
+            unset($customizations[$recipe_id]);
+        }
+
+        sff_save_user_recipe_customizations($user_id, $customizations);
+    }
+
+    $override         = sff_get_user_recipe_customization($user_id, $recipe_id);
+    $ingredient_rows  = sff_get_recipe_ingredient_details_with_overrides($recipe_id, $override);
+    $macros           = sff_get_recipe_macros_with_overrides($recipe_id, $override, false);
+    $preferences      = sff_get_client_preferences_for_user($user_id);
+    $ingredients_html = sff_render_preview_ingredient_list($ingredient_rows, $preferences);
+
+    $response = [
+        'ingredients_html' => $ingredients_html,
+        'macros'           => [
+            'calories' => isset($macros['calories']) ? floatval($macros['calories']) : 0.0,
+            'protein'  => isset($macros['protein']) ? floatval($macros['protein']) : 0.0,
+            'carbs'    => isset($macros['carbs']) ? floatval($macros['carbs']) : 0.0,
+            'fat'      => isset($macros['fat']) ? floatval($macros['fat']) : 0.0,
+        ],
+        'swaps'            => isset($override['ingredients']) ? array_map('intval', (array) $override['ingredients']) : [],
+        'has_swaps'        => !empty($override['ingredients']),
+    ];
+
+    wp_send_json_success($response);
+}
+add_action('wp_ajax_sff_update_recipe_swaps', 'sff_ajax_update_recipe_swaps');
+
 function sff_recalc_recipe_nutrition() {
     check_ajax_referer('sff_scan_nonce', 'security');
 

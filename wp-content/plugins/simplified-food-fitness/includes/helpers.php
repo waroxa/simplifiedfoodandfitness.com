@@ -1109,6 +1109,140 @@ function sff_get_general_ingredients() {
     return $items;
 }
 
+function sff_get_client_preferences_for_user($user_id) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return [
+            'liked'    => [],
+            'disliked' => [],
+        ];
+    }
+
+    $preferences = [
+        'liked'    => [],
+        'disliked' => [],
+    ];
+
+    if (function_exists('sff_get_client_preference_items')) {
+        $linked_clients = get_posts([
+            'post_type'      => 'clients',
+            'numberposts'    => 1,
+            'fields'         => 'ids',
+            'meta_key'       => 'linked_user_id',
+            'meta_value'     => $user_id,
+            'suppress_filters' => false,
+        ]);
+
+        if (!empty($linked_clients)) {
+            $preferences = sff_get_client_preference_items(intval($linked_clients[0]));
+        }
+    }
+
+    return $preferences;
+}
+
+function sff_determine_preference_state_for_name($name, $preferences) {
+    $name = is_string($name) ? trim($name) : '';
+    if ($name === '' || !is_array($preferences)) {
+        return '';
+    }
+
+    if (function_exists('sff_title_matches_preference_items')) {
+        if (!empty($preferences['disliked']) && sff_title_matches_preference_items($name, (array) $preferences['disliked'])) {
+            return 'disliked';
+        }
+
+        if (!empty($preferences['liked']) && sff_title_matches_preference_items($name, (array) $preferences['liked'])) {
+            return 'liked';
+        }
+    } else {
+        $normalized = strtolower(preg_replace('/\s+/', ' ', $name));
+        if (!empty($preferences['disliked'])) {
+            foreach ((array) $preferences['disliked'] as $item) {
+                $item = strtolower(trim($item));
+                if ($item !== '' && strpos($normalized, $item) !== false) {
+                    return 'disliked';
+                }
+            }
+        }
+        if (!empty($preferences['liked'])) {
+            foreach ((array) $preferences['liked'] as $item) {
+                $item = strtolower(trim($item));
+                if ($item !== '' && strpos($normalized, $item) !== false) {
+                    return 'liked';
+                }
+            }
+        }
+    }
+
+    return '';
+}
+
+function sff_render_preview_ingredient_list($ingredient_rows, $preferences) {
+    if (empty($ingredient_rows) || !is_array($ingredient_rows)) {
+        return '<p class="sff-preview-ingredients__empty">' . esc_html__('No ingredients have been added yet.', 'simplified-food-fitness') . '</p>';
+    }
+
+    ob_start();
+    ?>
+    <ul class="sff-preview-ingredients">
+        <?php foreach ($ingredient_rows as $row) :
+            $display_name   = isset($row['display_name']) && $row['display_name'] !== '' ? $row['display_name'] : ($row['original_name'] ?? '');
+            $original_name  = $row['original_name'] ?? $display_name;
+            $preference     = sff_determine_preference_state_for_name($display_name, $preferences);
+            if ($preference === '' && $display_name !== $original_name) {
+                $preference = sff_determine_preference_state_for_name($original_name, $preferences);
+            }
+            $classes = ['sff-preview-ingredient'];
+            if (!empty($row['is_custom'])) {
+                $classes[] = 'is-swapped';
+            }
+            if ($preference) {
+                $classes[] = 'sff-preview-ingredient--' . $preference;
+            }
+            ?>
+            <li class="<?php echo esc_attr(implode(' ', $classes)); ?>">
+                <div class="sff-preview-ingredient__main">
+                    <span class="sff-preview-ingredient__name"><?php echo esc_html($display_name ?: $original_name); ?></span>
+                    <?php if ($preference === 'liked') : ?>
+                        <span class="sff-preview-ingredient__badge sff-preview-ingredient__badge--liked"><?php esc_html_e('Liked', 'simplified-food-fitness'); ?></span>
+                    <?php elseif ($preference === 'disliked') : ?>
+                        <span class="sff-preview-ingredient__badge sff-preview-ingredient__badge--disliked"><?php esc_html_e('Disliked', 'simplified-food-fitness'); ?></span>
+                    <?php endif; ?>
+                </div>
+                <?php if (!empty($row['is_custom'])) : ?>
+                    <div class="sff-preview-ingredient__note">
+                        <?php
+                        printf(
+                            esc_html__('Original: %s', 'simplified-food-fitness'),
+                            esc_html($original_name)
+                        );
+                        ?>
+                    </div>
+                <?php endif; ?>
+                <?php
+                $details = [];
+                if (isset($row['servings']) && $row['servings'] !== '') {
+                    $servings_value = floatval($row['servings']);
+                    $details[] = sprintf(
+                        esc_html__('%s servings', 'simplified-food-fitness'),
+                        esc_html(number_format_i18n($servings_value, $servings_value === floor($servings_value) ? 0 : 2))
+                    );
+                }
+                if (!empty($row['serving_size'])) {
+                    $details[] = $row['serving_size'];
+                }
+                if (!empty($details)) :
+                    ?>
+                    <div class="sff-preview-ingredient__details"><?php echo esc_html(implode(' • ', $details)); ?></div>
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php
+    return ob_get_clean();
+}
+
 function sff_get_recipe_ingredient_details_with_overrides($recipe_id, $overrides = []) {
     $recipe_id = intval($recipe_id);
     if (!$recipe_id) {

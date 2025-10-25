@@ -1210,12 +1210,19 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
         return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('Please log in to view the meal plan preview.', 'simplified-food-fitness') . '</p>';
     }
 
-    $user_id        = get_current_user_id();
-    $macro_profile  = sff_get_user_macro_profile($user_id);
-    $calorie_target = $macro_profile['calories'] ?: 2000;
-    $day_type_configs = sff_get_day_type_macros();
-    $day_targets = [];
+    $user_id       = get_current_user_id();
+    $macro_profile = sff_get_user_macro_profile($user_id);
 
+    $calorie_target = isset($macro_profile['calories']) && $macro_profile['calories']
+        ? floatval($macro_profile['calories'])
+        : 2000;
+
+    $day_type_configs = sff_get_day_type_macros();
+    if (empty($day_type_configs)) {
+        return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('Configure macro day types in the settings page to view this preview.', 'simplified-food-fitness') . '</p>';
+    }
+
+    $day_targets = [];
     foreach ($day_type_configs as $slug => $config) {
         $percentages = [
             'carb_percent'    => floatval($config['carbs']),
@@ -1238,7 +1245,7 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
         ];
     }
 
-    $day_order  = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    $day_order = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     $day_labels = [
         'monday'    => __('Monday', 'simplified-food-fitness'),
         'tuesday'   => __('Tuesday', 'simplified-food-fitness'),
@@ -1249,15 +1256,225 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
         'sunday'    => __('Sunday', 'simplified-food-fitness'),
     ];
 
+    $preferences      = sff_get_client_preferences_for_user($user_id);
+    $customizations   = sff_get_user_recipe_customizations($user_id);
+    $personal_items   = sff_get_user_personal_ingredients($user_id);
+    $general_items    = sff_get_general_ingredients();
+    $personal_options = [];
+    $general_options  = [];
+
+    foreach ($personal_items as $item) {
+        if (!empty($item['id'])) {
+            $personal_options[intval($item['id'])] = $item['name'];
+        }
+    }
+
+    foreach ($general_items as $item) {
+        if (!empty($item['id'])) {
+            $general_options[intval($item['id'])] = $item['name'];
+        }
+    }
+
+    $plan_query_args = [
+        'post_type'      => 'meal_plan',
+        'numberposts'    => 1,
+        'orderby'        => 'modified',
+        'order'          => 'DESC',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_assigned_users',
+                'value'   => '"' . $user_id . '"',
+                'compare' => 'LIKE',
+            ],
+        ],
+    ];
+
+    $meal_plans = get_posts($plan_query_args);
+
+    if (empty($meal_plans)) {
+        $fallback = get_posts([
+            'post_type'      => 'meal_plan',
+            'numberposts'    => 1,
+            'orderby'        => 'modified',
+            'order'          => 'DESC',
+            'meta_key'       => '_assigned_user',
+            'meta_value'     => strval($user_id),
+        ]);
+        if (!empty($fallback)) {
+            $meal_plans = $fallback;
+        }
+    }
+
+    $plan_post          = !empty($meal_plans) ? $meal_plans[0] : null;
+    $plan_title         = $plan_post ? get_the_title($plan_post) : '';
+    $plan_last_modified = $plan_post ? get_post_modified_time(get_option('date_format'), false, $plan_post, true) : '';
+
+    $stored_schedule    = [];
+    $selected_day_types = [];
+
+    if ($plan_post) {
+        $raw_schedule = get_post_meta($plan_post->ID, '_sff_meal_data', true);
+        if (is_string($raw_schedule)) {
+            $decoded = json_decode($raw_schedule, true);
+            if (is_array($decoded)) {
+                $stored_schedule = $decoded;
+            }
+        } elseif (is_array($raw_schedule)) {
+            $stored_schedule = $raw_schedule;
+        }
+
+        $selected_day_types = get_post_meta($plan_post->ID, '_sff_day_types', true);
+        if (!is_array($selected_day_types)) {
+            $selected_day_types = [];
+        }
+    }
+
     $type_keys = array_keys($day_targets);
     if (empty($type_keys)) {
         return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('Configure macro day types in the settings page to view this preview.', 'simplified-food-fitness') . '</p>';
     }
 
-    $day_schedule = [];
+    $schedule      = [];
+    $recipe_id_map = [];
     foreach ($day_order as $index => $day) {
-        $day_schedule[$day] = $type_keys[$index % count($type_keys)];
+        $type_slug = isset($selected_day_types[$day]) && isset($day_targets[$selected_day_types[$day]])
+            ? $selected_day_types[$day]
+            : $type_keys[$index % count($type_keys)];
+
+        $selected_day_types[$day] = $type_slug;
+
+        $schedule[$day] = [];
+        if (isset($stored_schedule[$day]) && is_array($stored_schedule[$day])) {
+            foreach ($stored_schedule[$day] as $recipe_id) {
+                $recipe_id = intval($recipe_id);
+                if ($recipe_id) {
+                    $schedule[$day][]      = $recipe_id;
+                    $recipe_id_map[$recipe_id] = $recipe_id;
+                }
+            }
+        }
     }
+
+    $recipes_cache = [];
+    foreach (array_keys($recipe_id_map) as $recipe_id) {
+        $recipe_post = get_post($recipe_id);
+        if (!$recipe_post || $recipe_post->post_type !== 'recipe') {
+            continue;
+        }
+
+        $override          = isset($customizations[$recipe_id]) ? $customizations[$recipe_id] : [];
+        $ingredient_rows   = sff_get_recipe_ingredient_details_with_overrides($recipe_id, $override);
+        $ingredients_html  = sff_render_preview_ingredient_list($ingredient_rows, $preferences);
+        $recipe_macros     = sff_get_recipe_macros_with_overrides($recipe_id, $override, false);
+        $macro_snapshot    = [
+            'calories' => isset($recipe_macros['calories']) ? floatval($recipe_macros['calories']) : 0.0,
+            'protein'  => isset($recipe_macros['protein']) ? floatval($recipe_macros['protein']) : 0.0,
+            'carbs'    => isset($recipe_macros['carbs']) ? floatval($recipe_macros['carbs']) : 0.0,
+            'fat'      => isset($recipe_macros['fat']) ? floatval($recipe_macros['fat']) : 0.0,
+        ];
+
+        $recipes_cache[$recipe_id] = [
+            'id'                => $recipe_id,
+            'title'             => get_the_title($recipe_post),
+            'macros'            => $macro_snapshot,
+            'ingredients'       => $ingredient_rows,
+            'ingredients_html'  => $ingredients_html,
+            'swaps'             => isset($override['ingredients']) ? array_map('intval', (array) $override['ingredients']) : [],
+            'has_customization' => !empty($override['ingredients']),
+        ];
+    }
+
+    $determine_status = static function ($value, $target) {
+        $value  = max(0.0, floatval($value));
+        $target = max(0.0, floatval($target));
+
+        if ($target <= 0) {
+            return $value > 0 ? 'warn' : 'neutral';
+        }
+
+        if ($value <= 0.0001) {
+            return 'warn';
+        }
+
+        $ratio = $value / $target;
+        if ($ratio >= 1.2 || $ratio <= 0.6) {
+            return 'danger';
+        }
+
+        if ($ratio >= 1.05 || $ratio <= 0.85) {
+            return 'warn';
+        }
+
+        return 'good';
+    };
+
+    $worst_status = static function ($statuses) {
+        $statuses = array_unique(array_filter($statuses));
+        if (in_array('danger', $statuses, true)) {
+            return 'danger';
+        }
+        if (in_array('warn', $statuses, true)) {
+            return 'warn';
+        }
+        if (in_array('good', $statuses, true)) {
+            return 'good';
+        }
+        return 'neutral';
+    };
+
+    $calendar_days = [];
+    $has_meals     = false;
+
+    foreach ($day_order as $index => $day) {
+        $type_slug = $selected_day_types[$day];
+        $target    = $day_targets[$type_slug];
+        $recipes   = [];
+
+        $totals = [
+            'calories' => 0.0,
+            'protein'  => 0.0,
+            'carbs'    => 0.0,
+            'fat'      => 0.0,
+        ];
+
+        foreach ($schedule[$day] as $recipe_id) {
+            if (!isset($recipes_cache[$recipe_id])) {
+                continue;
+            }
+
+            $entry = $recipes_cache[$recipe_id];
+            $recipes[] = $entry;
+            foreach ($totals as $metric => $value) {
+                $totals[$metric] += isset($entry['macros'][$metric]) ? floatval($entry['macros'][$metric]) : 0.0;
+            }
+        }
+
+        if (!empty($recipes)) {
+            $has_meals = true;
+        }
+
+        $macro_statuses = [];
+        $macro_statuses['calories'] = $determine_status($totals['calories'], $target['calories']);
+        $macro_statuses['protein']  = $determine_status($totals['protein'], $target['protein']);
+        $macro_statuses['carbs']    = $determine_status($totals['carbs'], $target['carbs']);
+        $macro_statuses['fat']      = $determine_status($totals['fat'], $target['fat']);
+
+        $calendar_days[$day] = [
+            'label'      => $day_labels[$day],
+            'type_slug'  => $type_slug,
+            'target'     => $target,
+            'recipes'    => $recipes,
+            'totals'     => $totals,
+            'status'     => [
+                'overall' => $worst_status($macro_statuses),
+                'macros'  => $macro_statuses,
+            ],
+        ];
+    }
+
+    $has_swap_options = !empty($personal_options) || !empty($general_options);
+
+    $locale = function_exists('get_locale') ? get_locale() : 'en_US';
 
     ob_start();
     include SFF_PLUGIN_DIR . 'templates/meal-plan-preview.php';

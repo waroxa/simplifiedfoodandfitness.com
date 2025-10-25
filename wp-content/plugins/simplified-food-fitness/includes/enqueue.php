@@ -63,6 +63,14 @@ function sff_enqueue_assets() {
         'nonce'    => wp_create_nonce('sff_dashboard_nonce'),
     ]);
 
+    wp_register_script(
+        'sff-meal-plan-preview',
+        SFF_PLUGIN_URL . 'assets/js/meal-plan-preview.js',
+        [],
+        SFF_PLUGIN_VERSION,
+        true
+    );
+
     // ✅ CSS
     wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.5');
 
