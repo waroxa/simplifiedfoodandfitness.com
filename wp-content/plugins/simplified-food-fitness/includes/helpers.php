@@ -1350,3 +1350,163 @@ function sff_admin_notice() {
     }
 }
 add_action('admin_notices', 'sff_admin_notice');
+function sff_get_default_day_type_macros() {
+    return [
+        'rest' => [
+            'label' => __('Rest Day', 'simplified-food-fitness'),
+            'carbs' => 40,
+            'protein' => 30,
+            'fat' => 30,
+        ],
+        'active' => [
+            'label' => __('Active Day', 'simplified-food-fitness'),
+            'carbs' => 45,
+            'protein' => 30,
+            'fat' => 25,
+        ],
+        'training' => [
+            'label' => __('Training Day', 'simplified-food-fitness'),
+            'carbs' => 50,
+            'protein' => 30,
+            'fat' => 20,
+        ],
+    ];
+}
+
+function sff_get_day_type_macros($include_saved = true) {
+    $defaults = sff_get_default_day_type_macros();
+
+    if (!$include_saved) {
+        return $defaults;
+    }
+
+    $saved = get_option('sff_day_type_macros');
+    if (!is_array($saved)) {
+        return $defaults;
+    }
+
+    foreach ($defaults as $slug => $config) {
+        if (!isset($saved[$slug]) || !is_array($saved[$slug])) {
+            continue;
+        }
+
+        $defaults[$slug]['carbs'] = isset($saved[$slug]['carbs']) ? floatval($saved[$slug]['carbs']) : $config['carbs'];
+        $defaults[$slug]['protein'] = isset($saved[$slug]['protein']) ? floatval($saved[$slug]['protein']) : $config['protein'];
+        $defaults[$slug]['fat'] = isset($saved[$slug]['fat']) ? floatval($saved[$slug]['fat']) : $config['fat'];
+    }
+
+    return $defaults;
+}
+
+function sff_calculate_macro_targets_from_percentages($calories, array $percentages) {
+    $calories = floatval($calories);
+    if ($calories <= 0) {
+        return [
+            'calories' => 0,
+            'carbs'    => 0,
+            'protein'  => 0,
+            'fat'      => 0,
+        ];
+    }
+
+    $carb_percent    = isset($percentages['carb_percent']) ? floatval($percentages['carb_percent']) : 0;
+    $protein_percent = isset($percentages['protein_percent']) ? floatval($percentages['protein_percent']) : 0;
+    $fat_percent     = isset($percentages['fat_percent']) ? floatval($percentages['fat_percent']) : 0;
+
+    $carbs   = ($calories * $carb_percent / 100) / 4;
+    $protein = ($calories * $protein_percent / 100) / 4;
+    $fat     = ($calories * $fat_percent / 100) / 9;
+
+    return [
+        'calories' => $calories,
+        'carbs'    => $carbs,
+        'protein'  => $protein,
+        'fat'      => $fat,
+    ];
+}
+
+function sff_get_user_macro_profile($user_id) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return [
+            'calories'     => 0,
+            'macros'       => ['carbs' => 0, 'protein' => 0, 'fat' => 0, 'fats' => 0],
+            'percentages'  => ['carbs' => 0, 'protein' => 0, 'fat' => 0],
+            'source'       => 'none',
+        ];
+    }
+
+    $targets      = get_user_meta($user_id, '_sff_macro_targets', true);
+    $percentages  = get_user_meta($user_id, '_sff_macro_percentages', true);
+    $calories     = 0;
+    $macros       = ['carbs' => 0, 'protein' => 0, 'fat' => 0];
+    $macro_source = 'user_meta';
+
+    if (is_array($targets)) {
+        $calories = isset($targets['calories']) ? floatval($targets['calories']) : 0;
+        $macros['carbs']   = isset($targets['carbs']) ? floatval($targets['carbs']) : (isset($targets['carb']) ? floatval($targets['carb']) : 0);
+        $macros['protein'] = isset($targets['protein']) ? floatval($targets['protein']) : 0;
+        $macros['fat']     = isset($targets['fat']) ? floatval($targets['fat']) : (isset($targets['fats']) ? floatval($targets['fats']) : 0);
+    }
+
+    if (!is_array($percentages) || empty($percentages)) {
+        if ($calories > 0 && ($macros['carbs'] || $macros['protein'] || $macros['fat'])) {
+            $percentages = [
+                'carbs'   => $macros['carbs'] * 4 / max($calories, 1) * 100,
+                'protein' => $macros['protein'] * 4 / max($calories, 1) * 100,
+                'fat'     => $macros['fat'] * 9 / max($calories, 1) * 100,
+            ];
+        } else {
+            $percentages = [];
+        }
+    }
+
+    if ($calories <= 0 || (!$macros['carbs'] && !$macros['protein'] && !$macros['fat'])) {
+        $macro_posts = get_posts([
+            'post_type'      => 'macro_target',
+            'author'         => $user_id,
+            'post_status'    => 'publish',
+            'posts_per_page' => 1,
+            'fields'         => 'ids',
+        ]);
+
+        if (!empty($macro_posts)) {
+            $macro_source = 'macro_post';
+            $post_id  = $macro_posts[0];
+            $calories = floatval(get_post_meta($post_id, 'calories', true));
+            $macros['carbs']   = floatval(get_post_meta($post_id, 'carbs', true));
+            $macros['protein'] = floatval(get_post_meta($post_id, 'protein', true));
+            $macros['fat']     = floatval(get_post_meta($post_id, 'fats', true));
+            $percentages = [
+                'carbs'   => floatval(get_post_meta($post_id, 'carb_percent', true)),
+                'protein' => floatval(get_post_meta($post_id, 'protein_percent', true)),
+                'fat'     => floatval(get_post_meta($post_id, 'fat_percent', true)),
+            ];
+        }
+    }
+
+    if (!is_array($percentages) || empty($percentages)) {
+        $percentages = [
+            'carbs'   => 0,
+            'protein' => 0,
+            'fat'     => 0,
+        ];
+    }
+
+    $macros['carbs']   = round($macros['carbs'], 2);
+    $macros['protein'] = round($macros['protein'], 2);
+    $macros['fat']     = round($macros['fat'], 2);
+    $macros['fats']    = $macros['fat'];
+
+    return [
+        'calories'    => round($calories),
+        'macros'      => $macros,
+        'percentages' => [
+            'carbs'   => round(floatval($percentages['carbs'] ?? 0), 2),
+            'protein' => round(floatval($percentages['protein'] ?? 0), 2),
+            'fat'     => round(floatval($percentages['fat'] ?? 0), 2),
+        ],
+        'source'      => $macro_source,
+    ];
+}
+

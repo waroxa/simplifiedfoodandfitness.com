@@ -8,6 +8,8 @@
         var calendar = document.getElementById('sff-meal-calendar');
         var hiddenInput = document.getElementById('sff_meal_data');
         var totalsPanel = document.getElementById('sff-macro-totals');
+        var dayTypeControls = document.querySelectorAll('.sff-day-type-select');
+        var hiddenDayTypeInput = document.getElementById('sff_day_types');
         if (!recipeList || !calendar || !hiddenInput) {
             return;
         }
@@ -15,6 +17,8 @@
         var schedule = sffMealPlan.schedule || {};
         var recipes = sffMealPlan.recipes || [];
         var macros = sffMealPlan.macros || {};
+        var selectedDayTypes = Object.assign({}, sffMealPlan.selectedDayTypes || {});
+        var dayTypeOptions = sffMealPlan.dayTypeOptions || {};
 
         var dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         var dayLabels = {
@@ -31,6 +35,8 @@
             ? new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 })
             : null;
 
+        var dayTypeBadges = {};
+
         function formatNumber(value) {
             var num = parseFloat(value);
             if (!isFinite(num)) {
@@ -40,6 +46,40 @@
                 return numberFormatter.format(num);
             }
             return Math.round(num * 10) / 10;
+        }
+
+        function getDayTypeLabel(day) {
+            var type = selectedDayTypes[day];
+            if (type && dayTypeOptions[type]) {
+                return dayTypeOptions[type].label || type;
+            }
+            return '';
+        }
+
+        function getTargetsForDay(day) {
+            var type = selectedDayTypes[day];
+            if (type && dayTypeOptions[type]) {
+                return dayTypeOptions[type];
+            }
+            return null;
+        }
+
+        function updateDayTypeBadge(day) {
+            var badge = dayTypeBadges[day];
+            if (badge) {
+                badge.textContent = getDayTypeLabel(day);
+            }
+        }
+
+        function serializeDayTypes() {
+            if (!hiddenDayTypeInput) {
+                return;
+            }
+            try {
+                hiddenDayTypeInput.value = JSON.stringify(selectedDayTypes);
+            } catch (error) {
+                // noop
+            }
         }
 
         function createMacroMeta(macroData) {
@@ -169,6 +209,7 @@
 
         function renderCalendar() {
             calendar.innerHTML = '';
+            dayTypeBadges = {};
 
             dayOrder.forEach(function (day) {
                 var column = document.createElement('div');
@@ -182,6 +223,12 @@
                 title.className = 'sff-calendar-day__title';
                 title.textContent = dayLabels[day] || day;
                 header.appendChild(title);
+
+                var typeBadge = document.createElement('span');
+                typeBadge.className = 'sff-calendar-day__type';
+                typeBadge.textContent = getDayTypeLabel(day);
+                header.appendChild(typeBadge);
+                dayTypeBadges[day] = typeBadge;
 
                 var count = document.createElement('span');
                 count.className = 'sff-calendar-day__count';
@@ -225,6 +272,7 @@
                 calendar.appendChild(column);
                 refreshDayState(column);
             });
+            serializeDayTypes();
         }
 
         function updateSchedule() {
@@ -248,6 +296,36 @@
 
             hiddenInput.value = JSON.stringify(schedule);
             updateTotals();
+        }
+
+        function determineStatus(value, target) {
+            var ratio = target > 0 ? value / target : 0;
+            if (ratio >= 0.95) {
+                return 'danger';
+            }
+            if (ratio <= 0.6 && value > 0) {
+                return 'warn';
+            }
+            if (value === 0 && target > 0) {
+                return 'warn';
+            }
+            if (target === 0 && value === 0) {
+                return 'neutral';
+            }
+            return 'good';
+        }
+
+        function worstStatus(statuses) {
+            if (statuses.indexOf('danger') !== -1) {
+                return 'danger';
+            }
+            if (statuses.indexOf('warn') !== -1) {
+                return 'warn';
+            }
+            if (statuses.indexOf('good') !== -1) {
+                return 'good';
+            }
+            return 'neutral';
         }
 
         function updateTotals() {
@@ -286,20 +364,68 @@
                 var card = document.createElement('div');
                 card.className = 'sff-macro-card';
 
+                var badgeStatuses = [];
+                var targets = getTargetsForDay(day);
+
                 var heading = document.createElement('div');
                 heading.className = 'sff-macro-card__day';
-                heading.textContent = dayLabels[day] || day;
+                var headingLabel = dayLabels[day] || day;
+                var typeLabel = getDayTypeLabel(day);
+                heading.innerHTML = typeLabel ? '<span>' + headingLabel + '</span><span class="sff-macro-card__type">' + typeLabel + '</span>' : headingLabel;
                 card.appendChild(heading);
 
                 var metrics = document.createElement('div');
                 metrics.className = 'sff-macro-card__metrics';
-                metrics.innerHTML = `
-                    <span><strong>${formatNumber(totals.calories)}</strong> kcal</span>
-                    <span><strong>${formatNumber(totals.protein)}g</strong> protein</span>
-                    <span><strong>${formatNumber(totals.carbs)}g</strong> carbs</span>
-                    <span><strong>${formatNumber(totals.fat)}g</strong> fat</span>
-                `;
+                if (targets) {
+                    var caloriesStatus = determineStatus(totals.calories, targets.calories);
+                    var proteinStatus = determineStatus(totals.protein, targets.protein);
+                    var carbStatus = determineStatus(totals.carbs, targets.carbs);
+                    var fatStatus = determineStatus(totals.fat, targets.fat);
+                    badgeStatuses = [caloriesStatus, proteinStatus, carbStatus, fatStatus];
+                    metrics.innerHTML = '
+                        <div class="sff-macro-metric is-' + caloriesStatus + '">
+                            <span>Calories</span>
+                            <span>' + formatNumber(totals.calories) + ' / ' + formatNumber(targets.calories) + '</span>
+                        </div>
+                        <div class="sff-macro-metric is-' + proteinStatus + '">
+                            <span>Protein</span>
+                            <span>' + formatNumber(totals.protein) + 'g / ' + formatNumber(targets.protein) + 'g</span>
+                        </div>
+                        <div class="sff-macro-metric is-' + carbStatus + '">
+                            <span>Carbs</span>
+                            <span>' + formatNumber(totals.carbs) + 'g / ' + formatNumber(targets.carbs) + 'g</span>
+                        </div>
+                        <div class="sff-macro-metric is-' + fatStatus + '">
+                            <span>Fat</span>
+                            <span>' + formatNumber(totals.fat) + 'g / ' + formatNumber(targets.fat) + 'g</span>
+                        </div>
+                    ';
+                } else {
+                    metrics.innerHTML = '
+                        <div class="sff-macro-metric">
+                            <span>Calories</span>
+                            <span>' + formatNumber(totals.calories) + '</span>
+                        </div>
+                        <div class="sff-macro-metric">
+                            <span>Protein</span>
+                            <span>' + formatNumber(totals.protein) + 'g</span>
+                        </div>
+                        <div class="sff-macro-metric">
+                            <span>Carbs</span>
+                            <span>' + formatNumber(totals.carbs) + 'g</span>
+                        </div>
+                        <div class="sff-macro-metric">
+                            <span>Fat</span>
+                            <span>' + formatNumber(totals.fat) + 'g</span>
+                        </div>
+                    ';
+                }
                 card.appendChild(metrics);
+
+                var overallStatus = worstStatus(badgeStatuses);
+                if (overallStatus && overallStatus !== 'neutral') {
+                    card.classList.add('sff-macro-card--' + overallStatus);
+                }
 
                 grid.appendChild(card);
             });
@@ -333,6 +459,24 @@
         renderRecipeList();
         renderCalendar();
         updateSchedule();
+
+        if (dayTypeControls && dayTypeControls.length) {
+            dayTypeControls.forEach(function (select) {
+                select.addEventListener('change', function (event) {
+                    var day = event.target.getAttribute('data-day');
+                    var value = event.target.value;
+                    if (!day) {
+                        return;
+                    }
+                    if (dayTypeOptions[value]) {
+                        selectedDayTypes[day] = value;
+                        updateDayTypeBadge(day);
+                        serializeDayTypes();
+                        updateTotals();
+                    }
+                });
+            });
+        }
     });
 })();
 

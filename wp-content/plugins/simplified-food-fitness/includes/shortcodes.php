@@ -798,6 +798,10 @@ function sff_client_profile_shortcode() {
     $user      = wp_get_current_user();
     $username  = $user->display_name;
     $day_type  = 'Rest Day';
+    $macro_profile = sff_get_user_macro_profile($user_id);
+    $macro_totals  = $macro_profile['macros'];
+    $macro_percentages = $macro_profile['percentages'];
+    $calorie_target = $macro_profile['calories'];
 
     // Ordered sections of intake-form fields
     $sections = [
@@ -890,6 +894,33 @@ function sff_client_profile_shortcode() {
     ob_start(); ?>
     <div class="dashboard-container">
         <?php echo sff_render_header($username, $day_type); ?>
+
+        <?php if ($calorie_target) : ?>
+            <div class="sff-profile-card sff-profile-card--macros">
+                <h2><?php esc_html_e('Daily Macro Targets', 'simplified-food-fitness'); ?></h2>
+                <div class="sff-profile-macro-grid">
+                    <div class="sff-profile-macro">
+                        <span class="sff-profile-macro__label"><?php esc_html_e('Calories', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-profile-macro__value"><?php echo esc_html(number_format_i18n($calorie_target)); ?></span>
+                    </div>
+                    <div class="sff-profile-macro">
+                        <span class="sff-profile-macro__label"><?php esc_html_e('Protein', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-profile-macro__value"><?php echo esc_html(number_format_i18n($macro_totals['protein'] ?? 0)); ?>g</span>
+                        <span class="sff-profile-macro__meta"><?php echo esc_html(number_format_i18n($macro_percentages['protein'] ?? 0, 1)); ?>%</span>
+                    </div>
+                    <div class="sff-profile-macro">
+                        <span class="sff-profile-macro__label"><?php esc_html_e('Carbs', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-profile-macro__value"><?php echo esc_html(number_format_i18n($macro_totals['carbs'] ?? 0)); ?>g</span>
+                        <span class="sff-profile-macro__meta"><?php echo esc_html(number_format_i18n($macro_percentages['carbs'] ?? 0, 1)); ?>%</span>
+                    </div>
+                    <div class="sff-profile-macro">
+                        <span class="sff-profile-macro__label"><?php esc_html_e('Fat', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-profile-macro__value"><?php echo esc_html(number_format_i18n($macro_totals['fat'] ?? 0)); ?>g</span>
+                        <span class="sff-profile-macro__meta"><?php echo esc_html(number_format_i18n($macro_percentages['fat'] ?? 0, 1)); ?>%</span>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <div class="sff-profile-card">
             <h2><?php echo esc_html(get_the_title($client_id)); ?></h2>
@@ -1079,6 +1110,7 @@ function sff_frontend_macro_micro_targets() {
     }
 
     $user_id = get_current_user_id();
+    $macro_profile = sff_get_user_macro_profile($user_id);
     $macro_post = get_posts([
         'post_type'      => 'macro_target',
         'author'         => $user_id,
@@ -1091,6 +1123,14 @@ function sff_frontend_macro_micro_targets() {
 
     $post_id = $macro_post[0]->ID;
     $macros = get_post_meta($post_id, '_macro_targets', true);
+    if (!is_array($macros) || empty($macros)) {
+        $macros = [
+            'calories' => $macro_profile['calories'],
+            'protein'  => $macro_profile['macros']['protein'],
+            'carbs'    => $macro_profile['macros']['carbs'],
+            'fats'     => $macro_profile['macros']['fat'],
+        ];
+    }
     $micros = get_post_meta($post_id, '_micro_targets', true);
 
     // Logo URL (replace with your actual logo URL)
@@ -1165,6 +1205,66 @@ function sff_frontend_macro_micro_targets() {
 
 add_shortcode('sff_macro_micro_targets', 'sff_frontend_macro_micro_targets');
 
+function sff_weekly_meal_plan_preview_shortcode($atts = []) {
+    if (!is_user_logged_in()) {
+        return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('Please log in to view the meal plan preview.', 'simplified-food-fitness') . '</p>';
+    }
+
+    $user_id        = get_current_user_id();
+    $macro_profile  = sff_get_user_macro_profile($user_id);
+    $calorie_target = $macro_profile['calories'] ?: 2000;
+    $day_type_configs = sff_get_day_type_macros();
+    $day_targets = [];
+
+    foreach ($day_type_configs as $slug => $config) {
+        $percentages = [
+            'carb_percent'    => floatval($config['carbs']),
+            'protein_percent' => floatval($config['protein']),
+            'fat_percent'     => floatval($config['fat']),
+        ];
+        $calc = sff_calculate_macro_targets_from_percentages($calorie_target, $percentages);
+
+        $day_targets[$slug] = [
+            'label'       => $config['label'],
+            'calories'    => round($calc['calories']),
+            'protein'     => round($calc['protein'], 1),
+            'carbs'       => round($calc['carbs'], 1),
+            'fat'         => round($calc['fat'], 1),
+            'percentages' => [
+                'protein' => $percentages['protein_percent'],
+                'carbs'   => $percentages['carb_percent'],
+                'fat'     => $percentages['fat_percent'],
+            ],
+        ];
+    }
+
+    $day_order  = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    $day_labels = [
+        'monday'    => __('Monday', 'simplified-food-fitness'),
+        'tuesday'   => __('Tuesday', 'simplified-food-fitness'),
+        'wednesday' => __('Wednesday', 'simplified-food-fitness'),
+        'thursday'  => __('Thursday', 'simplified-food-fitness'),
+        'friday'    => __('Friday', 'simplified-food-fitness'),
+        'saturday'  => __('Saturday', 'simplified-food-fitness'),
+        'sunday'    => __('Sunday', 'simplified-food-fitness'),
+    ];
+
+    $type_keys = array_keys($day_targets);
+    if (empty($type_keys)) {
+        return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('Configure macro day types in the settings page to view this preview.', 'simplified-food-fitness') . '</p>';
+    }
+
+    $day_schedule = [];
+    foreach ($day_order as $index => $day) {
+        $day_schedule[$day] = $type_keys[$index % count($type_keys)];
+    }
+
+    ob_start();
+    include SFF_PLUGIN_DIR . 'templates/meal-plan-preview.php';
+    return ob_get_clean();
+}
+add_shortcode('sff_meal_plan_preview', 'sff_weekly_meal_plan_preview_shortcode');
+
 function sff_frontend_meal_planner() {
     if (!is_user_logged_in()) {
         return '<p style="text-align:center; font-size:18px; color:#777;">Please log in to view your meal planner.</p>';
@@ -1173,7 +1273,16 @@ function sff_frontend_meal_planner() {
     $user_id = get_current_user_id();
 
     // Fetch User's Macro & Micro Targets
+    $macro_profile = sff_get_user_macro_profile($user_id);
     $macro_targets = get_user_meta($user_id, '_sff_macro_targets', true);
+    if (!is_array($macro_targets) || empty($macro_targets)) {
+        $macro_targets = [
+            'calories' => $macro_profile['calories'],
+            'protein'  => $macro_profile['macros']['protein'],
+            'carbs'    => $macro_profile['macros']['carbs'],
+            'fats'     => $macro_profile['macros']['fat'],
+        ];
+    }
     $micro_targets = get_user_meta($user_id, '_sff_micro_targets', true);
 
     // Fetch User's Assigned Meal Plans

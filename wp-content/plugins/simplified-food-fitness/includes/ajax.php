@@ -1035,6 +1035,17 @@ function sff_calculate_macros() {
     update_post_meta($lead_id, 'sff_macro_protein_percent', round($protein_percent, 2));
     update_post_meta($lead_id, 'sff_macro_carb_percent', round($carb_percent, 2));
     update_post_meta($lead_id, 'sff_macro_fat_percent', round($fat_percent, 2));
+    update_post_meta($lead_id, '_sff_macro_targets', [
+        'calories' => round($adjusted_calories),
+        'protein'  => $protein_g,
+        'carbs'    => $carb_g,
+        'fat'      => $fat_g,
+    ]);
+    update_post_meta($lead_id, '_sff_macro_percentages', [
+        'protein' => round($protein_percent, 2),
+        'carbs'   => round($carb_percent, 2),
+        'fat'     => round($fat_percent, 2),
+    ]);
 
     // Response
     wp_send_json_success([
@@ -1052,6 +1063,11 @@ function sff_calculate_macros() {
         'protein_g' => $protein_g,
         'carb_g' => $carb_g,
         'fat_g' => $fat_g,
+        'percentages' => [
+            'protein' => round($protein_percent, 2),
+            'carbs'   => round($carb_percent, 2),
+            'fat'     => round($fat_percent, 2),
+        ],
         'message' => 'Macros calculated successfully.'
     ]);
 }
@@ -1135,61 +1151,104 @@ function sff_convert_to_client() {
         'posts_per_page' => 1,
     ));
 
-    if (!$existing_post) {
-        $post_id = wp_insert_post(array(
-            'post_title'    => "$first $last – Macro Targets",
-            'post_type'     => 'macro_target', // Correct CPT
-            'post_status'   => 'publish',
-            'post_author'   => $user_id,
-        ));
+    $macro_post_id = $existing_post ? $existing_post[0]->ID : 0;
 
-        if (!is_wp_error($post_id)) {
-            // Pull macro data stored on the lead
-            $calories       = intval(get_post_meta($lead_id, 'sff_macro_calories', true));
-            $protein_percent = floatval(get_post_meta($lead_id, 'sff_macro_protein_percent', true));
-            $carb_percent    = floatval(get_post_meta($lead_id, 'sff_macro_carb_percent', true));
-            $fat_percent     = floatval(get_post_meta($lead_id, 'sff_macro_fat_percent', true));
+    $calories        = intval(get_post_meta($lead_id, 'sff_macro_calories', true));
+    $protein_percent = floatval(get_post_meta($lead_id, 'sff_macro_protein_percent', true));
+    $carb_percent    = floatval(get_post_meta($lead_id, 'sff_macro_carb_percent', true));
+    $fat_percent     = floatval(get_post_meta($lead_id, 'sff_macro_fat_percent', true));
+    $protein_g       = floatval(get_post_meta($lead_id, 'sff_macro_protein_g', true));
+    $carb_g          = floatval(get_post_meta($lead_id, 'sff_macro_carb_g', true));
+    $fat_g           = floatval(get_post_meta($lead_id, 'sff_macro_fat_g', true));
 
-            // If percentages are missing, derive them from gram values
-            if (!$protein_percent || !$carb_percent || !$fat_percent) {
-                $protein_g = floatval(get_post_meta($lead_id, 'sff_macro_protein_g', true));
-                $carb_g    = floatval(get_post_meta($lead_id, 'sff_macro_carb_g', true));
-                $fat_g     = floatval(get_post_meta($lead_id, 'sff_macro_fat_g', true));
-
-                if ($calories > 0) {
-                    if (!$protein_percent && $protein_g) {
-                        $protein_percent = $protein_g * 4 / $calories * 100;
-                    }
-                    if (!$carb_percent && $carb_g) {
-                        $carb_percent = $carb_g * 4 / $calories * 100;
-                    }
-                    if (!$fat_percent && $fat_g) {
-                        $fat_percent = $fat_g * 9 / $calories * 100;
-                    }
-                }
-            }
-
-            // Fallback defaults if data is missing
-            if (!$calories) {
-                $calories = 2000;
-            }
-            if (!$carb_percent) {
-                $carb_percent = 50;
-            }
-            if (!$protein_percent) {
-                $protein_percent = 30;
-            }
-            if (!$fat_percent) {
-                $fat_percent = 20;
-            }
-
-            // Save calculated macro data to the macro_target post
-            update_post_meta($post_id, 'calories', round($calories));
-            update_post_meta($post_id, 'carb_percent', round($carb_percent));
-            update_post_meta($post_id, 'protein_percent', round($protein_percent));
-            update_post_meta($post_id, 'fat_percent', round($fat_percent));
-        }
+    if ($calories <= 0 && ($protein_g || $carb_g || $fat_g)) {
+        $calories = ($protein_g * 4) + ($carb_g * 4) + ($fat_g * 9);
     }
+
+    if ($calories <= 0) {
+        $calories = 2000;
+    }
+
+    if (!$protein_percent && $calories > 0 && $protein_g) {
+        $protein_percent = $protein_g * 4 / $calories * 100;
+    }
+    if (!$carb_percent && $calories > 0 && $carb_g) {
+        $carb_percent = $carb_g * 4 / $calories * 100;
+    }
+    if (!$fat_percent && $calories > 0 && $fat_g) {
+        $fat_percent = $fat_g * 9 / $calories * 100;
+    }
+
+    if (!$carb_percent) {
+        $carb_percent = 50;
+    }
+    if (!$protein_percent) {
+        $protein_percent = 30;
+    }
+    if (!$fat_percent) {
+        $fat_percent = 20;
+    }
+
+    $calculated_macros = sff_calculate_macro_targets_from_percentages($calories, [
+        'carb_percent'    => $carb_percent,
+        'protein_percent' => $protein_percent,
+        'fat_percent'     => $fat_percent,
+    ]);
+
+    if ($protein_g) {
+        $calculated_macros['protein'] = $protein_g;
+    }
+    if ($carb_g) {
+        $calculated_macros['carbs'] = $carb_g;
+    }
+    if ($fat_g) {
+        $calculated_macros['fat'] = $fat_g;
+    }
+
+    if (!$macro_post_id) {
+        $macro_post_id = wp_insert_post([
+            'post_title'  => "$first $last – Macro Targets",
+            'post_type'   => 'macro_target',
+            'post_status' => 'publish',
+            'post_author' => $user_id,
+        ]);
+    }
+
+    if ($macro_post_id && !is_wp_error($macro_post_id)) {
+        update_post_meta($macro_post_id, 'calories', round($calculated_macros['calories']));
+        update_post_meta($macro_post_id, 'carb_percent', round($carb_percent));
+        update_post_meta($macro_post_id, 'protein_percent', round($protein_percent));
+        update_post_meta($macro_post_id, 'fat_percent', round($fat_percent));
+        update_post_meta($macro_post_id, 'carbs', round($calculated_macros['carbs'], 1));
+        update_post_meta($macro_post_id, 'protein', round($calculated_macros['protein'], 1));
+        update_post_meta($macro_post_id, 'fats', round($calculated_macros['fat'], 1));
+        update_post_meta($macro_post_id, '_macro_targets', [
+            'calories'        => round($calculated_macros['calories']),
+            'carb_percent'    => round($carb_percent, 2),
+            'protein_percent' => round($protein_percent, 2),
+            'fat_percent'     => round($fat_percent, 2),
+            'carbs'           => round($calculated_macros['carbs'], 1),
+            'protein'         => round($calculated_macros['protein'], 1),
+            'fats'            => round($calculated_macros['fat'], 1),
+        ]);
+    }
+
+    $user_macro_targets = [
+        'calories' => round($calculated_macros['calories']),
+        'carbs'    => round($calculated_macros['carbs'], 1),
+        'protein'  => round($calculated_macros['protein'], 1),
+        'fat'      => round($calculated_macros['fat'], 1),
+    ];
+    $user_macro_percentages = [
+        'carbs'   => round($carb_percent, 2),
+        'protein' => round($protein_percent, 2),
+        'fat'     => round($fat_percent, 2),
+    ];
+
+    update_user_meta($user_id, '_sff_macro_targets', $user_macro_targets);
+    update_user_meta($user_id, '_sff_macro_percentages', $user_macro_percentages);
+    update_post_meta($lead_id, '_sff_macro_targets', $user_macro_targets);
+    update_post_meta($lead_id, '_sff_macro_percentages', $user_macro_percentages);
 
     // ✅ Email user credentials
     $login_url = wp_login_url(site_url('/dashboard/'));
