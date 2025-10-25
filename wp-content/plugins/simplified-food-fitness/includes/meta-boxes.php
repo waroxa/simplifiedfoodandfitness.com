@@ -172,6 +172,55 @@ function sff_render_meal_plan_meta_box($post) {
         $schedule_json = json_encode($schedule);
     }
 
+    $day_type_raw = get_post_meta($post->ID, '_sff_day_types', true);
+    if (is_string($day_type_raw) && $day_type_raw !== '') {
+        $decoded = json_decode($day_type_raw, true);
+        $selected_day_types = is_array($decoded) ? $decoded : [];
+    } elseif (is_array($day_type_raw)) {
+        $selected_day_types = $day_type_raw;
+    } else {
+        $selected_day_types = [];
+    }
+
+    $day_type_configs = sff_get_day_type_macros();
+    $day_type_default = array_key_first($day_type_configs);
+    $day_order        = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    foreach ($day_order as $day_key) {
+        if (empty($selected_day_types[$day_key]) || !isset($day_type_configs[$selected_day_types[$day_key]])) {
+            $selected_day_types[$day_key] = $day_type_default;
+        }
+    }
+
+    $assigned_users = get_post_meta($post->ID, '_sff_assigned_users', true);
+    if (!is_array($assigned_users)) {
+        $assigned_users = [];
+    }
+    $primary_user_id = !empty($assigned_users) ? intval($assigned_users[0]) : 0;
+    $macro_profile   = $primary_user_id ? sff_get_user_macro_profile($primary_user_id) : ['calories' => 0, 'macros' => ['carbs' => 0, 'protein' => 0, 'fat' => 0], 'percentages' => ['carbs' => 0, 'protein' => 0, 'fat' => 0]];
+    $calorie_target  = !empty($macro_profile['calories']) ? floatval($macro_profile['calories']) : 2000;
+
+    $day_type_targets = [];
+    foreach ($day_type_configs as $slug => $config) {
+        $percentages = [
+            'carb_percent'    => floatval($config['carbs']),
+            'protein_percent' => floatval($config['protein']),
+            'fat_percent'     => floatval($config['fat']),
+        ];
+        $calculated = sff_calculate_macro_targets_from_percentages($calorie_target, $percentages);
+        $day_type_targets[$slug] = [
+            'label'       => $config['label'],
+            'calories'    => round($calculated['calories']),
+            'carbs'       => round($calculated['carbs'], 1),
+            'protein'     => round($calculated['protein'], 1),
+            'fat'         => round($calculated['fat'], 1),
+            'percentages' => [
+                'carbs'   => $percentages['carb_percent'],
+                'protein' => $percentages['protein_percent'],
+                'fat'     => $percentages['fat_percent'],
+            ],
+        ];
+    }
+
     // Enqueue scripts
     wp_enqueue_script('sortablejs', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js', [], '1.15.0', true);
     wp_enqueue_script('sff-meal-plan-calendar', SFF_PLUGIN_URL . 'assets/js/meal-plan-calendar.js', ['sortablejs'], '1.0', true);
@@ -187,11 +236,14 @@ function sff_render_meal_plan_meta_box($post) {
 
     // Pass data to JS
     wp_localize_script('sff-meal-plan-calendar', 'sffMealPlan', [
-        'recipes'  => $recipes_data,
-        'schedule' => $schedule,
-        'macros'   => $recipe_macros,
-        'ajaxUrl'  => admin_url('admin-ajax.php'),
-        'nonce'    => wp_create_nonce('sff_meal_plan_js'),
+        'recipes'          => $recipes_data,
+        'schedule'         => $schedule,
+        'macros'           => $recipe_macros,
+        'ajaxUrl'          => admin_url('admin-ajax.php'),
+        'nonce'            => wp_create_nonce('sff_meal_plan_js'),
+        'selectedDayTypes' => $selected_day_types,
+        'dayTypeOptions'   => $day_type_targets,
+        'calorieTarget'    => $calorie_target,
     ]);
     ?>
 
@@ -270,6 +322,28 @@ function sff_render_meal_plan_meta_box($post) {
             </div>
         </div>
 
+        <div class="sff-card sff-day-type-selector">
+            <div class="sff-panel-header">
+                <h3><?php esc_html_e('Day Type Targets', 'simplified-food-fitness'); ?></h3>
+                <p><?php esc_html_e('Adjust the training focus for each day to update macro targets.', 'simplified-food-fitness'); ?></p>
+            </div>
+            <div class="sff-day-type-selector__grid">
+                <?php foreach ($day_order as $day_key) :
+                    $current = $selected_day_types[$day_key];
+                    $label   = ucfirst($day_key);
+                ?>
+                    <div class="sff-day-type-selector__item" data-day="<?php echo esc_attr($day_key); ?>">
+                        <label for="sff-day-type-<?php echo esc_attr($day_key); ?>"><?php echo esc_html($label); ?></label>
+                        <select id="sff-day-type-<?php echo esc_attr($day_key); ?>" class="sff-day-type-select" data-day="<?php echo esc_attr($day_key); ?>">
+                            <?php foreach ($day_type_targets as $slug => $config) : ?>
+                                <option value="<?php echo esc_attr($slug); ?>" <?php selected($current, $slug); ?>><?php echo esc_html($config['label']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
         <div id="sff-macro-totals" class="sff-card sff-macro-summary" aria-live="polite">
             <div class="sff-macro-summary__header">
                 <h3><?php esc_html_e('Daily Nutrition Snapshot', 'simplified-food-fitness'); ?></h3>
@@ -281,6 +355,7 @@ function sff_render_meal_plan_meta_box($post) {
 
     <!-- Hidden JSON the saver expects -->
     <input type="hidden" name="sff_meal_data" id="sff_meal_data" value="<?php echo esc_attr($schedule_json); ?>">
+    <input type="hidden" name="sff_day_types" id="sff_day_types" value="<?php echo esc_attr(wp_json_encode($selected_day_types)); ?>">
 
     <!-- Modal: Create Recipe -->
     <div id="sff-recipe-modal" style="display:none;">
@@ -335,6 +410,23 @@ function sff_save_meal_plan_details($post_id) {
     if (isset($_POST['sff_meal_data'])) {
         $schedule_json = wp_unslash($_POST['sff_meal_data']);
         update_post_meta($post_id, '_sff_meal_data', $schedule_json);
+    }
+
+    if (isset($_POST['sff_day_types'])) {
+        $raw = wp_unslash($_POST['sff_day_types']);
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded)) {
+            $configs = sff_get_day_type_macros();
+            $filtered = [];
+            foreach ($decoded as $day => $slug) {
+                $day = sanitize_key($day);
+                $slug = sanitize_key($slug);
+                if ($day && isset($configs[$slug])) {
+                    $filtered[$day] = $slug;
+                }
+            }
+            update_post_meta($post_id, '_sff_day_types', $filtered);
+        }
     }
 }
 add_action('save_post', 'sff_save_meal_plan_details');

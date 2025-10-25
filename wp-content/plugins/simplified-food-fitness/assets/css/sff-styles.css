@@ -195,6 +195,50 @@
     font-family: "Inter", sans-serif;
 }
 
+.sff-profile-card--macros {
+    border-left: 6px solid #2c7a64;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sff-profile-macro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.sff-profile-macro {
+    background: #f3f8f6;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sff-profile-macro__label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #4a5d60;
+    letter-spacing: 0.05em;
+}
+
+.sff-profile-macro__value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #023441;
+}
+
+.sff-profile-macro__meta {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6a7d81;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
 /* Ingredient Database Dropdown */
 #sff-ingredient-suggestions {
     position: absolute;
@@ -209,6 +253,121 @@
     overflow-y: auto;
     box-shadow: 0 8px 18px rgba(2, 52, 65, 0.12);
     padding: 4px 0;
+}
+
+.sff-day-type-selector {
+    margin-top: 20px;
+}
+
+.sff-day-type-selector__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 0 16px 16px;
+}
+
+.sff-day-type-selector__item label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: #023441;
+}
+
+.sff-day-type-selector__item select {
+    width: 100%;
+    border: 1px solid #c9d2d6;
+    border-radius: 8px;
+    padding: 8px;
+    background: #fff;
+}
+
+.sff-calendar-day__type {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c7a64;
+    background: rgba(44, 122, 100, 0.12);
+    border-radius: 999px;
+    padding: 2px 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.sff-macro-summary__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.sff-macro-card {
+    border: 1px solid #d9e1e5;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sff-macro-card__day {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    color: #023441;
+}
+
+.sff-macro-card__type {
+    font-size: 12px;
+    font-weight: 600;
+    color: #56757d;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.sff-macro-card__metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sff-macro-metric {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+    color: #31464d;
+}
+
+.sff-macro-metric span:last-child {
+    font-variant-numeric: tabular-nums;
+}
+
+.sff-macro-metric.is-good {
+    color: #1e875a;
+}
+
+.sff-macro-metric.is-warn {
+    color: #b68623;
+}
+
+.sff-macro-metric.is-danger {
+    color: #bf3b3b;
+}
+
+.sff-macro-card--good {
+    border-color: rgba(30, 135, 90, 0.35);
+    box-shadow: 0 6px 14px rgba(30, 135, 90, 0.08);
+}
+
+.sff-macro-card--warn {
+    border-color: rgba(182, 134, 35, 0.35);
+    box-shadow: 0 6px 14px rgba(182, 134, 35, 0.08);
+}
+
+.sff-macro-card--danger {
+    border-color: rgba(191, 59, 59, 0.4);
+    box-shadow: 0 6px 18px rgba(191, 59, 59, 0.1);
 }
 #sff-ingredient-suggestions ul {
     list-style: none;
@@ -553,6 +712,11 @@
     color: #4b5a53;
 }
 
+.sff-recipe-item--placeholder {
+    opacity: 0.65;
+    pointer-events: none;
+}
+
 .sff-recipe-item__macro--split {
     display: flex;
     gap: 12px;
@@ -608,7 +772,8 @@
 .sff-calendar-day__header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 10px;
     padding: 16px 18px;
     border-bottom: 1px solid #dbe8e2;
     border-radius: 16px 16px 0 0;
@@ -632,6 +797,7 @@
     text-transform: uppercase;
     color: #023441;
     background: rgba(2, 52, 65, 0.08);
+    margin-left: auto;
 }
 
 .sff-calendar-day.is-empty .sff-calendar-day__count {
@@ -691,35 +857,6 @@
     margin: 0;
     color: #5f6f64;
     font-size: 13px;
-}
-
-.sff-macro-summary__grid {
-    display: grid;
-    gap: 16px;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
-
-.sff-macro-card {
-    border: 1px solid #d3e4dd;
-    border-radius: 14px;
-    padding: 18px 20px;
-    background: linear-gradient(135deg, rgba(2, 52, 65, 0.06), rgba(233, 250, 176, 0.25));
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.sff-macro-card__day {
-    font-weight: 700;
-    font-size: 16px;
-    color: #023441;
-}
-
-.sff-macro-card__metrics {
-    display: grid;
-    gap: 8px;
-    font-size: 13px;
-    color: #4b5a53;
 }
 
 .sff-macro-card__metrics span {
