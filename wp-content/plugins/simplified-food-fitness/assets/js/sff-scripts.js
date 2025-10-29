@@ -930,6 +930,29 @@ jQuery(document).ready(function($) {
     $('body').removeClass('sff-menu-open');
   });
 
+  // Admin manager navigation toggle
+  $(document).on('click', '.sff-admin-manager__menu-toggle', function (e) {
+    e.preventDefault();
+    var $toggle = $(this);
+    var isOpen = !$('body').hasClass('sff-admin-manager-menu-open');
+    $('body').toggleClass('sff-admin-manager-menu-open', isOpen);
+    $toggle.attr('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  $(document).on('click', '.sff-admin-manager__nav a', function () {
+    if ($('body').hasClass('sff-admin-manager-menu-open')) {
+      $('body').removeClass('sff-admin-manager-menu-open');
+      $('.sff-admin-manager__menu-toggle').attr('aria-expanded', 'false');
+    }
+  });
+
+  $(document).on('keyup', function (e) {
+    if (e.key === 'Escape' && $('body').hasClass('sff-admin-manager-menu-open')) {
+      $('body').removeClass('sff-admin-manager-menu-open');
+      $('.sff-admin-manager__menu-toggle').attr('aria-expanded', 'false');
+    }
+  });
+
   // Recipe modal logic
   $(document).on('click', '#sff-open-recipe-modal', function() {
     $('#sff-recipe-modal').show();
