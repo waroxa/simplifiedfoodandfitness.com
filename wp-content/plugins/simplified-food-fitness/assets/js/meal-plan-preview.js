@@ -155,6 +155,202 @@
             days.forEach(updateDayTotals);
         }
 
+        function syncFormDayAttributes(dayEl) {
+            if (!dayEl) {
+                return;
+            }
+            var dayKey = dayEl.dataset.day || '';
+            dayEl.querySelectorAll('.sff-preview-swap-form').forEach(function (form) {
+                form.dataset.day = dayKey;
+            });
+        }
+
+        function captureDayPayload(dayEl) {
+            if (!dayEl) {
+                return null;
+            }
+
+            var payload = {
+                dataset: {},
+                status: dayEl.dataset.status || 'neutral',
+                typeText: '',
+                statusBadgeText: '',
+                macrosHtml: '',
+                bodyHtml: ''
+            };
+
+            ['targetCalories', 'targetProtein', 'targetCarbs', 'targetFat'].forEach(function (field) {
+                payload.dataset[field] = dayEl.dataset[field] || '';
+            });
+
+            var typeEl = dayEl.querySelector('.sff-calendar-day__type');
+            if (typeEl) {
+                payload.typeText = typeEl.textContent || '';
+            }
+
+            var badge = dayEl.querySelector('.sff-calendar-day__status-badge');
+            if (badge) {
+                payload.statusBadgeText = badge.textContent || '';
+            }
+
+            var macrosEl = dayEl.querySelector('.sff-calendar-day__macros');
+            if (macrosEl) {
+                payload.macrosHtml = macrosEl.innerHTML;
+            }
+
+            var bodyEl = dayEl.querySelector('.sff-calendar-day__body');
+            if (bodyEl) {
+                payload.bodyHtml = bodyEl.innerHTML;
+            }
+
+            return payload;
+        }
+
+        function applyDayPayload(dayEl, payload, preservedTitleText) {
+            if (!dayEl || !payload) {
+                return;
+            }
+
+            ['targetCalories', 'targetProtein', 'targetCarbs', 'targetFat'].forEach(function (field) {
+                if (typeof payload.dataset[field] !== 'undefined') {
+                    dayEl.dataset[field] = payload.dataset[field];
+                }
+            });
+
+            var status = payload.status || 'neutral';
+            dayEl.dataset.status = status;
+            dayEl.classList.remove('sff-calendar-day--good', 'sff-calendar-day--warn', 'sff-calendar-day--danger', 'sff-calendar-day--neutral');
+            dayEl.classList.add('sff-calendar-day--' + status);
+
+            var typeEl = dayEl.querySelector('.sff-calendar-day__type');
+            if (typeEl) {
+                var typeText = payload.typeText || '';
+                typeEl.textContent = typeText;
+                if (typeText.trim().length) {
+                    typeEl.classList.remove('is-hidden');
+                } else {
+                    typeEl.classList.add('is-hidden');
+                }
+            }
+
+            var badge = dayEl.querySelector('.sff-calendar-day__status-badge');
+            if (badge) {
+                badge.dataset.status = status;
+                if (payload.statusBadgeText) {
+                    badge.textContent = payload.statusBadgeText;
+                }
+            }
+
+            var macrosEl = dayEl.querySelector('.sff-calendar-day__macros');
+            if (macrosEl) {
+                macrosEl.innerHTML = payload.macrosHtml || '';
+            }
+
+            var bodyEl = dayEl.querySelector('.sff-calendar-day__body');
+            if (bodyEl) {
+                bodyEl.innerHTML = payload.bodyHtml || '';
+            }
+
+            var titleEl = dayEl.querySelector('.sff-calendar-day__title');
+            if (titleEl && typeof preservedTitleText === 'string') {
+                titleEl.textContent = preservedTitleText;
+            }
+
+            syncFormDayAttributes(dayEl);
+        }
+
+        function swapDayPayloads(dayA, dayB) {
+            if (!dayA || !dayB || dayA === dayB) {
+                return;
+            }
+
+            var titleAEl = dayA.querySelector('.sff-calendar-day__title');
+            var titleBEl = dayB.querySelector('.sff-calendar-day__title');
+            var titleAText = titleAEl ? titleAEl.textContent : '';
+            var titleBText = titleBEl ? titleBEl.textContent : '';
+
+            var payloadA = captureDayPayload(dayA);
+            var payloadB = captureDayPayload(dayB);
+
+            applyDayPayload(dayA, payloadB, titleAText);
+            applyDayPayload(dayB, payloadA, titleBText);
+
+            refreshAllDays();
+        }
+
+        function setupDayDragAndDrop() {
+            var draggedDay = null;
+
+            function clearDragState(day) {
+                if (!day) {
+                    return;
+                }
+                day.classList.remove('is-dragging');
+                day.classList.remove('is-drop-target');
+            }
+
+            root.querySelectorAll('.sff-calendar-day').forEach(function (day) {
+                var typeEl = day.querySelector('.sff-calendar-day__type');
+                if (typeEl && !typeEl.textContent.trim().length) {
+                    typeEl.classList.add('is-hidden');
+                }
+
+                day.addEventListener('dragstart', function (event) {
+                    draggedDay = day;
+                    day.classList.add('is-dragging');
+                    if (event.dataTransfer) {
+                        event.dataTransfer.effectAllowed = 'move';
+                        event.dataTransfer.setData('text/plain', day.dataset.day || '');
+                    }
+                });
+
+                day.addEventListener('dragenter', function (event) {
+                    if (!draggedDay || draggedDay === day) {
+                        return;
+                    }
+                    event.preventDefault();
+                    day.classList.add('is-drop-target');
+                });
+
+                day.addEventListener('dragover', function (event) {
+                    if (!draggedDay || draggedDay === day) {
+                        return;
+                    }
+                    event.preventDefault();
+                    if (event.dataTransfer) {
+                        event.dataTransfer.dropEffect = 'move';
+                    }
+                });
+
+                day.addEventListener('dragleave', function () {
+                    day.classList.remove('is-drop-target');
+                });
+
+                day.addEventListener('drop', function (event) {
+                    if (!draggedDay || draggedDay === day) {
+                        return;
+                    }
+                    event.preventDefault();
+                    day.classList.remove('is-drop-target');
+                    root.querySelectorAll('.sff-calendar-day.is-drop-target').forEach(function (targetDay) {
+                        targetDay.classList.remove('is-drop-target');
+                    });
+                    swapDayPayloads(draggedDay, day);
+                });
+
+                day.addEventListener('dragend', function () {
+                    clearDragState(day);
+                    if (draggedDay && draggedDay !== day) {
+                        clearDragState(draggedDay);
+                    }
+                    root.querySelectorAll('.sff-calendar-day.is-drop-target').forEach(function (targetDay) {
+                        targetDay.classList.remove('is-drop-target');
+                    });
+                    draggedDay = null;
+                });
+            });
+        }
+
         function updateRecipeMacros(recipeEl, macros) {
             if (!recipeEl || !macros) {
                 return;
@@ -358,6 +554,7 @@
             });
         });
 
+        setupDayDragAndDrop();
         refreshAllDays();
     });
 })();
