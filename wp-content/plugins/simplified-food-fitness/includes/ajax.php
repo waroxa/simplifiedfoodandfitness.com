@@ -870,6 +870,17 @@ function sff_ajax_update_recipe_swaps() {
     }
 
     $user_id = get_current_user_id();
+    if (current_user_can('manage_options')) {
+        $requested_id = isset($_POST['client_id']) ? intval($_POST['client_id']) : 0;
+        if ($requested_id) {
+            $user_id = $requested_id;
+        }
+    }
+
+    if (!$user_id || !get_user_by('id', $user_id)) {
+        wp_send_json_error(['message' => __('Unable to locate the selected client.', 'simplified-food-fitness')], 400);
+    }
+
     $assigned_ids = sff_get_user_assigned_recipe_ids($user_id);
     if (!in_array($recipe_id, $assigned_ids, true)) {
         wp_send_json_error(['message' => __('This recipe is not part of your plan.', 'simplified-food-fitness')], 403);
