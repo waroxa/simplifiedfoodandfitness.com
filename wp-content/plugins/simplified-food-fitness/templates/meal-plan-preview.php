@@ -112,6 +112,7 @@ $preview_is_admin     = !empty($preview_context['is_admin_preview']);
                 data-target-protein="<?php echo esc_attr($target['protein']); ?>"
                 data-target-carbs="<?php echo esc_attr($target['carbs']); ?>"
                 data-target-fat="<?php echo esc_attr($target['fat']); ?>"
+                draggable="true"
             >
                 <div class="sff-calendar-day__header">
                     <div class="sff-calendar-day__heading">
