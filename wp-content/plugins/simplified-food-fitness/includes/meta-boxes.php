@@ -344,13 +344,6 @@ function sff_render_meal_plan_meta_box($post) {
             </div>
         </div>
 
-        <div id="sff-macro-totals" class="sff-card sff-macro-summary" aria-live="polite">
-            <div class="sff-macro-summary__header">
-                <h3><?php esc_html_e('Daily Nutrition Snapshot', 'simplified-food-fitness'); ?></h3>
-                <p><?php esc_html_e('Nutrition totals update automatically as meals are assigned.', 'simplified-food-fitness'); ?></p>
-            </div>
-            <div class="sff-macro-summary__grid"></div>
-        </div>
     </div>
 
     <!-- Hidden JSON the saver expects -->
