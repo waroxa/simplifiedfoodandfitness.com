@@ -7,7 +7,6 @@
         var recipeList = document.getElementById('sff-recipe-list');
         var calendar = document.getElementById('sff-meal-calendar');
         var hiddenInput = document.getElementById('sff_meal_data');
-        var totalsPanel = document.getElementById('sff-macro-totals');
         var dayTypeControls = document.querySelectorAll('.sff-day-type-select');
         var hiddenDayTypeInput = document.getElementById('sff_day_types');
         if (!recipeList || !calendar || !hiddenInput) {
@@ -36,6 +35,7 @@
             : null;
 
         var dayTypeBadges = {};
+        var dayTotals = {};
 
         function formatNumber(value) {
             var num = parseFloat(value);
@@ -210,6 +210,7 @@
         function renderCalendar() {
             calendar.innerHTML = '';
             dayTypeBadges = {};
+            dayTotals = {};
 
             dayOrder.forEach(function (day) {
                 var column = document.createElement('div');
@@ -244,6 +245,26 @@
                 emptyState.className = 'sff-calendar-day__empty';
                 emptyState.textContent = 'Drop recipes here';
                 column.appendChild(emptyState);
+
+                var totalsWrapper = document.createElement('div');
+                totalsWrapper.className = 'sff-calendar-day__totals is-empty is-neutral';
+
+                var totalsTitle = document.createElement('div');
+                totalsTitle.className = 'sff-calendar-day__totals-title';
+                totalsTitle.textContent = 'Daily Nutrition Snapshot';
+                totalsWrapper.appendChild(totalsTitle);
+
+                var totalsGrid = document.createElement('div');
+                totalsGrid.className = 'sff-calendar-day__totals-grid';
+                totalsWrapper.appendChild(totalsGrid);
+
+                var totalsEmpty = document.createElement('div');
+                totalsEmpty.className = 'sff-calendar-day__totals-empty';
+                totalsEmpty.textContent = 'Add recipes to see nutrition totals.';
+                totalsWrapper.appendChild(totalsEmpty);
+
+                column.appendChild(totalsWrapper);
+                dayTotals[day] = { wrapper: totalsWrapper, grid: totalsGrid, empty: totalsEmpty };
 
                 if (schedule[day]) {
                     schedule[day].forEach(function (id) {
@@ -329,26 +350,27 @@
         }
 
         function updateTotals() {
-            if (!totalsPanel) {
-                return;
-            }
-
-            var grid = totalsPanel.querySelector('.sff-macro-summary__grid');
-            if (!grid) {
-                return;
-            }
-
-            grid.innerHTML = '';
-
-            var hasMeals = false;
-
             dayOrder.forEach(function (day) {
-                var daySchedule = schedule[day] || [];
-                if (!daySchedule.length) {
+                var totalsRef = dayTotals[day];
+                if (!totalsRef) {
                     return;
                 }
 
-                hasMeals = true;
+                var wrapper = totalsRef.wrapper;
+                var grid = totalsRef.grid;
+
+                grid.innerHTML = '';
+                ['is-good', 'is-warn', 'is-danger', 'is-neutral'].forEach(function (cls) {
+                    wrapper.classList.remove(cls);
+                });
+
+                var daySchedule = schedule[day] || [];
+                if (!daySchedule.length) {
+                    wrapper.classList.add('is-empty', 'is-neutral');
+                    return;
+                }
+
+                wrapper.classList.remove('is-empty');
 
                 var totals = { calories: 0, carbs: 0, protein: 0, fat: 0 };
                 daySchedule.forEach(function (id) {
@@ -361,83 +383,53 @@
                     }
                 });
 
-                var card = document.createElement('div');
-                card.className = 'sff-macro-card';
-
-                var badgeStatuses = [];
                 var targets = getTargetsForDay(day);
+                var statuses = [];
 
-                var heading = document.createElement('div');
-                heading.className = 'sff-macro-card__day';
-                var headingLabel = dayLabels[day] || day;
-                var typeLabel = getDayTypeLabel(day);
-                heading.innerHTML = typeLabel ? '<span>' + headingLabel + '</span><span class="sff-macro-card__type">' + typeLabel + '</span>' : headingLabel;
-                card.appendChild(heading);
+                function appendMetric(label, valueText, status) {
+                    var metric = document.createElement('div');
+                    metric.className = 'sff-calendar-day__metric';
+                    if (status) {
+                        metric.classList.add('is-' + status);
+                        statuses.push(status);
+                    }
 
-                var metrics = document.createElement('div');
-                metrics.className = 'sff-macro-card__metrics';
+                    var labelEl = document.createElement('span');
+                    labelEl.className = 'sff-calendar-day__metric-label';
+                    labelEl.textContent = label;
+                    metric.appendChild(labelEl);
+
+                    var valueEl = document.createElement('span');
+                    valueEl.className = 'sff-calendar-day__metric-value';
+                    valueEl.textContent = valueText;
+                    metric.appendChild(valueEl);
+
+                    grid.appendChild(metric);
+                }
+
                 if (targets) {
                     var caloriesStatus = determineStatus(totals.calories, targets.calories);
                     var proteinStatus = determineStatus(totals.protein, targets.protein);
                     var carbStatus = determineStatus(totals.carbs, targets.carbs);
                     var fatStatus = determineStatus(totals.fat, targets.fat);
-                    badgeStatuses = [caloriesStatus, proteinStatus, carbStatus, fatStatus];
-                    metrics.innerHTML = '
-                        <div class="sff-macro-metric is-' + caloriesStatus + '">
-                            <span>Calories</span>
-                            <span>' + formatNumber(totals.calories) + ' / ' + formatNumber(targets.calories) + '</span>
-                        </div>
-                        <div class="sff-macro-metric is-' + proteinStatus + '">
-                            <span>Protein</span>
-                            <span>' + formatNumber(totals.protein) + 'g / ' + formatNumber(targets.protein) + 'g</span>
-                        </div>
-                        <div class="sff-macro-metric is-' + carbStatus + '">
-                            <span>Carbs</span>
-                            <span>' + formatNumber(totals.carbs) + 'g / ' + formatNumber(targets.carbs) + 'g</span>
-                        </div>
-                        <div class="sff-macro-metric is-' + fatStatus + '">
-                            <span>Fat</span>
-                            <span>' + formatNumber(totals.fat) + 'g / ' + formatNumber(targets.fat) + 'g</span>
-                        </div>
-                    ';
+
+                    appendMetric('Calories', formatNumber(totals.calories) + ' / ' + formatNumber(targets.calories), caloriesStatus);
+                    appendMetric('Protein', formatNumber(totals.protein) + 'g / ' + formatNumber(targets.protein) + 'g', proteinStatus);
+                    appendMetric('Carbs', formatNumber(totals.carbs) + 'g / ' + formatNumber(targets.carbs) + 'g', carbStatus);
+                    appendMetric('Fat', formatNumber(totals.fat) + 'g / ' + formatNumber(targets.fat) + 'g', fatStatus);
                 } else {
-                    metrics.innerHTML = '
-                        <div class="sff-macro-metric">
-                            <span>Calories</span>
-                            <span>' + formatNumber(totals.calories) + '</span>
-                        </div>
-                        <div class="sff-macro-metric">
-                            <span>Protein</span>
-                            <span>' + formatNumber(totals.protein) + 'g</span>
-                        </div>
-                        <div class="sff-macro-metric">
-                            <span>Carbs</span>
-                            <span>' + formatNumber(totals.carbs) + 'g</span>
-                        </div>
-                        <div class="sff-macro-metric">
-                            <span>Fat</span>
-                            <span>' + formatNumber(totals.fat) + 'g</span>
-                        </div>
-                    ';
-                }
-                card.appendChild(metrics);
-
-                var overallStatus = worstStatus(badgeStatuses);
-                if (overallStatus && overallStatus !== 'neutral') {
-                    card.classList.add('sff-macro-card--' + overallStatus);
+                    appendMetric('Calories', formatNumber(totals.calories), null);
+                    appendMetric('Protein', formatNumber(totals.protein) + 'g', null);
+                    appendMetric('Carbs', formatNumber(totals.carbs) + 'g', null);
+                    appendMetric('Fat', formatNumber(totals.fat) + 'g', null);
                 }
 
-                grid.appendChild(card);
+                var overallStatus = targets ? worstStatus(statuses) : 'neutral';
+                if (!overallStatus) {
+                    overallStatus = 'neutral';
+                }
+                wrapper.classList.add('is-' + overallStatus);
             });
-
-            totalsPanel.classList.toggle('is-empty', !hasMeals);
-
-            if (!hasMeals) {
-                var empty = document.createElement('div');
-                empty.className = 'sff-macro-empty';
-                empty.textContent = 'Drag recipes into the calendar to see daily nutrition totals.';
-                grid.appendChild(empty);
-            }
         }
 
         calendar.addEventListener('click', function (event) {
