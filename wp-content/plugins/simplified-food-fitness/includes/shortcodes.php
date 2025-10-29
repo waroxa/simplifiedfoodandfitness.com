@@ -58,7 +58,7 @@ function sff_meal_dashboard_shortcode() {
         'meta_query'     => [
             [
                 'key'     => '_sff_assigned_users',
-                'value'   => '"' . $user_id . '"',
+                'value'   => serialize($user_id),
                 'compare' => 'LIKE',
             ],
         ],
@@ -1322,7 +1322,7 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
             'meta_query'     => [
                 [
                     'key'     => '_sff_assigned_users',
-                    'value'   => '"' . $user_id . '"',
+                    'value'   => serialize($user_id),
                     'compare' => 'LIKE',
                 ],
             ],
@@ -3555,7 +3555,7 @@ function sff_admin_meal_plan_manager_shortcode($atts = []) {
         'meta_query'     => [
             [
                 'key'     => '_sff_assigned_users',
-                'value'   => '"' . $client_id . '"',
+                'value'   => serialize($client_id),
                 'compare' => 'LIKE',
             ],
         ],

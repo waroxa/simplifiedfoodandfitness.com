@@ -1225,7 +1225,7 @@ function sff_sync_user_recipes_from_assigned_plans($user_id) {
         'meta_query'     => [
             [
                 'key'     => '_sff_assigned_users',
-                'value'   => '"' . $user_id . '"',
+                'value'   => serialize($user_id),
                 'compare' => 'LIKE',
             ],
         ],
