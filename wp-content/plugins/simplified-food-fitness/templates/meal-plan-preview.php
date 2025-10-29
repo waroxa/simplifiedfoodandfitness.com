@@ -73,6 +73,10 @@ $macro_display_map = [
         'precision' => 1,
     ],
 ];
+
+$preview_context      = isset($preview_context) && is_array($preview_context) ? $preview_context : [];
+$preview_client_id    = isset($preview_context['client_id']) ? intval($preview_context['client_id']) : 0;
+$preview_is_admin     = !empty($preview_context['is_admin_preview']);
 ?>
 <div class="sff-meal-plan-preview">
     <div class="sff-panel-header sff-meal-plan-preview__intro">
@@ -178,6 +182,9 @@ $macro_display_map = [
                                     <summary><?php esc_html_e('Swap ingredients', 'simplified-food-fitness'); ?></summary>
                                     <form class="sff-preview-swap-form" data-recipe-id="<?php echo esc_attr($recipe['id']); ?>" data-day="<?php echo esc_attr($day_key); ?>">
                                         <input type="hidden" name="recipe_id" value="<?php echo esc_attr($recipe['id']); ?>">
+                                        <?php if ($preview_is_admin && $preview_client_id) : ?>
+                                            <input type="hidden" name="client_id" value="<?php echo esc_attr($preview_client_id); ?>">
+                                        <?php endif; ?>
 
                                         <?php if (!empty($has_swap_options)) : ?>
                                             <?php foreach ($recipe['ingredients'] as $row) :

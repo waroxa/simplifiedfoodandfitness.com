@@ -1141,6 +1141,235 @@ function sff_get_client_preferences_for_user($user_id) {
     return $preferences;
 }
 
+function sff_extract_recipe_ids_from_plan($plan) {
+    if (is_numeric($plan)) {
+        $plan = get_post(intval($plan));
+    }
+
+    if (!$plan || $plan->post_type !== 'meal_plan') {
+        return [];
+    }
+
+    $raw_schedule = get_post_meta($plan->ID, '_sff_meal_data', true);
+
+    if (is_string($raw_schedule) && $raw_schedule !== '') {
+        $decoded = json_decode($raw_schedule, true);
+        $raw_schedule = is_array($decoded) ? $decoded : [];
+    } elseif (!is_array($raw_schedule)) {
+        $raw_schedule = [];
+    }
+
+    $recipe_ids = [];
+
+    foreach ($raw_schedule as $entries) {
+        if (!is_array($entries)) {
+            continue;
+        }
+
+        foreach ($entries as $recipe_id) {
+            $recipe_id = intval($recipe_id);
+            if ($recipe_id) {
+                $recipe_ids[$recipe_id] = $recipe_id;
+            }
+        }
+    }
+
+    return array_values($recipe_ids);
+}
+
+function sff_prune_user_recipe_customizations($user_id, $allowed_recipe_ids) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return;
+    }
+
+    $allowed_map = [];
+    foreach ((array) $allowed_recipe_ids as $recipe_id) {
+        $recipe_id = intval($recipe_id);
+        if ($recipe_id) {
+            $allowed_map[$recipe_id] = true;
+        }
+    }
+
+    $customizations = sff_get_user_recipe_customizations($user_id);
+    if (empty($customizations)) {
+        return;
+    }
+
+    $changed = false;
+
+    foreach ($customizations as $recipe_id => $config) {
+        $recipe_id = intval($recipe_id);
+        if (!$recipe_id || !isset($allowed_map[$recipe_id])) {
+            unset($customizations[$recipe_id]);
+            $changed = true;
+        }
+    }
+
+    if ($changed) {
+        sff_save_user_recipe_customizations($user_id, $customizations);
+    }
+}
+
+function sff_sync_user_recipes_from_assigned_plans($user_id) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return;
+    }
+
+    $plans = get_posts([
+        'post_type'      => 'meal_plan',
+        'post_status'    => ['publish', 'private'],
+        'numberposts'    => -1,
+        'fields'         => 'ids',
+        'meta_query'     => [
+            [
+                'key'     => '_sff_assigned_users',
+                'value'   => '"' . $user_id . '"',
+                'compare' => 'LIKE',
+            ],
+        ],
+        'suppress_filters' => false,
+    ]);
+
+    $recipe_ids = [];
+
+    foreach ($plans as $plan_id) {
+        foreach (sff_extract_recipe_ids_from_plan($plan_id) as $recipe_id) {
+            if ($recipe_id) {
+                $recipe_ids[$recipe_id] = $recipe_id;
+            }
+        }
+    }
+
+    $recipe_ids = array_values($recipe_ids);
+
+    $current = sff_get_user_assigned_recipe_ids($user_id);
+    $to_add = array_diff($recipe_ids, $current);
+    $to_remove = array_diff($current, $recipe_ids);
+
+    foreach ($to_add as $recipe_id) {
+        $assigned_users = sff_get_recipe_assigned_users($recipe_id);
+        if (!in_array($user_id, $assigned_users, true)) {
+            $assigned_users[] = $user_id;
+            sff_save_recipe_assigned_users($recipe_id, $assigned_users);
+        }
+    }
+
+    foreach ($to_remove as $recipe_id) {
+        $assigned_users = sff_get_recipe_assigned_users($recipe_id);
+        if (in_array($user_id, $assigned_users, true)) {
+            $assigned_users = array_values(array_diff($assigned_users, [$user_id]));
+            sff_save_recipe_assigned_users($recipe_id, $assigned_users);
+        }
+        sff_clear_user_recipe_customization($user_id, $recipe_id);
+    }
+
+    sff_save_user_assigned_recipe_ids($user_id, $recipe_ids);
+    sff_prune_user_recipe_customizations($user_id, $recipe_ids);
+}
+
+function sff_get_page_allowed_users($page_id) {
+    $page_id = intval($page_id);
+    if (!$page_id) {
+        return [];
+    }
+
+    $raw = get_post_meta($page_id, '_sff_allowed_users', true);
+    if (!is_array($raw)) {
+        return [];
+    }
+
+    $ids = [];
+    foreach ($raw as $user_id) {
+        $user_id = intval($user_id);
+        if ($user_id) {
+            $ids[$user_id] = $user_id;
+        }
+    }
+
+    return array_values($ids);
+}
+
+function sff_save_page_allowed_users($page_id, $user_ids) {
+    $page_id = intval($page_id);
+    if (!$page_id) {
+        return;
+    }
+
+    $normalized = [];
+    foreach ((array) $user_ids as $user_id) {
+        $user_id = intval($user_id);
+        if ($user_id) {
+            $normalized[$user_id] = $user_id;
+        }
+    }
+
+    if (!empty($normalized)) {
+        update_post_meta($page_id, '_sff_allowed_users', array_values($normalized));
+    } else {
+        delete_post_meta($page_id, '_sff_allowed_users');
+    }
+}
+
+function sff_get_user_allowed_pages($user_id) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return [];
+    }
+
+    $raw = get_user_meta($user_id, 'sff_allowed_pages', true);
+    if (!is_array($raw)) {
+        return [];
+    }
+
+    $ids = [];
+    foreach ($raw as $page_id) {
+        $page_id = intval($page_id);
+        if ($page_id) {
+            $ids[$page_id] = $page_id;
+        }
+    }
+
+    return array_values($ids);
+}
+
+function sff_sync_user_page_access($user_id, $page_ids) {
+    $user_id = intval($user_id);
+    if (!$user_id) {
+        return;
+    }
+
+    $page_ids = array_map('intval', (array) $page_ids);
+    $page_ids = array_values(array_filter(array_unique($page_ids)));
+
+    $current = sff_get_user_allowed_pages($user_id);
+    $to_add = array_diff($page_ids, $current);
+    $to_remove = array_diff($current, $page_ids);
+
+    foreach ($to_add as $page_id) {
+        $allowed_users = sff_get_page_allowed_users($page_id);
+        if (!in_array($user_id, $allowed_users, true)) {
+            $allowed_users[] = $user_id;
+            sff_save_page_allowed_users($page_id, $allowed_users);
+        }
+    }
+
+    foreach ($to_remove as $page_id) {
+        $allowed_users = sff_get_page_allowed_users($page_id);
+        if (in_array($user_id, $allowed_users, true)) {
+            $allowed_users = array_values(array_diff($allowed_users, [$user_id]));
+            sff_save_page_allowed_users($page_id, $allowed_users);
+        }
+    }
+
+    if (!empty($page_ids)) {
+        update_user_meta($user_id, 'sff_allowed_pages', $page_ids);
+    } else {
+        delete_user_meta($user_id, 'sff_allowed_pages');
+    }
+}
+
 function sff_determine_preference_state_for_name($name, $preferences) {
     $name = is_string($name) ? trim($name) : '';
     if ($name === '' || !is_array($preferences)) {

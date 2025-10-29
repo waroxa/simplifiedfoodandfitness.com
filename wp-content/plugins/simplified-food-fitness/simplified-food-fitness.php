@@ -184,3 +184,44 @@ function sff_woocommerce_login_redirect($redirect, $user) {
     return $redirect;
 }
 add_filter('woocommerce_login_redirect', 'sff_woocommerce_login_redirect', 10, 2);
+
+function sff_guard_restricted_pages() {
+    if (is_admin()) {
+        return;
+    }
+
+    if (!is_page()) {
+        return;
+    }
+
+    $page_id = get_queried_object_id();
+    if (!$page_id) {
+        return;
+    }
+
+    $allowed_users = sff_get_page_allowed_users($page_id);
+    if (empty($allowed_users)) {
+        return;
+    }
+
+    if (current_user_can('manage_options')) {
+        return;
+    }
+
+    if (!is_user_logged_in()) {
+        wp_safe_redirect(wp_login_url(get_permalink($page_id)));
+        exit;
+    }
+
+    $user_id = get_current_user_id();
+    if (in_array($user_id, $allowed_users, true)) {
+        return;
+    }
+
+    wp_die(
+        esc_html__('You do not have access to this page.', 'simplified-food-fitness'),
+        esc_html__('Access restricted', 'simplified-food-fitness'),
+        ['response' => 403]
+    );
+}
+add_action('template_redirect', 'sff_guard_restricted_pages', 9);

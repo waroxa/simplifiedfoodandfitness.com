@@ -1210,7 +1210,23 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
         return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('Please log in to view the meal plan preview.', 'simplified-food-fitness') . '</p>';
     }
 
-    $user_id       = get_current_user_id();
+    $atts = shortcode_atts([
+        'user_id' => 0,
+        'plan_id' => 0,
+    ], $atts, 'sff_meal_plan_preview');
+
+    $current_user_id = get_current_user_id();
+    $requested_user_id = intval($atts['user_id']);
+    $user_id = $current_user_id;
+
+    if ($requested_user_id > 0 && current_user_can('manage_options')) {
+        $user_id = $requested_user_id;
+    }
+
+    if (!$user_id || !get_user_by('id', $user_id)) {
+        return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('Select a valid client to load the preview.', 'simplified-food-fitness') . '</p>';
+    }
+
     $macro_profile = sff_get_user_macro_profile($user_id);
 
     $calorie_target = isset($macro_profile['calories']) && $macro_profile['calories']
@@ -1275,37 +1291,62 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
         }
     }
 
-    $plan_query_args = [
-        'post_type'      => 'meal_plan',
-        'numberposts'    => 1,
-        'orderby'        => 'modified',
-        'order'          => 'DESC',
-        'meta_query'     => [
-            [
-                'key'     => '_sff_assigned_users',
-                'value'   => '"' . $user_id . '"',
-                'compare' => 'LIKE',
-            ],
-        ],
-    ];
+    $requested_plan_id = intval($atts['plan_id']);
+    if ($requested_plan_id <= 0 || !current_user_can('manage_options')) {
+        $requested_plan_id = 0;
+    }
 
-    $meal_plans = get_posts($plan_query_args);
+    $plan_post = null;
 
-    if (empty($meal_plans)) {
-        $fallback = get_posts([
+    if ($requested_plan_id) {
+        $candidate = get_post($requested_plan_id);
+        if ($candidate && $candidate->post_type === 'meal_plan') {
+            $assigned_users = get_post_meta($candidate->ID, '_sff_assigned_users', true);
+            if (!is_array($assigned_users)) {
+                $assigned_users = [];
+            }
+
+            $assigned_users = array_map('intval', $assigned_users);
+            if (in_array($user_id, $assigned_users, true)) {
+                $plan_post = $candidate;
+            }
+        }
+    }
+
+    if (!$plan_post) {
+        $plan_query_args = [
             'post_type'      => 'meal_plan',
             'numberposts'    => 1,
             'orderby'        => 'modified',
             'order'          => 'DESC',
-            'meta_key'       => '_assigned_user',
-            'meta_value'     => strval($user_id),
-        ]);
-        if (!empty($fallback)) {
-            $meal_plans = $fallback;
+            'meta_query'     => [
+                [
+                    'key'     => '_sff_assigned_users',
+                    'value'   => '"' . $user_id . '"',
+                    'compare' => 'LIKE',
+                ],
+            ],
+        ];
+
+        $meal_plans = get_posts($plan_query_args);
+
+        if (empty($meal_plans)) {
+            $fallback = get_posts([
+                'post_type'      => 'meal_plan',
+                'numberposts'    => 1,
+                'orderby'        => 'modified',
+                'order'          => 'DESC',
+                'meta_key'       => '_assigned_user',
+                'meta_value'     => strval($user_id),
+            ]);
+            if (!empty($fallback)) {
+                $meal_plans = $fallback;
+            }
         }
+
+        $plan_post = !empty($meal_plans) ? $meal_plans[0] : null;
     }
 
-    $plan_post          = !empty($meal_plans) ? $meal_plans[0] : null;
     $plan_title         = $plan_post ? get_the_title($plan_post) : '';
     $plan_last_modified = $plan_post ? get_post_modified_time(get_option('date_format'), false, $plan_post, true) : '';
 
@@ -1475,6 +1516,15 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
     $has_swap_options = !empty($personal_options) || !empty($general_options);
 
     $locale = function_exists('get_locale') ? get_locale() : 'en_US';
+
+    $preview_context = [
+        'client_id'        => $user_id,
+        'is_admin_preview' => current_user_can('manage_options') && $user_id !== $current_user_id,
+    ];
+
+    if ($requested_plan_id) {
+        $preview_context['plan_id'] = $requested_plan_id;
+    }
 
     ob_start();
     include SFF_PLUGIN_DIR . 'templates/meal-plan-preview.php';
@@ -3451,5 +3501,358 @@ function sff_client_leads_list_shortcode() {
 add_shortcode('sff_client_leads_list', 'sff_client_leads_list_shortcode');
 
 
+
+
+function sff_admin_meal_plan_manager_shortcode($atts = []) {
+    if (!is_user_logged_in() || !current_user_can('manage_options')) {
+        return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('Administrator access is required to view this dashboard.', 'simplified-food-fitness') . '</p>';
+    }
+
+    $users = get_users([
+        'orderby' => 'display_name',
+        'order'   => 'ASC',
+        'fields'  => ['ID', 'display_name', 'user_email'],
+    ]);
+
+    if (empty($users)) {
+        return '<p style="text-align:center; font-size:18px; color:#777;">' . esc_html__('No clients available yet. Create a user to begin assigning meal plans.', 'simplified-food-fitness') . '</p>';
+    }
+
+    $client_id = isset($_GET['sff_client']) ? intval($_GET['sff_client']) : 0;
+    if ($client_id && !get_user_by('id', $client_id)) {
+        $client_id = 0;
+    }
+    if (!$client_id) {
+        $client_id = $users[0]->ID;
+    }
+
+    $selected_plan_id = isset($_GET['sff_plan']) ? intval($_GET['sff_plan']) : 0;
+
+    $current_page_id = get_queried_object_id();
+    $base_url = $current_page_id ? get_permalink($current_page_id) : home_url('/');
+
+    $notice_key = isset($_GET['sff_message']) ? sanitize_key(wp_unslash($_GET['sff_message'])) : '';
+    $notice_map = [
+        'plan_assigned'   => ['type' => 'success', 'text' => __('Meal plan assigned to client.', 'simplified-food-fitness')],
+        'plan_unassigned' => ['type' => 'success', 'text' => __('Meal plan removed from client.', 'simplified-food-fitness')],
+        'plan_error'      => ['type' => 'error', 'text' => __('We were unable to update that meal plan assignment.', 'simplified-food-fitness')],
+        'pages_saved'     => ['type' => 'success', 'text' => __('Page access updated for the client.', 'simplified-food-fitness')],
+        'pages_error'     => ['type' => 'error', 'text' => __('We were unable to update page access permissions.', 'simplified-food-fitness')],
+    ];
+
+    $notice = ($notice_key && isset($notice_map[$notice_key])) ? $notice_map[$notice_key] : null;
+
+    $preferences    = sff_get_client_preferences_for_user($client_id);
+    $liked_items    = array_values(array_filter(array_unique((array) ($preferences['liked'] ?? []))));
+    $disliked_items = array_values(array_filter(array_unique((array) ($preferences['disliked'] ?? []))));
+
+    $assigned_plan_posts = get_posts([
+        'post_type'      => 'meal_plan',
+        'numberposts'    => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'post_status'    => ['publish', 'private'],
+        'meta_query'     => [
+            [
+                'key'     => '_sff_assigned_users',
+                'value'   => '"' . $client_id . '"',
+                'compare' => 'LIKE',
+            ],
+        ],
+        'suppress_filters' => false,
+    ]);
+
+    $assigned_plan_ids = array_map('intval', wp_list_pluck($assigned_plan_posts, 'ID'));
+    if ($selected_plan_id && !in_array($selected_plan_id, $assigned_plan_ids, true)) {
+        $selected_plan_id = 0;
+    }
+    if (!$selected_plan_id && !empty($assigned_plan_ids)) {
+        $selected_plan_id = $assigned_plan_ids[0];
+    }
+
+    $client_query_args = ['sff_client' => $client_id];
+    $client_url        = add_query_arg($client_query_args, $base_url);
+    $current_view_url  = $selected_plan_id ? add_query_arg(array_merge($client_query_args, ['sff_plan' => $selected_plan_id]), $base_url) : $client_url;
+
+    $all_plans = get_posts([
+        'post_type'      => 'meal_plan',
+        'numberposts'    => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'post_status'    => ['publish', 'private'],
+        'suppress_filters' => false,
+    ]);
+
+    $allowed_pages = sff_get_user_allowed_pages($client_id);
+    $pages = get_pages([
+        'sort_column' => 'post_title',
+        'sort_order'  => 'ASC',
+        'post_status' => ['publish'],
+    ]);
+
+    ob_start();
+    ?>
+    <div class="dashboard-container sff-admin-manager">
+        <div class="dashboard-header">
+            <div class="dashboard-logo">
+                <img src="<?php echo esc_url('https://simplifiedfoodandfitness.com/wp-content/uploads/2024/10/3.png'); ?>" alt="Simplified Food &amp; Fitness" />
+            </div>
+            <div class="dashboard-greeting">
+                <h1><?php esc_html_e('Admin Meal Planning Hub', 'simplified-food-fitness'); ?></h1>
+                <p><?php esc_html_e('Assign plans, manage ingredient swaps, and control page access for each client.', 'simplified-food-fitness'); ?></p>
+            </div>
+        </div>
+
+        <?php if ($notice) : ?>
+            <div class="sff-admin-manager__notice sff-admin-manager__notice--<?php echo esc_attr($notice['type']); ?>">
+                <?php echo esc_html($notice['text']); ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="sff-card sff-admin-manager__card">
+            <div class="sff-card__header">
+                <h3><?php esc_html_e('Step 1 · Choose the client', 'simplified-food-fitness'); ?></h3>
+                <p><?php esc_html_e('Pick the client or account you are customizing so that their preferences and access rules stay in sync.', 'simplified-food-fitness'); ?></p>
+            </div>
+            <form method="get" class="sff-admin-manager__selector">
+                <?php
+                foreach ($_GET as $param_key => $param_value) {
+                    if ($param_key === 'sff_client') {
+                        continue;
+                    }
+                    if (is_array($param_value)) {
+                        continue;
+                    }
+                    $sanitized_key = sanitize_key($param_key);
+                    echo '<input type="hidden" name="' . esc_attr($sanitized_key) . '" value="' . esc_attr(wp_unslash($param_value)) . '" />';
+                }
+                ?>
+                <div class="sff-field">
+                    <label for="sff-client-select"><?php esc_html_e('Client or account', 'simplified-food-fitness'); ?></label>
+                    <select id="sff-client-select" name="sff_client" onchange="this.form.submit()">
+                        <?php foreach ($users as $user_option) :
+                            $label = $user_option->display_name ? $user_option->display_name : $user_option->user_email;
+                            ?>
+                            <option value="<?php echo esc_attr($user_option->ID); ?>" <?php selected($client_id, $user_option->ID); ?>>
+                                <?php echo esc_html($label); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <noscript>
+                    <button type="submit" class="button button-primary"><?php esc_html_e('Load client', 'simplified-food-fitness'); ?></button>
+                </noscript>
+            </form>
+
+            <div class="sff-admin-manager__preferences">
+                <div class="sff-admin-manager__preference-column">
+                    <h4><?php esc_html_e('Liked ingredients', 'simplified-food-fitness'); ?></h4>
+                    <?php if (!empty($liked_items)) : ?>
+                        <ul>
+                            <?php foreach ($liked_items as $item) : ?>
+                                <li class="sff-admin-manager__preference is-liked"><?php echo esc_html($item); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else : ?>
+                        <p class="sff-admin-manager__preferences-empty"><?php esc_html_e('No likes recorded yet.', 'simplified-food-fitness'); ?></p>
+                    <?php endif; ?>
+                </div>
+                <div class="sff-admin-manager__preference-column">
+                    <h4><?php esc_html_e('Disliked ingredients', 'simplified-food-fitness'); ?></h4>
+                    <?php if (!empty($disliked_items)) : ?>
+                        <ul>
+                            <?php foreach ($disliked_items as $item) : ?>
+                                <li class="sff-admin-manager__preference is-disliked"><?php echo esc_html($item); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else : ?>
+                        <p class="sff-admin-manager__preferences-empty"><?php esc_html_e('No dislikes recorded yet.', 'simplified-food-fitness'); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="sff-card sff-admin-manager__card">
+            <div class="sff-card__header">
+                <h3><?php esc_html_e('Step 2 · Assign a meal plan', 'simplified-food-fitness'); ?></h3>
+                <p><?php esc_html_e('Assign at least one plan before customizing ingredients. Removing a plan will clear its swaps for this client.', 'simplified-food-fitness'); ?></p>
+            </div>
+
+            <?php if (empty($all_plans)) : ?>
+                <p class="sff-admin-manager__empty"><?php esc_html_e('No meal plans are available yet. Create a meal plan to get started.', 'simplified-food-fitness'); ?></p>
+            <?php else : ?>
+                <div class="sff-admin-manager__plan-list">
+                    <?php foreach ($all_plans as $plan) :
+                        $is_assigned = in_array($plan->ID, $assigned_plan_ids, true);
+                        $assign_action = $is_assigned ? 'unassign' : 'assign';
+                        $assign_label  = $is_assigned ? __('Remove from client', 'simplified-food-fitness') : __('Assign to client', 'simplified-food-fitness');
+                        $plan_redirect = $is_assigned
+                            ? remove_query_arg('sff_plan', $client_url)
+                            : add_query_arg(['sff_client' => $client_id, 'sff_plan' => $plan->ID], $base_url);
+                        ?>
+                        <div class="sff-admin-manager__plan <?php echo $is_assigned ? 'is-assigned' : ''; ?>">
+                            <div class="sff-admin-manager__plan-main">
+                                <h4><?php echo esc_html(get_the_title($plan)); ?></h4>
+                                <?php if ($is_assigned) : ?>
+                                    <span class="sff-admin-manager__badge"><?php esc_html_e('Assigned', 'simplified-food-fitness'); ?></span>
+                                <?php endif; ?>
+                                <span class="sff-admin-manager__plan-updated"><?php printf(esc_html__('Updated %s', 'simplified-food-fitness'), esc_html(get_post_modified_time(get_option('date_format'), false, $plan, true))); ?></span>
+                            </div>
+                            <div class="sff-admin-manager__plan-actions">
+                                <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-admin-manager__plan-form">
+                                    <?php wp_nonce_field('sff_assign_plan_' . $plan->ID); ?>
+                                    <input type="hidden" name="action" value="sff_assign_plan_to_user">
+                                    <input type="hidden" name="user_id" value="<?php echo esc_attr($client_id); ?>">
+                                    <input type="hidden" name="plan_id" value="<?php echo esc_attr($plan->ID); ?>">
+                                    <input type="hidden" name="plan_action" value="<?php echo esc_attr($assign_action); ?>">
+                                    <input type="hidden" name="redirect" value="<?php echo esc_url($plan_redirect); ?>">
+                                    <button type="submit" class="button <?php echo $is_assigned ? 'button-secondary' : 'button-primary'; ?>">
+                                        <?php echo esc_html($assign_label); ?>
+                                    </button>
+                                </form>
+                                <?php if ($is_assigned) :
+                                    $manage_url = add_query_arg(['sff_client' => $client_id, 'sff_plan' => $plan->ID], $base_url);
+                                    ?>
+                                    <a class="button button-secondary" href="<?php echo esc_url($manage_url); ?>"><?php esc_html_e('Manage in calendar', 'simplified-food-fitness'); ?></a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="sff-card sff-admin-manager__card">
+            <div class="sff-card__header">
+                <h3><?php esc_html_e('Step 3 · Swap ingredients with confidence', 'simplified-food-fitness'); ?></h3>
+                <p><?php esc_html_e('Once a meal plan is assigned, the calendar mirrors the client dashboard. Disliked ingredients glow red and favorites glow green so you can swap at a glance.', 'simplified-food-fitness'); ?></p>
+            </div>
+
+            <?php if ($selected_plan_id) : ?>
+                <div class="sff-admin-manager__legend">
+                    <span class="sff-admin-manager__legend-item is-liked"><?php esc_html_e('Green = Liked', 'simplified-food-fitness'); ?></span>
+                    <span class="sff-admin-manager__legend-item is-disliked"><?php esc_html_e('Red = Disliked', 'simplified-food-fitness'); ?></span>
+                </div>
+                <div class="sff-admin-manager__preview">
+                    <?php echo do_shortcode(sprintf('[sff_meal_plan_preview user_id="%1$d" plan_id="%2$d"]', intval($client_id), intval($selected_plan_id))); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                </div>
+            <?php else : ?>
+                <p class="sff-admin-manager__empty"><?php esc_html_e('Assign a meal plan in Step 2 to unlock ingredient swaps for this client.', 'simplified-food-fitness'); ?></p>
+            <?php endif; ?>
+        </div>
+
+        <div class="sff-card sff-admin-manager__card">
+            <div class="sff-card__header">
+                <h3><?php esc_html_e('Step 4 · Control page access', 'simplified-food-fitness'); ?></h3>
+                <p><?php esc_html_e('Lock down premium content by granting page-by-page access to the selected client or account.', 'simplified-food-fitness'); ?></p>
+            </div>
+
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-admin-manager__pages-form">
+                <?php wp_nonce_field('sff_update_page_access_' . $client_id); ?>
+                <input type="hidden" name="action" value="sff_update_page_access">
+                <input type="hidden" name="user_id" value="<?php echo esc_attr($client_id); ?>">
+                <input type="hidden" name="redirect" value="<?php echo esc_url($current_view_url); ?>">
+
+                <?php if (empty($pages)) : ?>
+                    <p class="sff-admin-manager__empty"><?php esc_html_e('No published pages are available to restrict.', 'simplified-food-fitness'); ?></p>
+                <?php else : ?>
+                    <div class="sff-admin-manager__pages-grid">
+                        <?php foreach ($pages as $page) :
+                            $is_allowed = in_array($page->ID, $allowed_pages, true);
+                            ?>
+                            <label class="sff-admin-manager__page-option">
+                                <input type="checkbox" name="allowed_pages[]" value="<?php echo esc_attr($page->ID); ?>" <?php checked($is_allowed); ?>>
+                                <span><?php echo esc_html(get_the_title($page)); ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="sff-admin-manager__actions">
+                    <button type="submit" class="button button-primary"><?php esc_html_e('Save page access', 'simplified-food-fitness'); ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('sff_admin_meal_manager', 'sff_admin_meal_plan_manager_shortcode');
+
+function sff_handle_assign_plan_to_user() {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have permission to update meal plan assignments.', 'simplified-food-fitness'));
+    }
+
+    $plan_id   = isset($_POST['plan_id']) ? intval($_POST['plan_id']) : 0;
+    $user_id   = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+    $action    = isset($_POST['plan_action']) ? sanitize_key(wp_unslash($_POST['plan_action'])) : 'assign';
+    $redirect  = isset($_POST['redirect']) ? esc_url_raw(wp_unslash($_POST['redirect'])) : home_url('/');
+
+    if (!$plan_id || !$user_id) {
+        $redirect = add_query_arg('sff_message', 'plan_error', $redirect);
+        wp_safe_redirect($redirect);
+        exit;
+    }
+
+    check_admin_referer('sff_assign_plan_' . $plan_id);
+
+    $assigned_users = get_post_meta($plan_id, '_sff_assigned_users', true);
+    if (!is_array($assigned_users)) {
+        $assigned_users = [];
+    }
+    $assigned_users = array_map('intval', $assigned_users);
+
+    $message = 'plan_assigned';
+
+    if ($action === 'unassign') {
+        $assigned_users = array_values(array_diff($assigned_users, [$user_id]));
+        if (!empty($assigned_users)) {
+            update_post_meta($plan_id, '_sff_assigned_users', $assigned_users);
+        } else {
+            delete_post_meta($plan_id, '_sff_assigned_users');
+        }
+        $message  = 'plan_unassigned';
+        $redirect = remove_query_arg('sff_plan', $redirect);
+    } else {
+        if (!in_array($user_id, $assigned_users, true)) {
+            $assigned_users[] = $user_id;
+        }
+        update_post_meta($plan_id, '_sff_assigned_users', array_values($assigned_users));
+        $redirect = add_query_arg('sff_plan', $plan_id, $redirect);
+    }
+
+    sff_sync_user_recipes_from_assigned_plans($user_id);
+
+    $redirect = add_query_arg('sff_message', $message, $redirect);
+    wp_safe_redirect($redirect);
+    exit;
+}
+add_action('admin_post_sff_assign_plan_to_user', 'sff_handle_assign_plan_to_user');
+
+function sff_handle_update_page_access() {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have permission to edit page access.', 'simplified-food-fitness'));
+    }
+
+    $user_id  = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+    $redirect = isset($_POST['redirect']) ? esc_url_raw(wp_unslash($_POST['redirect'])) : home_url('/');
+
+    if (!$user_id) {
+        $redirect = add_query_arg('sff_message', 'pages_error', $redirect);
+        wp_safe_redirect($redirect);
+        exit;
+    }
+
+    check_admin_referer('sff_update_page_access_' . $user_id);
+
+    $page_ids = isset($_POST['allowed_pages']) ? array_map('intval', (array) $_POST['allowed_pages']) : [];
+    sff_sync_user_page_access($user_id, $page_ids);
+
+    $redirect = add_query_arg('sff_message', 'pages_saved', $redirect);
+    wp_safe_redirect($redirect);
+    exit;
+}
+add_action('admin_post_sff_update_page_access', 'sff_handle_update_page_access');
 
 
