@@ -3590,18 +3590,76 @@ function sff_admin_meal_plan_manager_shortcode($atts = []) {
         'post_status' => ['publish'],
     ]);
 
+    $total_clients      = count($users);
+    $total_plans        = count($all_plans);
+    $assigned_plan_count = count($assigned_plan_ids);
+    $admin_user         = wp_get_current_user();
+    $admin_name         = ($admin_user && $admin_user->exists())
+        ? ($admin_user->display_name ? $admin_user->display_name : $admin_user->user_login)
+        : __('Administrator', 'simplified-food-fitness');
+    $selected_plan_title = $selected_plan_id ? get_the_title($selected_plan_id) : '';
+
     ob_start();
     ?>
     <div class="dashboard-container sff-admin-manager">
-        <div class="dashboard-header">
-            <div class="dashboard-logo">
-                <img src="<?php echo esc_url('https://simplifiedfoodandfitness.com/wp-content/uploads/2024/10/3.png'); ?>" alt="Simplified Food &amp; Fitness" />
+        <section class="sff-admin-manager__hero">
+            <div class="sff-admin-manager__hero-main">
+                <div class="sff-admin-manager__identity">
+                    <div class="sff-admin-manager__logo">
+                        <img src="<?php echo esc_url('https://simplifiedfoodandfitness.com/wp-content/uploads/2024/10/3.png'); ?>" alt="<?php esc_attr_e('Simplified Food &amp; Fitness', 'simplified-food-fitness'); ?>" />
+                    </div>
+                    <div class="sff-admin-manager__title-group">
+                        <span class="sff-admin-manager__eyebrow"><?php esc_html_e('Admin Suite', 'simplified-food-fitness'); ?></span>
+                        <h1 class="sff-admin-manager__title"><?php esc_html_e('Admin Meal Planning Hub', 'simplified-food-fitness'); ?></h1>
+                        <p class="sff-admin-manager__subtitle"><?php esc_html_e('Assign plans, manage ingredient swaps, and control page access for every client from a single, refined workspace.', 'simplified-food-fitness'); ?></p>
+                    </div>
+                </div>
+                <div class="sff-admin-manager__meta">
+                    <div class="sff-admin-manager__welcome">
+                        <span class="sff-admin-manager__welcome-title"><?php printf(esc_html__('Hello, %s', 'simplified-food-fitness'), esc_html($admin_name)); ?></span>
+                        <span class="sff-admin-manager__welcome-subtitle"><?php esc_html_e('You are customizing the client experience.', 'simplified-food-fitness'); ?></span>
+                    </div>
+                    <button class="sff-admin-manager__menu-toggle" type="button" aria-expanded="false" aria-controls="sff-admin-manager-nav">
+                        <span class="sff-admin-manager__menu-text"><?php esc_html_e('Menu', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-admin-manager__menu-icon" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </button>
+                </div>
             </div>
-            <div class="dashboard-greeting">
-                <h1><?php esc_html_e('Admin Meal Planning Hub', 'simplified-food-fitness'); ?></h1>
-                <p><?php esc_html_e('Assign plans, manage ingredient swaps, and control page access for each client.', 'simplified-food-fitness'); ?></p>
+            <div class="sff-admin-manager__stats" role="list">
+                <div class="sff-admin-manager__stat" role="listitem">
+                    <span class="sff-admin-manager__stat-label"><?php esc_html_e('Active clients', 'simplified-food-fitness'); ?></span>
+                    <span class="sff-admin-manager__stat-value"><?php echo esc_html(number_format_i18n($total_clients)); ?></span>
+                </div>
+                <div class="sff-admin-manager__stat" role="listitem">
+                    <span class="sff-admin-manager__stat-label"><?php esc_html_e('Meal plans available', 'simplified-food-fitness'); ?></span>
+                    <span class="sff-admin-manager__stat-value"><?php echo esc_html(number_format_i18n($total_plans)); ?></span>
+                </div>
+                <div class="sff-admin-manager__stat" role="listitem">
+                    <span class="sff-admin-manager__stat-label"><?php esc_html_e('Plans assigned to client', 'simplified-food-fitness'); ?></span>
+                    <span class="sff-admin-manager__stat-value"><?php echo esc_html(number_format_i18n($assigned_plan_count)); ?></span>
+                </div>
+                <?php if ($selected_plan_title) : ?>
+                    <div class="sff-admin-manager__stat is-highlight" role="listitem">
+                        <span class="sff-admin-manager__stat-label"><?php esc_html_e('Focused plan', 'simplified-food-fitness'); ?></span>
+                        <span class="sff-admin-manager__stat-value"><?php echo esc_html($selected_plan_title); ?></span>
+                    </div>
+                <?php endif; ?>
             </div>
-        </div>
+            <nav id="sff-admin-manager-nav" class="sff-admin-manager__nav" aria-label="<?php esc_attr_e('Admin navigation', 'simplified-food-fitness'); ?>">
+                <ul>
+                    <li><a href="<?php echo esc_url(home_url('/dashboard/')); ?>"><?php esc_html_e('Client Dashboard', 'simplified-food-fitness'); ?></a></li>
+                    <li><a href="<?php echo esc_url(admin_url('users.php')); ?>"><?php esc_html_e('Manage Clients', 'simplified-food-fitness'); ?></a></li>
+                    <li><a href="<?php echo esc_url(admin_url('edit.php?post_type=meal_plan')); ?>"><?php esc_html_e('Meal Plans', 'simplified-food-fitness'); ?></a></li>
+                    <li><a href="<?php echo esc_url(home_url('/ingredient-library/')); ?>"><?php esc_html_e('Ingredient Library', 'simplified-food-fitness'); ?></a></li>
+                    <li><a href="<?php echo esc_url(home_url('/add-ingredient/')); ?>"><?php esc_html_e('Add Ingredient', 'simplified-food-fitness'); ?></a></li>
+                    <li><a href="<?php echo esc_url(wp_logout_url(home_url())); ?>"><?php esc_html_e('Logout', 'simplified-food-fitness'); ?></a></li>
+                </ul>
+            </nav>
+        </section>
 
         <?php if ($notice) : ?>
             <div class="sff-admin-manager__notice sff-admin-manager__notice--<?php echo esc_attr($notice['type']); ?>">
