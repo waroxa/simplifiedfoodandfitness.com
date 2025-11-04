@@ -1387,6 +1387,14 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
 
     $schedule      = [];
     $recipe_id_map = [];
+    $default_time_slots = [
+        __('6:30 AM', 'simplified-food-fitness'),
+        __('9:30 AM', 'simplified-food-fitness'),
+        __('12:30 PM', 'simplified-food-fitness'),
+        __('3:30 PM', 'simplified-food-fitness'),
+        __('6:30 PM', 'simplified-food-fitness'),
+        __('8:30 PM', 'simplified-food-fitness'),
+    ];
     foreach ($day_order as $index => $day) {
         $type_slug = isset($selected_day_types[$day]) && isset($day_targets[$selected_day_types[$day]])
             ? $selected_day_types[$day]
@@ -1417,6 +1425,19 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
         $ingredient_rows   = sff_get_recipe_ingredient_details_with_overrides($recipe_id, $override);
         $ingredients_html  = sff_render_preview_ingredient_list($ingredient_rows, $preferences);
         $recipe_macros     = sff_get_recipe_macros_with_overrides($recipe_id, $override, false);
+        $time_meta_keys    = ['sff_meal_meta_time', '_sff_meal_meta_time', 'sff_meal_time', '_sff_meal_time', 'meal_time'];
+        $preferred_time    = '';
+
+        foreach ($time_meta_keys as $meta_key) {
+            $candidate = get_post_meta($recipe_id, $meta_key, true);
+            if (!empty($candidate)) {
+                $preferred_time = is_string($candidate) ? $candidate : '';
+                if ($preferred_time) {
+                    break;
+                }
+            }
+        }
+
         $macro_snapshot    = [
             'calories' => isset($recipe_macros['calories']) ? floatval($recipe_macros['calories']) : 0.0,
             'protein'  => isset($recipe_macros['protein']) ? floatval($recipe_macros['protein']) : 0.0,
@@ -1432,6 +1453,7 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
             'ingredients_html'  => $ingredients_html,
             'swaps'             => isset($override['ingredients']) ? array_map('intval', (array) $override['ingredients']) : [],
             'has_customization' => !empty($override['ingredients']),
+            'preferred_time'    => $preferred_time,
         ];
     }
 
@@ -1488,16 +1510,24 @@ function sff_weekly_meal_plan_preview_shortcode($atts = []) {
             'fat'      => 0.0,
         ];
 
+        $slot_index = 0;
         foreach ($schedule[$day] as $recipe_id) {
             if (!isset($recipes_cache[$recipe_id])) {
                 continue;
             }
 
             $entry = $recipes_cache[$recipe_id];
+            $time_label = $entry['preferred_time'];
+            if ('' === $time_label) {
+                $time_label = $default_time_slots[$slot_index % count($default_time_slots)];
+            }
+
+            $entry['time_label'] = $time_label;
             $recipes[] = $entry;
             foreach ($totals as $metric => $value) {
                 $totals[$metric] += isset($entry['macros'][$metric]) ? floatval($entry['macros'][$metric]) : 0.0;
             }
+            $slot_index++;
         }
 
         if (!empty($recipes)) {
@@ -3544,11 +3574,15 @@ function sff_admin_meal_plan_manager_shortcode($atts = []) {
 
     $notice_key = isset($_GET['sff_message']) ? sanitize_key(wp_unslash($_GET['sff_message'])) : '';
     $notice_map = [
-        'plan_assigned'   => ['type' => 'success', 'text' => __('Meal plan assigned to client.', 'simplified-food-fitness')],
-        'plan_unassigned' => ['type' => 'success', 'text' => __('Meal plan removed from client.', 'simplified-food-fitness')],
-        'plan_error'      => ['type' => 'error', 'text' => __('We were unable to update that meal plan assignment.', 'simplified-food-fitness')],
-        'pages_saved'     => ['type' => 'success', 'text' => __('Page access updated for the client.', 'simplified-food-fitness')],
-        'pages_error'     => ['type' => 'error', 'text' => __('We were unable to update page access permissions.', 'simplified-food-fitness')],
+        'plan_assigned'      => ['type' => 'success', 'text' => __('Meal plan assigned to client.', 'simplified-food-fitness')],
+        'plan_unassigned'    => ['type' => 'success', 'text' => __('Meal plan removed from client.', 'simplified-food-fitness')],
+        'plan_error'         => ['type' => 'error', 'text' => __('We were unable to update that meal plan assignment.', 'simplified-food-fitness')],
+        'plan_created'       => ['type' => 'success', 'text' => __('Meal plan created. Start building it below.', 'simplified-food-fitness')],
+        'plan_create_error'  => ['type' => 'error', 'text' => __('We could not create that meal plan. Please try again.', 'simplified-food-fitness')],
+        'plan_saved'         => ['type' => 'success', 'text' => __('Meal plan layout saved.', 'simplified-food-fitness')],
+        'plan_save_error'    => ['type' => 'error', 'text' => __('We were unable to save the meal plan layout.', 'simplified-food-fitness')],
+        'pages_saved'        => ['type' => 'success', 'text' => __('Page access updated for the client.', 'simplified-food-fitness')],
+        'pages_error'        => ['type' => 'error', 'text' => __('We were unable to update page access permissions.', 'simplified-food-fitness')],
     ];
 
     $notice = ($notice_key && isset($notice_map[$notice_key])) ? $notice_map[$notice_key] : null;
@@ -3623,6 +3657,140 @@ function sff_admin_meal_plan_manager_shortcode($atts = []) {
         'sort_order'  => 'ASC',
         'post_status' => ['publish'],
     ]);
+
+    $macro_profile  = sff_get_user_macro_profile($client_id);
+    $calorie_target = isset($macro_profile['calories']) && $macro_profile['calories']
+        ? floatval($macro_profile['calories'])
+        : 2000;
+
+    $day_type_configs = sff_get_day_type_macros();
+    $day_targets      = [];
+    foreach ($day_type_configs as $slug => $config) {
+        $percentages = [
+            'carb_percent'    => floatval($config['carbs']),
+            'protein_percent' => floatval($config['protein']),
+            'fat_percent'     => floatval($config['fat']),
+        ];
+        $calculated = sff_calculate_macro_targets_from_percentages($calorie_target, $percentages);
+        $day_targets[$slug] = [
+            'label'       => $config['label'],
+            'calories'    => round($calculated['calories']),
+            'protein'     => round($calculated['protein'], 1),
+            'carbs'       => round($calculated['carbs'], 1),
+            'fat'         => round($calculated['fat'], 1),
+            'percentages' => [
+                'protein' => $percentages['protein_percent'],
+                'carbs'   => $percentages['carb_percent'],
+                'fat'     => $percentages['fat_percent'],
+            ],
+        ];
+    }
+
+    if (empty($day_targets)) {
+        $day_targets['standard'] = [
+            'label'       => __('Standard', 'simplified-food-fitness'),
+            'calories'    => round($calorie_target),
+            'protein'     => round(($calorie_target * 0.3) / 4, 1),
+            'carbs'       => round(($calorie_target * 0.4) / 4, 1),
+            'fat'         => round(($calorie_target * 0.3) / 9, 1),
+            'percentages' => ['protein' => 30, 'carbs' => 40, 'fat' => 30],
+        ];
+    }
+
+    $day_order = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    $day_labels = [
+        'monday'    => __('Monday', 'simplified-food-fitness'),
+        'tuesday'   => __('Tuesday', 'simplified-food-fitness'),
+        'wednesday' => __('Wednesday', 'simplified-food-fitness'),
+        'thursday'  => __('Thursday', 'simplified-food-fitness'),
+        'friday'    => __('Friday', 'simplified-food-fitness'),
+        'saturday'  => __('Saturday', 'simplified-food-fitness'),
+        'sunday'    => __('Sunday', 'simplified-food-fitness'),
+    ];
+
+    $selected_day_types = [];
+    $stored_schedule    = [];
+
+    if ($selected_plan_id) {
+        $raw_schedule = get_post_meta($selected_plan_id, '_sff_meal_data', true);
+        if (is_string($raw_schedule)) {
+            $decoded = json_decode($raw_schedule, true);
+            if (is_array($decoded)) {
+                $stored_schedule = $decoded;
+            }
+        } elseif (is_array($raw_schedule)) {
+            $stored_schedule = $raw_schedule;
+        }
+
+        $saved_day_types = get_post_meta($selected_plan_id, '_sff_day_types', true);
+        if (is_array($saved_day_types)) {
+            $selected_day_types = $saved_day_types;
+        }
+    }
+
+    $type_keys = array_keys($day_targets);
+    $type_count = max(1, count($type_keys));
+
+    $schedule = [];
+    foreach ($day_order as $index => $day_key) {
+        $preferred_type = isset($selected_day_types[$day_key]) && isset($day_targets[$selected_day_types[$day_key]])
+            ? $selected_day_types[$day_key]
+            : $type_keys[$index % $type_count];
+        $selected_day_types[$day_key] = $preferred_type;
+
+        $schedule[$day_key] = [];
+        if (isset($stored_schedule[$day_key]) && is_array($stored_schedule[$day_key])) {
+            foreach ($stored_schedule[$day_key] as $recipe_id) {
+                $recipe_id = intval($recipe_id);
+                if ($recipe_id) {
+                    $schedule[$day_key][] = $recipe_id;
+                }
+            }
+        }
+    }
+
+    $builder_schedule_serialized = [];
+    foreach ($schedule as $day_key => $recipe_ids) {
+        $builder_schedule_serialized[$day_key] = array_values(array_map('intval', (array) $recipe_ids));
+    }
+
+    $builder_schedule_json   = wp_json_encode($builder_schedule_serialized);
+    $builder_day_types_json  = wp_json_encode($selected_day_types);
+    $builder_recipes_data    = [];
+    $builder_recipe_macros   = [];
+    $recipe_posts_for_builder = get_posts([
+        'post_type'      => 'recipe',
+        'numberposts'    => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+        'post_status'    => ['publish', 'private'],
+        'suppress_filters' => false,
+    ]);
+
+    foreach ($recipe_posts_for_builder as $recipe_post) {
+        $builder_recipes_data[]             = ['id' => $recipe_post->ID, 'title' => $recipe_post->post_title];
+        $builder_recipe_macros[$recipe_post->ID] = sff_get_recipe_macros($recipe_post->ID, true);
+    }
+
+    if ($selected_plan_id) {
+        wp_enqueue_script('sortablejs');
+        wp_enqueue_script('sff-meal-plan-calendar');
+        wp_localize_script('sff-meal-plan-calendar', 'sffMealPlan', [
+            'recipes'          => $builder_recipes_data,
+            'schedule'         => $builder_schedule_serialized,
+            'macros'           => $builder_recipe_macros,
+            'ajaxUrl'          => admin_url('admin-ajax.php'),
+            'nonce'            => wp_create_nonce('sff_meal_plan_js'),
+            'selectedDayTypes' => $selected_day_types,
+            'dayTypeOptions'   => $day_targets,
+            'calorieTarget'    => $calorie_target,
+            'timeSlots'        => $default_time_slots,
+            'i18n'             => [
+                'slotPlaceholder' => __('Drag meal here', 'simplified-food-fitness'),
+                'emptyDay'        => __('No meals scheduled yet. Drag recipes into the timeline.', 'simplified-food-fitness'),
+            ],
+        ]);
+    }
 
     $total_clients      = count($users);
     $total_plans        = count($all_plans);
@@ -3766,8 +3934,8 @@ function sff_admin_meal_plan_manager_shortcode($atts = []) {
 
         <div class="sff-card sff-admin-manager__card">
             <div class="sff-card__header">
-                <h3><?php esc_html_e('Step 2 · Assign a meal plan', 'simplified-food-fitness'); ?></h3>
-                <p><?php esc_html_e('Assign at least one plan before customizing ingredients. Removing a plan will clear its swaps for this client.', 'simplified-food-fitness'); ?></p>
+                <h3><?php esc_html_e('Step 2 · Build the meal plan', 'simplified-food-fitness'); ?></h3>
+                <p><?php esc_html_e('Capture the plan name, shape the calendar, and decide exactly when meals appear before assigning it to your client.', 'simplified-food-fitness'); ?></p>
             </div>
 
             <div class="sff-admin-manager__quick-links" role="group" aria-label="<?php esc_attr_e('Meal planning shortcuts', 'simplified-food-fitness'); ?>">
@@ -3777,149 +3945,191 @@ function sff_admin_meal_plan_manager_shortcode($atts = []) {
                 <a class="sff-admin-manager__quick-link" href="<?php echo esc_url(home_url('/add-ingredient/')); ?>"><?php esc_html_e('Add ingredient', 'simplified-food-fitness'); ?></a>
             </div>
 
-            <?php if (empty($all_plans)) : ?>
-                <p class="sff-admin-manager__empty"><?php esc_html_e('No meal plans are available yet. Create a meal plan to get started.', 'simplified-food-fitness'); ?></p>
-            <?php else : ?>
-                <div class="sff-admin-manager__plan-controls">
-                    <div class="sff-admin-manager__plan-toolbar">
-                        <div class="sff-admin-manager__plan-tool">
-                            <h4><?php esc_html_e('Search available plans', 'simplified-food-fitness'); ?></h4>
-                            <p class="sff-admin-manager__plan-copy"><?php esc_html_e('Find plans by name and keep this workspace focused on what you need.', 'simplified-food-fitness'); ?></p>
-                            <form method="get" class="sff-admin-manager__plan-search sff-admin-manager__selector">
-                                <?php
-                                foreach ($_GET as $param_key => $param_value) {
-                                    if ('sff_plan_search' === $param_key) {
-                                        continue;
-                                    }
-                                    if (is_array($param_value)) {
-                                        continue;
-                                    }
-                                    $sanitized_key = sanitize_key($param_key);
-                                    echo '<input type="hidden" name="' . esc_attr($sanitized_key) . '" value="' . esc_attr(wp_unslash($param_value)) . '" />';
-                                }
-                                ?>
-                                <div class="sff-field">
-                                    <label for="sff-plan-search"><?php esc_html_e('Search meal plans', 'simplified-food-fitness'); ?></label>
-                                    <div class="sff-admin-manager__plan-search-input">
-                                        <input type="search" id="sff-plan-search" name="sff_plan_search" value="<?php echo esc_attr($plan_search_query); ?>" placeholder="<?php esc_attr_e('Start typing a meal plan name', 'simplified-food-fitness'); ?>" />
-                                        <button type="submit" class="button button-secondary"><?php esc_html_e('Search', 'simplified-food-fitness'); ?></button>
-                                        <?php if ('' !== $plan_search_query) : ?>
-                                            <a class="button button-link" href="<?php echo esc_url(remove_query_arg('sff_plan_search')); ?>"><?php esc_html_e('Clear search', 'simplified-food-fitness'); ?></a>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </form>
+            <div class="sff-admin-manager__plan-controls">
+                <div class="sff-admin-manager__plan-tool sff-admin-manager__plan-tool--create">
+                    <h4><?php esc_html_e('Create a reusable plan name', 'simplified-food-fitness'); ?></h4>
+                    <p class="sff-admin-manager__plan-copy"><?php esc_html_e('Save the name so the plan stays in your library for future assignments.', 'simplified-food-fitness'); ?></p>
+                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-admin-manager__plan-create">
+                        <?php wp_nonce_field('sff_create_meal_plan'); ?>
+                        <input type="hidden" name="action" value="sff_create_meal_plan">
+                        <input type="hidden" name="redirect" value="<?php echo esc_url($current_view_url); ?>">
+                        <div class="sff-field">
+                            <label for="sff-plan-name"><?php esc_html_e('Plan name', 'simplified-food-fitness'); ?></label>
+                            <input type="text" id="sff-plan-name" name="plan_title" placeholder="<?php esc_attr_e('e.g., Performance Reset Week', 'simplified-food-fitness'); ?>" required>
                         </div>
-
-                        <div class="sff-admin-manager__plan-tool">
-                            <h4><?php esc_html_e('Assign or remove plans', 'simplified-food-fitness'); ?></h4>
-                            <p class="sff-admin-manager__plan-copy"><?php esc_html_e('Select a plan and instantly assign it to this client or remove it when you are done.', 'simplified-food-fitness'); ?></p>
-                            <?php if (!empty($available_plan_options)) :
-                                $assign_button_class = $plan_selector_is_assigned ? 'button button-secondary' : 'button button-primary';
-                                ?>
-                                <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-admin-manager__plan-selector">
-                                    <?php if ($plan_selector_default_id) : ?>
-                                        <?php wp_nonce_field('sff_assign_plan_' . $plan_selector_default_id); ?>
-                                    <?php endif; ?>
-                                    <input type="hidden" name="action" value="sff_assign_plan_to_user">
-                                    <input type="hidden" name="user_id" value="<?php echo esc_attr($client_id); ?>">
-                                    <input type="hidden" name="plan_action" id="sff-plan-action" value="<?php echo esc_attr($plan_selector_is_assigned ? 'unassign' : 'assign'); ?>">
-                                    <input type="hidden" name="redirect" value="<?php echo esc_url($plan_selector_redirect); ?>">
-                                    <div class="sff-field">
-                                        <label for="sff-plan-select"><?php esc_html_e('Select a meal plan', 'simplified-food-fitness'); ?></label>
-                                        <select id="sff-plan-select" name="plan_id">
-                                            <?php foreach ($available_plan_options as $plan_option) :
-                                                $is_option_assigned = in_array($plan_option->ID, $assigned_plan_ids, true);
-                                                $option_nonce       = wp_create_nonce('sff_assign_plan_' . $plan_option->ID);
-                                                ?>
-                                                <option value="<?php echo esc_attr($plan_option->ID); ?>" <?php selected($plan_selector_default_id, intval($plan_option->ID)); ?> data-assigned="<?php echo esc_attr($is_option_assigned ? '1' : '0'); ?>" data-nonce="<?php echo esc_attr($option_nonce); ?>">
-                                                    <?php echo esc_html(get_the_title($plan_option)); ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class="sff-admin-manager__plan-selector-actions">
-                                        <button type="submit" id="sff-plan-submit" class="<?php echo esc_attr($assign_button_class); ?>" data-base-class="<?php echo esc_attr(trim(str_replace(['button-primary', 'button-secondary'], '', $assign_button_class))); ?>" data-assign-text="<?php esc_attr_e('Assign to client', 'simplified-food-fitness'); ?>" data-unassign-text="<?php esc_attr_e('Remove from client', 'simplified-food-fitness'); ?>">
-                                            <?php echo esc_html($plan_selector_is_assigned ? __('Remove from client', 'simplified-food-fitness') : __('Assign to client', 'simplified-food-fitness')); ?>
-                                        </button>
-                                    </div>
-                                </form>
-                                <script>
-                                    document.addEventListener('DOMContentLoaded', function () {
-                                        var planSelect = document.getElementById('sff-plan-select');
-                                        var actionInput = document.getElementById('sff-plan-action');
-                                        var submitButton = document.getElementById('sff-plan-submit');
-                                        var planForm = document.querySelector('form.sff-admin-manager__plan-selector');
-                                        var nonceInput = planForm ? planForm.querySelector('input[name="_wpnonce"]') : null;
-                                        if (!planSelect || !actionInput || !submitButton) {
-                                            return;
-                                        }
-                                        var baseClass = (submitButton.getAttribute('data-base-class') || 'button').trim();
-                                        var assignText = submitButton.getAttribute('data-assign-text');
-                                        var unassignText = submitButton.getAttribute('data-unassign-text');
-
-                                        var updatePlanState = function () {
-                                            var selectedOption = planSelect.options[planSelect.selectedIndex];
-                                            if (!selectedOption) {
-                                                return;
-                                            }
-                                            var isAssigned = selectedOption.getAttribute('data-assigned') === '1';
-                                            var nonce = selectedOption.getAttribute('data-nonce');
-                                            actionInput.value = isAssigned ? 'unassign' : 'assign';
-                                            submitButton.textContent = isAssigned ? unassignText : assignText;
-                                            submitButton.className = baseClass + ' ' + (isAssigned ? 'button-secondary' : 'button-primary');
-                                            if (nonceInput) {
-                                                nonceInput.value = nonce ? nonce : '';
-                                            }
-                                        };
-
-                                        updatePlanState();
-                                        planSelect.addEventListener('change', updatePlanState);
-                                    });
-                                </script>
-                            <?php else : ?>
-                                <p class="sff-admin-manager__empty"><?php esc_html_e('No meal plans matched your search. Try a different name.', 'simplified-food-fitness'); ?></p>
-                            <?php endif; ?>
+                        <div class="sff-admin-manager__actions">
+                            <button type="submit" class="button button-secondary"><?php esc_html_e('Save plan name', 'simplified-food-fitness'); ?></button>
                         </div>
-                    </div>
-
-                    <?php if ($plan_option_overflow) : ?>
-                        <p class="sff-admin-manager__hint"><?php printf(esc_html__('Only the first %d results are shown. Refine your search to narrow the list.', 'simplified-food-fitness'), intval($plan_option_limit)); ?></p>
-                    <?php endif; ?>
+                    </form>
                 </div>
 
-                <?php if (!empty($assigned_plans)) : ?>
-                    <div class="sff-admin-manager__plan-list">
-                        <?php foreach ($assigned_plans as $plan) :
-                            $manage_url    = add_query_arg(array_merge($plan_selector_redirect_args, ['sff_plan' => $plan->ID]), $base_url);
-                            $plan_redirect = remove_query_arg('sff_plan', $plan_selector_redirect_base);
-                            ?>
-                            <div class="sff-admin-manager__plan is-assigned<?php echo $selected_plan_id === intval($plan->ID) ? ' is-active' : ''; ?>">
-                                <div class="sff-admin-manager__plan-main">
-                                    <h4><?php echo esc_html(get_the_title($plan)); ?></h4>
-                                    <span class="sff-admin-manager__badge"><?php esc_html_e('Assigned', 'simplified-food-fitness'); ?></span>
-                                    <span class="sff-admin-manager__plan-updated"><?php printf(esc_html__('Updated %s', 'simplified-food-fitness'), esc_html(get_post_modified_time(get_option('date_format'), false, $plan, true))); ?></span>
-                                </div>
-                                <div class="sff-admin-manager__plan-actions">
-                                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-admin-manager__plan-form">
-                                        <?php wp_nonce_field('sff_assign_plan_' . $plan->ID); ?>
-                                        <input type="hidden" name="action" value="sff_assign_plan_to_user">
-                                        <input type="hidden" name="user_id" value="<?php echo esc_attr($client_id); ?>">
-                                        <input type="hidden" name="plan_id" value="<?php echo esc_attr($plan->ID); ?>">
-                                        <input type="hidden" name="plan_action" value="unassign">
-                                        <input type="hidden" name="redirect" value="<?php echo esc_url($plan_redirect); ?>">
-                                        <button type="submit" class="button button-secondary">
-                                            <?php esc_html_e('Remove from client', 'simplified-food-fitness'); ?>
-                                        </button>
-                                    </form>
-                                    <a class="button button-secondary" href="<?php echo esc_url($manage_url); ?>"><?php esc_html_e('Manage in calendar', 'simplified-food-fitness'); ?></a>
-                                </div>
+                <div class="sff-admin-manager__plan-tool sff-admin-manager__plan-tool--assign">
+                    <h4><?php esc_html_e('Assign or remove plans', 'simplified-food-fitness'); ?></h4>
+                    <p class="sff-admin-manager__plan-copy"><?php esc_html_e('Select a plan to attach it to this client or remove it when you are finished.', 'simplified-food-fitness'); ?></p>
+                    <?php if (!empty($available_plan_options)) :
+                        $assign_button_class = $plan_selector_is_assigned ? 'button button-secondary' : 'button button-primary';
+                        ?>
+                        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-admin-manager__plan-selector">
+                            <?php if ($plan_selector_default_id) : ?>
+                                <?php wp_nonce_field('sff_assign_plan_' . $plan_selector_default_id); ?>
+                            <?php endif; ?>
+                            <input type="hidden" name="action" value="sff_assign_plan_to_user">
+                            <input type="hidden" name="user_id" value="<?php echo esc_attr($client_id); ?>">
+                            <input type="hidden" name="plan_action" id="sff-plan-action" value="<?php echo esc_attr($plan_selector_is_assigned ? 'unassign' : 'assign'); ?>">
+                            <input type="hidden" name="redirect" value="<?php echo esc_url($plan_selector_redirect); ?>">
+                            <div class="sff-field">
+                                <label for="sff-plan-select"><?php esc_html_e('Select a meal plan', 'simplified-food-fitness'); ?></label>
+                                <select id="sff-plan-select" name="plan_id">
+                                    <?php foreach ($available_plan_options as $plan_option) :
+                                        $is_option_assigned = in_array($plan_option->ID, $assigned_plan_ids, true);
+                                        $option_nonce       = wp_create_nonce('sff_assign_plan_' . $plan_option->ID);
+                                        ?>
+                                        <option value="<?php echo esc_attr($plan_option->ID); ?>" <?php selected($plan_selector_default_id, intval($plan_option->ID)); ?> data-assigned="<?php echo esc_attr($is_option_assigned ? '1' : '0'); ?>" data-nonce="<?php echo esc_attr($option_nonce); ?>">
+                                            <?php echo esc_html(get_the_title($plan_option)); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else : ?>
-                    <p class="sff-admin-manager__empty"><?php esc_html_e('This client does not have any assigned meal plans yet. Use the selector above to assign one.', 'simplified-food-fitness'); ?></p>
-                <?php endif; ?>
+                            <div class="sff-admin-manager__plan-selector-actions">
+                                <button type="submit" id="sff-plan-submit" class="<?php echo esc_attr($assign_button_class); ?>" data-base-class="<?php echo esc_attr(trim(str_replace(['button-primary', 'button-secondary'], '', $assign_button_class))); ?>" data-assign-text="<?php esc_attr_e('Assign to client', 'simplified-food-fitness'); ?>" data-unassign-text="<?php esc_attr_e('Remove from client', 'simplified-food-fitness'); ?>">
+                                    <?php echo esc_html($plan_selector_is_assigned ? __('Remove from client', 'simplified-food-fitness') : __('Assign to client', 'simplified-food-fitness')); ?>
+                                </button>
+                            </div>
+                        </form>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var planSelect = document.getElementById('sff-plan-select');
+                                var actionInput = document.getElementById('sff-plan-action');
+                                var submitButton = document.getElementById('sff-plan-submit');
+                                var planForm = document.querySelector('form.sff-admin-manager__plan-selector');
+                                var nonceInput = planForm ? planForm.querySelector('input[name="_wpnonce"]') : null;
+                                if (!planSelect || !actionInput || !submitButton) {
+                                    return;
+                                }
+                                var baseClass = (submitButton.getAttribute('data-base-class') || 'button').trim();
+                                var assignText = submitButton.getAttribute('data-assign-text');
+                                var unassignText = submitButton.getAttribute('data-unassign-text');
+
+                                var updatePlanState = function () {
+                                    var selectedOption = planSelect.options[planSelect.selectedIndex];
+                                    if (!selectedOption) {
+                                        return;
+                                    }
+                                    var isAssigned = selectedOption.getAttribute('data-assigned') === '1';
+                                    var nonce = selectedOption.getAttribute('data-nonce');
+                                    actionInput.value = isAssigned ? 'unassign' : 'assign';
+                                    submitButton.textContent = isAssigned ? unassignText : assignText;
+                                    submitButton.className = baseClass + ' ' + (isAssigned ? 'button-secondary' : 'button-primary');
+                                    if (nonceInput) {
+                                        nonceInput.value = nonce ? nonce : '';
+                                    }
+                                };
+
+                                updatePlanState();
+                                planSelect.addEventListener('change', updatePlanState);
+                            });
+                        </script>
+                        <?php if ($plan_option_overflow) : ?>
+                            <p class="sff-admin-manager__hint"><?php printf(esc_html__('Only the first %d plans are shown here. Archive older layouts or rename plans to keep this list focused.', 'simplified-food-fitness'), intval($plan_option_limit)); ?></p>
+                        <?php endif; ?>
+                    <?php else : ?>
+                        <p class="sff-admin-manager__empty"><?php esc_html_e('Create a meal plan name to begin assigning it to clients.', 'simplified-food-fitness'); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <?php if ($selected_plan_id) : ?>
+                <div class="sff-admin-manager__plan-builder">
+                    <h4><?php esc_html_e('Design the weekly schedule', 'simplified-food-fitness'); ?></h4>
+                    <p class="sff-admin-manager__plan-copy"><?php esc_html_e('Drag recipes from the bank into each day and time of day so the plan reflects exactly what your client should follow.', 'simplified-food-fitness'); ?></p>
+                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-admin-manager__plan-builder-form">
+                        <?php wp_nonce_field('sff_save_plan_from_hub_' . $selected_plan_id); ?>
+                        <input type="hidden" name="action" value="sff_save_plan_from_hub">
+                        <input type="hidden" name="plan_id" value="<?php echo esc_attr($selected_plan_id); ?>">
+                        <input type="hidden" name="client_id" value="<?php echo esc_attr($client_id); ?>">
+                        <input type="hidden" name="redirect" value="<?php echo esc_url($current_view_url); ?>">
+
+                        <div class="sff-field sff-field--wide">
+                            <label for="sff-plan-title"><?php esc_html_e('Meal plan name', 'simplified-food-fitness'); ?></label>
+                            <input type="text" id="sff-plan-title" name="plan_title" value="<?php echo esc_attr($selected_plan_title); ?>" required>
+                        </div>
+
+                        <div class="sff-admin-manager__builder-grid">
+                            <section class="sff-admin-manager__builder-column sff-admin-manager__builder-column--recipes" aria-label="<?php esc_attr_e('Recipe bank', 'simplified-food-fitness'); ?>">
+                                <div class="sff-panel-header">
+                                    <h5><?php esc_html_e('Recipe bank', 'simplified-food-fitness'); ?></h5>
+                                    <p><?php esc_html_e('Drag recipes into the calendar tiles that match the best time of day.', 'simplified-food-fitness'); ?></p>
+                                </div>
+                                <div id="sff-recipe-list" class="sff-recipe-pool" aria-live="polite"></div>
+                            </section>
+
+                            <section class="sff-admin-manager__builder-column sff-admin-manager__builder-column--calendar" aria-label="<?php esc_attr_e('Weekly meal calendar', 'simplified-food-fitness'); ?>">
+                                <div class="sff-panel-header">
+                                    <h5><?php esc_html_e('Weekly schedule', 'simplified-food-fitness'); ?></h5>
+                                    <p><?php esc_html_e('Drop meals into the correct time of day for every calendar tile.', 'simplified-food-fitness'); ?></p>
+                                </div>
+                                <div id="sff-meal-calendar" class="sff-calendar-grid" aria-live="polite"></div>
+                            </section>
+                        </div>
+
+                        <div class="sff-admin-manager__day-types">
+                            <?php foreach ($day_order as $day_key) :
+                                $current_type = isset($selected_day_types[$day_key]) ? $selected_day_types[$day_key] : '';
+                                ?>
+                                <div class="sff-day-type-selector__item" data-day="<?php echo esc_attr($day_key); ?>">
+                                    <label for="sff-day-type-front-<?php echo esc_attr($day_key); ?>"><?php echo esc_html($day_labels[$day_key]); ?></label>
+                                    <select id="sff-day-type-front-<?php echo esc_attr($day_key); ?>" class="sff-day-type-select" data-day="<?php echo esc_attr($day_key); ?>">
+                                        <?php foreach ($day_targets as $slug => $config) : ?>
+                                            <option value="<?php echo esc_attr($slug); ?>" <?php selected($current_type, $slug); ?>><?php echo esc_html($config['label']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <input type="hidden" name="sff_meal_data" id="sff_meal_data" value="<?php echo esc_attr($builder_schedule_json); ?>">
+                        <input type="hidden" name="sff_day_types" id="sff_day_types" value="<?php echo esc_attr($builder_day_types_json); ?>">
+
+                        <div class="sff-admin-manager__actions">
+                            <button type="submit" class="button button-primary"><?php esc_html_e('Save meal plan layout', 'simplified-food-fitness'); ?></button>
+                        </div>
+                    </form>
+                </div>
+            <?php else : ?>
+                <p class="sff-admin-manager__empty"><?php esc_html_e('Save a meal plan name above to unlock the drag-and-drop calendar.', 'simplified-food-fitness'); ?></p>
+            <?php endif; ?>
+
+            <?php if (!empty($assigned_plans)) : ?>
+                <div class="sff-admin-manager__plan-list">
+                    <?php foreach ($assigned_plans as $plan) :
+                        $manage_url    = add_query_arg(array_merge($plan_selector_redirect_args, ['sff_plan' => $plan->ID]), $base_url);
+                        $plan_redirect = remove_query_arg('sff_plan', $plan_selector_redirect_base);
+                        ?>
+                        <div class="sff-admin-manager__plan is-assigned<?php echo $selected_plan_id === intval($plan->ID) ? ' is-active' : ''; ?>">
+                            <div class="sff-admin-manager__plan-main">
+                                <h4><?php echo esc_html(get_the_title($plan)); ?></h4>
+                                <span class="sff-admin-manager__badge"><?php esc_html_e('Assigned', 'simplified-food-fitness'); ?></span>
+                                <span class="sff-admin-manager__plan-updated"><?php printf(esc_html__('Updated %s', 'simplified-food-fitness'), esc_html(get_post_modified_time(get_option('date_format'), false, $plan, true))); ?></span>
+                            </div>
+                            <div class="sff-admin-manager__plan-actions">
+                                <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="sff-admin-manager__plan-form">
+                                    <?php wp_nonce_field('sff_assign_plan_' . $plan->ID); ?>
+                                    <input type="hidden" name="action" value="sff_assign_plan_to_user">
+                                    <input type="hidden" name="user_id" value="<?php echo esc_attr($client_id); ?>">
+                                    <input type="hidden" name="plan_id" value="<?php echo esc_attr($plan->ID); ?>">
+                                    <input type="hidden" name="plan_action" value="unassign">
+                                    <input type="hidden" name="redirect" value="<?php echo esc_url($plan_redirect); ?>">
+                                    <button type="submit" class="button button-secondary">
+                                        <?php esc_html_e('Remove from client', 'simplified-food-fitness'); ?>
+                                    </button>
+                                </form>
+                                <a class="button button-secondary" href="<?php echo esc_url($manage_url); ?>"><?php esc_html_e('Manage in calendar', 'simplified-food-fitness'); ?></a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else : ?>
+                <p class="sff-admin-manager__empty"><?php esc_html_e('This client does not have any assigned meal plans yet. Use the selector above to assign one.', 'simplified-food-fitness'); ?></p>
             <?php endif; ?>
         </div>
 
@@ -3979,6 +4189,132 @@ function sff_admin_meal_plan_manager_shortcode($atts = []) {
     return ob_get_clean();
 }
 add_shortcode('sff_admin_meal_manager', 'sff_admin_meal_plan_manager_shortcode');
+
+function sff_handle_create_meal_plan() {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have permission to create meal plans.', 'simplified-food-fitness'));
+    }
+
+    $redirect = isset($_POST['redirect']) ? esc_url_raw(wp_unslash($_POST['redirect'])) : home_url('/');
+
+    check_admin_referer('sff_create_meal_plan');
+
+    $plan_title = isset($_POST['plan_title']) ? sanitize_text_field(wp_unslash($_POST['plan_title'])) : '';
+    if ('' === $plan_title) {
+        $redirect = add_query_arg('sff_message', 'plan_create_error', $redirect);
+        wp_safe_redirect($redirect);
+        exit;
+    }
+
+    $plan_id = wp_insert_post([
+        'post_title'  => $plan_title,
+        'post_type'   => 'meal_plan',
+        'post_status' => 'draft',
+    ], true);
+
+    if (is_wp_error($plan_id) || !$plan_id) {
+        $redirect = add_query_arg('sff_message', 'plan_create_error', $redirect);
+        wp_safe_redirect($redirect);
+        exit;
+    }
+
+    $day_order = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    $day_type_configs = sff_get_day_type_macros();
+    $type_keys = array_keys($day_type_configs);
+    if (empty($type_keys)) {
+        $type_keys = ['standard'];
+    }
+
+    $default_schedule = [];
+    $default_day_types = [];
+    foreach ($day_order as $index => $day_key) {
+        $default_schedule[$day_key] = [];
+        $default_day_types[$day_key] = $type_keys[$index % count($type_keys)];
+    }
+
+    update_post_meta($plan_id, '_sff_meal_data', wp_json_encode($default_schedule));
+    update_post_meta($plan_id, '_sff_day_types', $default_day_types);
+
+    $redirect = add_query_arg('sff_plan', $plan_id, $redirect);
+    $redirect = add_query_arg('sff_message', 'plan_created', $redirect);
+    wp_safe_redirect($redirect);
+    exit;
+}
+add_action('admin_post_sff_create_meal_plan', 'sff_handle_create_meal_plan');
+
+function sff_handle_save_plan_from_hub() {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have permission to update meal plans.', 'simplified-food-fitness'));
+    }
+
+    $plan_id  = isset($_POST['plan_id']) ? intval($_POST['plan_id']) : 0;
+    $client_id = isset($_POST['client_id']) ? intval($_POST['client_id']) : 0;
+    $redirect = isset($_POST['redirect']) ? esc_url_raw(wp_unslash($_POST['redirect'])) : home_url('/');
+
+    if (!$plan_id || get_post_type($plan_id) !== 'meal_plan') {
+        $redirect = add_query_arg('sff_message', 'plan_save_error', $redirect);
+        wp_safe_redirect($redirect);
+        exit;
+    }
+
+    check_admin_referer('sff_save_plan_from_hub_' . $plan_id);
+
+    $plan_title = isset($_POST['plan_title']) ? sanitize_text_field(wp_unslash($_POST['plan_title'])) : '';
+    if ($plan_title) {
+        wp_update_post([
+            'ID'         => $plan_id,
+            'post_title' => $plan_title,
+        ]);
+    }
+
+    $schedule_input = isset($_POST['sff_meal_data']) ? wp_unslash($_POST['sff_meal_data']) : '';
+    $schedule_data  = json_decode($schedule_input, true);
+    $day_order      = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+    if (!is_array($schedule_data)) {
+        $schedule_data = [];
+    }
+
+    $clean_schedule = [];
+    foreach ($day_order as $day_key) {
+        $day_values = isset($schedule_data[$day_key]) ? (array) $schedule_data[$day_key] : [];
+        $clean_schedule[$day_key] = array_values(array_filter(array_map('intval', $day_values)));
+    }
+
+    update_post_meta($plan_id, '_sff_meal_data', wp_json_encode($clean_schedule));
+
+    $day_types_input = isset($_POST['sff_day_types']) ? wp_unslash($_POST['sff_day_types']) : '';
+    $day_types_data  = json_decode($day_types_input, true);
+    $day_type_configs = sff_get_day_type_macros();
+    $type_keys        = array_keys($day_type_configs);
+    if (empty($type_keys)) {
+        $type_keys = ['standard'];
+    }
+
+    $clean_day_types = [];
+    foreach ($day_order as $index => $day_key) {
+        $candidate = '';
+        if (is_array($day_types_data) && isset($day_types_data[$day_key])) {
+            $candidate = sanitize_key($day_types_data[$day_key]);
+        }
+        if (!$candidate || (!empty($day_type_configs) && !isset($day_type_configs[$candidate]))) {
+            $candidate = $type_keys[$index % count($type_keys)];
+        }
+        $clean_day_types[$day_key] = $candidate;
+    }
+
+    update_post_meta($plan_id, '_sff_day_types', $clean_day_types);
+
+    if ($client_id) {
+        sff_sync_user_recipes_from_assigned_plans($client_id);
+    }
+
+    $redirect = add_query_arg('sff_plan', $plan_id, $redirect);
+    $redirect = add_query_arg('sff_message', 'plan_saved', $redirect);
+    wp_safe_redirect($redirect);
+    exit;
+}
+add_action('admin_post_sff_save_plan_from_hub', 'sff_handle_save_plan_from_hub');
 
 function sff_handle_assign_plan_to_user() {
     if (!current_user_can('manage_options')) {

@@ -18,6 +18,15 @@
         var macros = sffMealPlan.macros || {};
         var selectedDayTypes = Object.assign({}, sffMealPlan.selectedDayTypes || {});
         var dayTypeOptions = sffMealPlan.dayTypeOptions || {};
+        var timeSlots = Array.isArray(sffMealPlan.timeSlots) && sffMealPlan.timeSlots.length
+            ? sffMealPlan.timeSlots
+            : ['6:30 AM', '9:30 AM', '12:30 PM', '3:30 PM', '6:30 PM', '8:30 PM'];
+        var slotPlaceholder = (sffMealPlan.i18n && sffMealPlan.i18n.slotPlaceholder)
+            ? sffMealPlan.i18n.slotPlaceholder
+            : 'Drop meal here';
+        var emptyStateText = (sffMealPlan.i18n && sffMealPlan.i18n.emptyDay)
+            ? sffMealPlan.i18n.emptyDay
+            : 'Drop recipes here';
 
         var dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         var dayLabels = {
@@ -36,6 +45,7 @@
 
         var dayTypeBadges = {};
         var dayTotals = {};
+        var slotBodiesByDay = {};
 
         function formatNumber(value) {
             var num = parseFloat(value);
@@ -172,6 +182,7 @@
             var count = body.querySelectorAll('.sff-recipe-item').length;
             var badge = dayEl.querySelector('.sff-calendar-day__count');
             var empty = dayEl.querySelector('.sff-calendar-day__empty');
+            var slotBodies = dayEl.querySelectorAll('.sff-calendar-day__slot-body');
 
             if (badge) {
                 badge.textContent = count ? count + (count === 1 ? ' meal' : ' meals') : 'Empty';
@@ -180,6 +191,10 @@
                 empty.style.display = count ? 'none' : '';
             }
             dayEl.classList.toggle('is-empty', count === 0);
+            slotBodies.forEach(function (slotBody) {
+                var hasMeals = slotBody.querySelectorAll('.sff-recipe-item').length > 0;
+                slotBody.classList.toggle('is-empty', !hasMeals);
+            });
         }
 
         function renderRecipeList() {
@@ -211,6 +226,7 @@
             calendar.innerHTML = '';
             dayTypeBadges = {};
             dayTotals = {};
+            slotBodiesByDay = {};
 
             dayOrder.forEach(function (day) {
                 var column = document.createElement('div');
@@ -241,9 +257,46 @@
                 body.className = 'sff-calendar-day__body';
                 column.appendChild(body);
 
+                var slotsWrapper = document.createElement('div');
+                slotsWrapper.className = 'sff-calendar-day__slots';
+                body.appendChild(slotsWrapper);
+
+                slotBodiesByDay[day] = [];
+
+                var slotsToRender = timeSlots.length ? timeSlots : ['Anytime'];
+                slotsToRender.forEach(function (label, slotIndex) {
+                    var slot = document.createElement('div');
+                    slot.className = 'sff-calendar-day__slot';
+                    slot.dataset.slot = slotIndex;
+
+                    var slotLabel = document.createElement('span');
+                    slotLabel.className = 'sff-calendar-day__slot-label';
+                    slotLabel.textContent = label;
+                    slot.appendChild(slotLabel);
+
+                    var slotBody = document.createElement('div');
+                    slotBody.className = 'sff-calendar-day__slot-body';
+                    slotBody.dataset.placeholder = slotPlaceholder;
+                    slotBody.classList.add('is-empty');
+                    slot.appendChild(slotBody);
+
+                    slotsWrapper.appendChild(slot);
+                    slotBodiesByDay[day].push(slotBody);
+
+                    Sortable.create(slotBody, {
+                        group: 'recipes',
+                        animation: 150,
+                        ghostClass: 'sff-recipe-item--ghost',
+                        chosenClass: 'sff-recipe-item--chosen',
+                        onAdd: updateSchedule,
+                        onUpdate: updateSchedule,
+                        onRemove: updateSchedule
+                    });
+                });
+
                 var emptyState = document.createElement('div');
                 emptyState.className = 'sff-calendar-day__empty';
-                emptyState.textContent = 'Drop recipes here';
+                emptyState.textContent = emptyStateText;
                 column.appendChild(emptyState);
 
                 var totalsWrapper = document.createElement('div');
@@ -267,28 +320,24 @@
                 dayTotals[day] = { wrapper: totalsWrapper, grid: totalsGrid, empty: totalsEmpty };
 
                 if (schedule[day]) {
+                    var slotBodies = slotBodiesByDay[day];
+                    var slotCount = slotBodies.length || 1;
+                    var itemIndex = 0;
                     schedule[day].forEach(function (id) {
                         var recipe = recipes.find(function (r) {
                             return parseInt(r.id, 10) === parseInt(id, 10);
                         });
 
+                        var targetSlot = slotBodies[itemIndex % slotCount] || body;
+                        itemIndex += 1;
+
                         if (recipe) {
-                            body.appendChild(createRecipeElement(recipe));
+                            targetSlot.appendChild(createRecipeElement(recipe));
                         } else {
-                            body.appendChild(createMissingRecipeElement(id));
+                            targetSlot.appendChild(createMissingRecipeElement(id));
                         }
                     });
                 }
-
-                Sortable.create(body, {
-                    group: 'recipes',
-                    animation: 150,
-                    ghostClass: 'sff-recipe-item--ghost',
-                    chosenClass: 'sff-recipe-item--chosen',
-                    onAdd: updateSchedule,
-                    onUpdate: updateSchedule,
-                    onRemove: updateSchedule
-                });
 
                 calendar.appendChild(column);
                 refreshDayState(column);
@@ -302,14 +351,16 @@
             var dayEls = calendar.querySelectorAll('.sff-calendar-day');
             dayEls.forEach(function (dayEl) {
                 var day = dayEl.dataset.day;
-                var items = dayEl.querySelectorAll('.sff-calendar-day__body .sff-recipe-item');
+                var slotBodies = dayEl.querySelectorAll('.sff-calendar-day__slot-body');
 
                 schedule[day] = [];
-                items.forEach(function (item) {
-                    var id = parseInt(item.dataset.id, 10);
-                    if (!isNaN(id)) {
-                        schedule[day].push(id);
-                    }
+                slotBodies.forEach(function (slotBody) {
+                    slotBody.querySelectorAll('.sff-recipe-item').forEach(function (item) {
+                        var id = parseInt(item.dataset.id, 10);
+                        if (!isNaN(id)) {
+                            schedule[day].push(id);
+                        }
+                    });
                 });
 
                 refreshDayState(dayEl);

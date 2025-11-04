@@ -150,7 +150,9 @@
                 var numberEl = macroEl.querySelector('.sff-calendar-day__macro-number');
                 var targetEl = macroEl.querySelector('.sff-calendar-day__macro-target');
                 if (numberEl) {
-                    numberEl.textContent = formatNumber(totals[metric], precision, locale);
+                    var numberUnit = numberEl.dataset.unit || '';
+                    var numberText = formatNumber(totals[metric], precision, locale);
+                    numberEl.textContent = numberText + (numberUnit ? ' ' + numberUnit : '');
                 }
                 if (targetEl) {
                     var targetText = formatNumber(targetValue, precision, locale);
