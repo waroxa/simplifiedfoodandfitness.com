@@ -34,6 +34,16 @@
         var dangerLow = typeof thresholds.dangerLow === 'number' ? thresholds.dangerLow : 0.6;
         var dangerHigh = typeof thresholds.dangerHigh === 'number' ? thresholds.dangerHigh : 1.2;
 
+        var modal = root.querySelector('.sff-meal-plan-preview__modal');
+        var modalContent = modal ? modal.querySelector('.sff-meal-plan-preview__modal-content') : null;
+        var modalClose = modal ? modal.querySelector('.sff-meal-plan-preview__modal-close') : null;
+        var modalBackdrop = modal ? modal.querySelector('.sff-meal-plan-preview__modal-backdrop') : null;
+        var activeRecipe = null;
+        var activePanel = null;
+        var panelPlaceholder = null;
+        var isRecipeDragging = false;
+        var recipeDragResetTimer = null;
+
         function determineStatus(value, target) {
             value = Math.max(0, value);
             target = Math.max(0, target);
@@ -351,6 +361,280 @@
             });
         }
 
+        function isModalOpen() {
+            return modal && modal.classList.contains('is-active');
+        }
+
+        function closeRecipeModal(shouldFocus) {
+            if (!modal) {
+                return;
+            }
+
+            modal.setAttribute('aria-hidden', 'true');
+            modal.classList.remove('is-active');
+            root.classList.remove('sff-meal-plan-preview--modal-open');
+
+            if (activePanel && panelPlaceholder && panelPlaceholder.parentNode) {
+                panelPlaceholder.parentNode.replaceChild(activePanel, panelPlaceholder);
+            } else if (activePanel && activeRecipe) {
+                activeRecipe.appendChild(activePanel);
+            }
+
+            if (activePanel) {
+                activePanel.setAttribute('hidden', 'hidden');
+                activePanel.classList.remove('is-active');
+            }
+
+            if (panelPlaceholder && panelPlaceholder.parentNode) {
+                panelPlaceholder.parentNode.removeChild(panelPlaceholder);
+            }
+
+            if (activeRecipe) {
+                activeRecipe.classList.remove('is-modal-open');
+                activeRecipe.setAttribute('aria-expanded', 'false');
+                if (shouldFocus !== false) {
+                    try {
+                        activeRecipe.focus({ preventScroll: true });
+                    } catch (error) {
+                        activeRecipe.focus();
+                    }
+                }
+            }
+
+            if (modalContent) {
+                modalContent.innerHTML = '';
+            }
+
+            activeRecipe = null;
+            activePanel = null;
+            panelPlaceholder = null;
+        }
+
+        function openRecipeModal(recipeEl) {
+            if (!modal || !modalContent || !recipeEl) {
+                return;
+            }
+            if (isRecipeDragging) {
+                return;
+            }
+
+            var panel = recipeEl.querySelector('[data-recipe-panel]');
+            if (!panel) {
+                return;
+            }
+
+            if (activeRecipe && activeRecipe !== recipeEl) {
+                closeRecipeModal(false);
+            }
+
+            activeRecipe = recipeEl;
+            activePanel = panel;
+            panelPlaceholder = document.createElement('div');
+            panelPlaceholder.className = 'sff-preview-meal__panel-placeholder';
+            panel.parentNode.insertBefore(panelPlaceholder, panel);
+
+            var summary = recipeEl.querySelector('.sff-preview-meal__summary');
+            modalContent.innerHTML = '';
+            if (summary) {
+                var summaryClone = summary.cloneNode(true);
+                summaryClone.classList.add('sff-preview-meal__summary--modal');
+                modalContent.appendChild(summaryClone);
+            }
+
+            modalContent.appendChild(panel);
+            panel.classList.add('is-active');
+            panel.removeAttribute('hidden');
+
+            recipeEl.classList.add('is-modal-open');
+            recipeEl.setAttribute('aria-expanded', 'true');
+            modal.setAttribute('aria-hidden', 'false');
+            modal.classList.add('is-active');
+            root.classList.add('sff-meal-plan-preview--modal-open');
+
+            if (modalClose) {
+                modalClose.focus();
+            }
+        }
+
+        function setupRecipeModal() {
+            if (!modal || !modalContent) {
+                return;
+            }
+
+            root.addEventListener('click', function (event) {
+                if (modal.contains(event.target)) {
+                    return;
+                }
+                var recipeEl = event.target.closest('.sff-preview-meal');
+                if (!recipeEl) {
+                    return;
+                }
+                if (event.target.closest('.sff-preview-swap-form')) {
+                    return;
+                }
+                event.preventDefault();
+                openRecipeModal(recipeEl);
+            });
+
+            root.addEventListener('keydown', function (event) {
+                if (event.key !== 'Enter' && event.key !== ' ') {
+                    return;
+                }
+                var recipeEl = event.target.closest('.sff-preview-meal');
+                if (!recipeEl) {
+                    return;
+                }
+                event.preventDefault();
+                openRecipeModal(recipeEl);
+            });
+
+            if (modalClose) {
+                modalClose.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    closeRecipeModal();
+                });
+            }
+
+            if (modalBackdrop) {
+                modalBackdrop.addEventListener('click', function () {
+                    closeRecipeModal();
+                });
+            }
+
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    closeRecipeModal();
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && isModalOpen()) {
+                    event.preventDefault();
+                    closeRecipeModal();
+                }
+            });
+        }
+
+        function setupRecipeDragAndDrop() {
+            var draggedRecipe = null;
+            var sourceDay = null;
+
+            function clearRecipeDropState() {
+                root.querySelectorAll('.sff-calendar-day__body.is-drop-target').forEach(function (el) {
+                    el.classList.remove('is-drop-target');
+                });
+                root.querySelectorAll('.sff-calendar-day.is-recipe-target').forEach(function (el) {
+                    el.classList.remove('is-recipe-target');
+                });
+                if (draggedRecipe) {
+                    draggedRecipe.classList.remove('is-dragging');
+                }
+            }
+
+            root.addEventListener('dragstart', function (event) {
+                var recipe = event.target.closest('.sff-preview-meal');
+                if (!recipe) {
+                    return;
+                }
+                if (activeRecipe && activeRecipe === recipe && isModalOpen()) {
+                    closeRecipeModal(false);
+                }
+                draggedRecipe = recipe;
+                sourceDay = recipe.closest('.sff-calendar-day');
+                isRecipeDragging = true;
+                if (recipeDragResetTimer) {
+                    clearTimeout(recipeDragResetTimer);
+                }
+                recipe.classList.add('is-dragging');
+                if (event.dataTransfer) {
+                    event.dataTransfer.effectAllowed = 'move';
+                    event.dataTransfer.setData('text/plain', recipe.dataset.recipeId || '');
+                }
+            });
+
+            root.addEventListener('dragover', function (event) {
+                if (!draggedRecipe) {
+                    return;
+                }
+                var day = event.target.closest('.sff-calendar-day');
+                if (!day) {
+                    return;
+                }
+                var body = day.querySelector('.sff-calendar-day__body');
+                if (!body) {
+                    return;
+                }
+                event.preventDefault();
+                body.classList.add('is-drop-target');
+                day.classList.add('is-recipe-target');
+            });
+
+            root.addEventListener('dragleave', function (event) {
+                if (!draggedRecipe) {
+                    return;
+                }
+                var body = event.target.closest('.sff-calendar-day__body');
+                if (!body) {
+                    return;
+                }
+                var next = event.relatedTarget || null;
+                if (!next || !body.contains(next)) {
+                    body.classList.remove('is-drop-target');
+                    var parentDay = body.closest('.sff-calendar-day');
+                    if (parentDay) {
+                        parentDay.classList.remove('is-recipe-target');
+                    }
+                }
+            });
+
+            root.addEventListener('drop', function (event) {
+                if (!draggedRecipe) {
+                    return;
+                }
+                var day = event.target.closest('.sff-calendar-day');
+                if (!day) {
+                    return;
+                }
+                var body = day.querySelector('.sff-calendar-day__body');
+                if (!body) {
+                    return;
+                }
+                event.preventDefault();
+
+                var reference = event.target.closest('.sff-preview-meal');
+                if (reference && reference !== draggedRecipe) {
+                    var rect = reference.getBoundingClientRect();
+                    var midpoint = rect.top + rect.height / 2;
+                    if (event.clientY < midpoint) {
+                        body.insertBefore(draggedRecipe, reference);
+                    } else {
+                        body.insertBefore(draggedRecipe, reference.nextSibling);
+                    }
+                } else {
+                    body.appendChild(draggedRecipe);
+                }
+
+                if (sourceDay && sourceDay !== day) {
+                    syncFormDayAttributes(sourceDay);
+                }
+                syncFormDayAttributes(day);
+                refreshAllDays();
+                clearRecipeDropState();
+            });
+
+            root.addEventListener('dragend', function () {
+                if (!draggedRecipe) {
+                    return;
+                }
+                clearRecipeDropState();
+                draggedRecipe = null;
+                sourceDay = null;
+                recipeDragResetTimer = setTimeout(function () {
+                    isRecipeDragging = false;
+                }, 80);
+            });
+        }
+
         function updateRecipeMacros(recipeEl, macros) {
             if (!recipeEl || !macros) {
                 return;
@@ -361,10 +645,21 @@
                     return;
                 }
                 var precision = metric === 'calories' ? 0 : 1;
+                var formatted = formatNumber(macros[metric], precision, locale);
                 recipeEl.dataset[metric] = macros[metric];
                 var field = recipeEl.querySelector('[data-metric="' + metric + '"]');
                 if (field) {
-                    field.textContent = formatNumber(macros[metric], precision, locale);
+                    field.textContent = formatted;
+                }
+                if (activeRecipe && modalContent) {
+                    var activeId = activeRecipe.getAttribute('data-recipe-id');
+                    var currentId = recipeEl.getAttribute('data-recipe-id');
+                    if (activeId && currentId && activeId === currentId) {
+                        var modalField = modalContent.querySelector('[data-metric="' + metric + '"]');
+                        if (modalField) {
+                            modalField.textContent = formatted;
+                        }
+                    }
                 }
             });
         }
@@ -403,10 +698,25 @@
         }
 
         function replaceIngredients(recipeEl, html) {
-            var container = recipeEl.querySelector('.sff-preview-meal__ingredients');
-            if (container) {
-                container.innerHTML = html;
+            if (!html) {
+                return;
             }
+            var targets = [];
+            if (recipeEl) {
+                targets = Array.prototype.slice.call(recipeEl.querySelectorAll('.sff-preview-meal__ingredients'));
+            }
+            if ((!targets || !targets.length) && recipeEl) {
+                var recipeId = recipeEl.getAttribute('data-recipe-id');
+                if (recipeId) {
+                    targets = Array.prototype.slice.call(root.querySelectorAll('.sff-preview-meal__ingredients[data-recipe-id="' + recipeId + '"]'));
+                }
+            }
+            if (!targets || !targets.length) {
+                return;
+            }
+            targets.forEach(function (container) {
+                container.innerHTML = html;
+            });
         }
 
         function setResetState(form, hasSwaps) {
@@ -555,6 +865,8 @@
         });
 
         setupDayDragAndDrop();
+        setupRecipeDragAndDrop();
+        setupRecipeModal();
         refreshAllDays();
     });
 })();
