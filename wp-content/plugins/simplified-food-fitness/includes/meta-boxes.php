@@ -221,9 +221,18 @@ function sff_render_meal_plan_meta_box($post) {
         ];
     }
 
+    $default_time_slots = [
+        __('6:30 AM', 'simplified-food-fitness'),
+        __('9:30 AM', 'simplified-food-fitness'),
+        __('12:30 PM', 'simplified-food-fitness'),
+        __('3:30 PM', 'simplified-food-fitness'),
+        __('6:30 PM', 'simplified-food-fitness'),
+        __('8:30 PM', 'simplified-food-fitness'),
+    ];
+
     // Enqueue scripts
-    wp_enqueue_script('sortablejs', 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js', [], '1.15.0', true);
-    wp_enqueue_script('sff-meal-plan-calendar', SFF_PLUGIN_URL . 'assets/js/meal-plan-calendar.js', ['sortablejs'], '1.0', true);
+    wp_enqueue_script('sortablejs');
+    wp_enqueue_script('sff-meal-plan-calendar');
 
     // Build recipe data + macros
     $recipes       = get_posts(['post_type' => 'recipe', 'numberposts' => -1]);
@@ -244,6 +253,11 @@ function sff_render_meal_plan_meta_box($post) {
         'selectedDayTypes' => $selected_day_types,
         'dayTypeOptions'   => $day_type_targets,
         'calorieTarget'    => $calorie_target,
+        'timeSlots'        => $default_time_slots,
+        'i18n'             => [
+            'slotPlaceholder' => __('Drag meal here', 'simplified-food-fitness'),
+            'emptyDay'        => __('No meals scheduled yet. Drag recipes into the timeline.', 'simplified-food-fitness'),
+        ],
     ]);
     ?>
 

@@ -941,12 +941,6 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
 }
 
 .sff-admin-manager__plan-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-}
-
-.sff-admin-manager__plan-toolbar {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
@@ -978,6 +972,153 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
 
 .sff-admin-manager__plan-tool .sff-admin-manager__selector {
     margin-bottom: 0;
+}
+
+.sff-admin-manager__plan-builder {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 12px;
+}
+
+.sff-admin-manager__plan-builder-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.sff-admin-manager__builder-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: minmax(260px, 320px) 1fr;
+}
+
+.sff-admin-manager__builder-column {
+    background: #f6fbf9;
+    border: 1px solid rgba(2, 52, 65, 0.08);
+    border-radius: 18px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 100%;
+}
+
+.sff-admin-manager__builder-column .sff-panel-header {
+    margin-bottom: 0;
+}
+
+.sff-admin-manager__builder-column--recipes {
+    overflow: hidden;
+}
+
+.sff-admin-manager__builder-column--recipes #sff-recipe-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.sff-admin-manager__builder-column--calendar {
+    overflow: hidden;
+}
+
+.sff-admin-manager__builder-column--calendar .sff-calendar-day__body {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.sff-admin-manager__builder-column--calendar .sff-calendar-day__slots {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.sff-admin-manager__builder-column--calendar .sff-calendar-day__slot {
+    display: grid;
+    grid-template-columns: minmax(68px, 80px) 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+.sff-admin-manager__builder-column--calendar .sff-calendar-day__slot-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(2, 52, 65, 0.55);
+    padding-top: 6px;
+}
+
+.sff-admin-manager__builder-column--calendar .sff-calendar-day__slot-body {
+    min-height: 60px;
+    border: 1px dashed rgba(2, 52, 65, 0.15);
+    border-radius: 14px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.sff-admin-manager__builder-column--calendar .sff-calendar-day__slot-body.is-empty {
+    background: rgba(2, 52, 65, 0.03);
+    border-color: rgba(2, 52, 65, 0.12);
+}
+
+.sff-admin-manager__builder-column--calendar .sff-calendar-day__slot-body:empty::before {
+    content: attr(data-placeholder);
+    font-size: 12px;
+    color: rgba(2, 52, 65, 0.45);
+}
+
+@media (max-width: 720px) {
+    .sff-admin-manager__builder-column--calendar .sff-calendar-day__slot {
+        grid-template-columns: 1fr;
+    }
+
+    .sff-admin-manager__builder-column--calendar .sff-calendar-day__slot-label {
+        padding-top: 0;
+    }
+}
+
+.sff-admin-manager__day-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    padding: 18px 20px;
+    background: rgba(2, 52, 65, 0.03);
+    border: 1px solid rgba(2, 52, 65, 0.08);
+    border-radius: 18px;
+}
+
+.sff-admin-manager__day-types .sff-day-type-selector__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sff-admin-manager__day-types label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #023441;
+}
+
+.sff-admin-manager__day-types select {
+    border-radius: 10px;
+    border: 1px solid rgba(2, 52, 65, 0.18);
+    padding: 8px 10px;
+    background: #fff;
+}
+
+@media (max-width: 1080px) {
+    .sff-admin-manager__builder-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 720px) {
@@ -1404,9 +1545,9 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
 
 .sff-calendar-day__header {
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
     padding: 16px 18px;
     border-bottom: 1px solid #dbe8e2;
     border-radius: 16px 16px 0 0;
@@ -1706,25 +1847,35 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
     letter-spacing: 0.04em;
 }
 
-.sff-meal-plan-preview .sff-calendar-day__macros {
+.sff-meal-plan-preview .sff-calendar-day__status {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.sff-meal-plan-preview .sff-calendar-day__macros,
+.sff-meal-plan-preview .sff-calendar-day__macros--compact {
+    padding: 10px 18px;
+    background: rgba(2, 52, 65, 0.02);
+    border-bottom: 1px dashed rgba(2, 52, 65, 0.1);
+}
+
+.sff-meal-plan-preview .sff-calendar-day__macro-group {
+    display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
-    row-gap: 16px;
-    padding: 14px 20px 12px;
-    border-bottom: 1px dashed rgba(2, 52, 65, 0.12);
-    background: rgba(2, 52, 65, 0.03);
+    gap: 14px;
 }
 
 .sff-meal-plan-preview .sff-calendar-day__macro {
-    flex: 1 1 calc(50% - 12px);
-    min-width: 140px;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
     font-weight: 600;
-    color: #365148;
+    color: #2f4a41;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
 }
 
 .sff-meal-plan-preview .sff-calendar-day__macro[data-status="good"] {
@@ -1744,42 +1895,57 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
 }
 
 .sff-meal-plan-preview .sff-calendar-day__macro-label {
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: rgba(2, 52, 65, 0.7);
-}
-
-
-.sff-meal-plan-preview .sff-calendar-day__macro-value {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-    width: 100%;
-    font-size: clamp(14px, 1.2vw + 12px, 16px);
-    line-height: 1.35;
+    color: rgba(2, 52, 65, 0.65);
 }
 
 .sff-meal-plan-preview .sff-calendar-day__macro-number {
-    font-size: clamp(16px, 1.5vw + 10px, 18px);
+    font-size: 15px;
     font-weight: 700;
-    font-variant-numeric: tabular-nums;
     white-space: nowrap;
+    color: inherit;
 }
 
 .sff-meal-plan-preview .sff-calendar-day__macro-target {
     font-size: 12px;
-    color: rgba(2, 52, 65, 0.55);
+    color: rgba(2, 52, 65, 0.5);
     white-space: nowrap;
-    font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 1080px) {
-    .sff-meal-plan-preview .sff-calendar-day__macro {
-        flex: 1 1 100%;
-    }
+.sff-meal-plan-preview .sff-calendar-day__calories {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 14px;
+    background: rgba(2, 52, 65, 0.08);
+}
+
+.sff-meal-plan-preview .sff-calendar-day__calories .sff-calendar-day__macro-number {
+    color: #023441;
+}
+
+.sff-meal-plan-preview .sff-calendar-day__calories[data-status="good"] {
+    background: rgba(30, 135, 90, 0.12);
+}
+
+.sff-meal-plan-preview .sff-calendar-day__calories[data-status="warn"] {
+    background: rgba(182, 134, 35, 0.12);
+}
+
+.sff-meal-plan-preview .sff-calendar-day__calories[data-status="danger"] {
+    background: rgba(191, 59, 59, 0.12);
+}
+
+.sff-meal-plan-preview .sff-calendar-day__calories-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(2, 52, 65, 0.55);
 }
 
 @media (max-width: 1024px) {
@@ -1837,11 +2003,11 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
 .sff-preview-meal {
     border: 1px solid rgba(2, 52, 65, 0.08);
     border-radius: 16px;
-    padding: 18px;
+    padding: 16px 18px;
     background: #ffffff;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 12px;
     box-shadow: 0 10px 28px rgba(2, 52, 65, 0.08);
     cursor: grab;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -1869,13 +2035,14 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
 .sff-preview-meal__summary {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
 }
 
 .sff-preview-meal__header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 12px;
+    align-items: center;
 }
 
 .sff-preview-meal__titles {
@@ -1886,7 +2053,7 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
 
 .sff-preview-meal__title {
     margin: 0;
-    font-size: 18px;
+    font-size: 17px;
     color: #023441;
 }
 
@@ -1902,43 +2069,30 @@ body.sff-admin-manager-menu-open .sff-admin-manager__menu-toggle {
     text-transform: uppercase;
 }
 
-.sff-preview-meal__macros {
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 12px;
-}
-
-.sff-preview-meal__macros div {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: rgba(2, 52, 65, 0.05);
-}
-
-.sff-preview-meal__macros dt {
-    margin: 0;
+.sff-preview-meal__time {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(2, 52, 65, 0.1);
     font-size: 11px;
-    text-transform: uppercase;
+    font-weight: 600;
     letter-spacing: 0.05em;
-    color: rgba(2, 52, 65, 0.55);
-}
-
-.sff-preview-meal__macros dd {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 700;
+    text-transform: uppercase;
     color: #023441;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
 }
 
-.sff-preview-meal__prompt {
-    margin: 0;
-    font-size: 13px;
-    color: rgba(2, 52, 65, 0.65);
+@media (max-width: 640px) {
+    .sff-meal-plan-preview .sff-calendar-day__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .sff-preview-meal__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .sff-preview-meal__summary--modal {

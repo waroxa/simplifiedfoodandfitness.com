@@ -71,6 +71,22 @@ function sff_enqueue_assets() {
         true
     );
 
+    wp_register_script(
+        'sortablejs',
+        'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js',
+        [],
+        '1.15.0',
+        true
+    );
+
+    wp_register_script(
+        'sff-meal-plan-calendar',
+        SFF_PLUGIN_URL . 'assets/js/meal-plan-calendar.js',
+        ['sortablejs'],
+        SFF_PLUGIN_VERSION,
+        true
+    );
+
     // ✅ CSS
     wp_enqueue_style('sff-styles', SFF_PLUGIN_URL . 'assets/css/sff-styles.css', [], '1.0.5');
 

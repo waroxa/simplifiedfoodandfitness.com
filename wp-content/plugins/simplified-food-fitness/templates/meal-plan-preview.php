@@ -74,6 +74,12 @@ $macro_display_map = [
     ],
 ];
 
+$macro_compact_labels = [
+    'protein' => ['abbr' => __('P', 'simplified-food-fitness'), 'label' => __('Protein', 'simplified-food-fitness')],
+    'carbs'   => ['abbr' => __('C', 'simplified-food-fitness'), 'label' => __('Carbs', 'simplified-food-fitness')],
+    'fat'     => ['abbr' => __('F', 'simplified-food-fitness'), 'label' => __('Fat', 'simplified-food-fitness')],
+];
+
 $preview_context      = isset($preview_context) && is_array($preview_context) ? $preview_context : [];
 $preview_client_id    = isset($preview_context['client_id']) ? intval($preview_context['client_id']) : 0;
 $preview_is_admin     = !empty($preview_context['is_admin_preview']);
@@ -124,24 +130,40 @@ $preview_is_admin     = !empty($preview_context['is_admin_preview']);
                             <span class="sff-calendar-day__type"><?php echo esc_html($day_type_label); ?></span>
                         <?php endif; ?>
                     </div>
-                    <span class="sff-calendar-day__status-badge" data-status="<?php echo esc_attr($status); ?>">
-                        <?php echo esc_html($status_labels[$status] ?? $status_labels['neutral']); ?>
-                    </span>
+                    <div class="sff-calendar-day__status">
+                        <span class="sff-calendar-day__status-badge" data-status="<?php echo esc_attr($status); ?>">
+                            <?php echo esc_html($status_labels[$status] ?? $status_labels['neutral']); ?>
+                        </span>
+                        <?php
+                        $calorie_value        = isset($totals['calories']) ? floatval($totals['calories']) : 0.0;
+                        $calorie_target_value = isset($target['calories']) ? floatval($target['calories']) : 0.0;
+                        ?>
+                        <div class="sff-calendar-day__macro sff-calendar-day__macro--calories sff-calendar-day__calories" data-day-metric="calories" data-status="<?php echo esc_attr($macro_statuses['calories'] ?? 'neutral'); ?>">
+                            <span class="sff-calendar-day__calories-label"><?php echo esc_html($macro_display_map['calories']['label']); ?></span>
+                            <span class="sff-calendar-day__macro-number" data-unit="<?php echo esc_attr($macro_display_map['calories']['unit']); ?>"><?php echo esc_html(number_format_i18n($calorie_value, $macro_display_map['calories']['precision'])); ?></span>
+                            <span class="sff-calendar-day__macro-target" data-unit="<?php echo esc_attr($macro_display_map['calories']['unit']); ?>"><?php echo esc_html('/ ' . number_format_i18n($calorie_target_value, $macro_display_map['calories']['precision'])); ?></span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="sff-calendar-day__macros">
-                    <?php foreach ($macro_display_map as $metric => $meta) :
-                        $value        = isset($totals[$metric]) ? floatval($totals[$metric]) : 0.0;
-                        $target_value = isset($target[$metric]) ? floatval($target[$metric]) : 0.0;
-                        ?>
-                        <div class="sff-calendar-day__macro" data-day-metric="<?php echo esc_attr($metric); ?>" data-status="<?php echo esc_attr($macro_statuses[$metric] ?? 'neutral'); ?>">
-                            <span class="sff-calendar-day__macro-label"><?php echo esc_html($meta['label']); ?></span>
-                            <span class="sff-calendar-day__macro-value">
-                                <span class="sff-calendar-day__macro-number"><?php echo esc_html(number_format_i18n($value, $meta['precision'])); ?></span>
-                                <span class="sff-calendar-day__macro-target" data-unit="<?php echo esc_attr($meta['unit']); ?>"><?php echo esc_html('/ ' . number_format_i18n($target_value, $meta['precision']) . ($meta['unit'] ? ' ' . $meta['unit'] : '')); ?></span>
-                            </span>
-                        </div>
-                    <?php endforeach; ?>
+                <div class="sff-calendar-day__macros sff-calendar-day__macros--compact">
+                    <div class="sff-calendar-day__macro-group" role="group" aria-label="<?php esc_attr_e('Daily macros', 'simplified-food-fitness'); ?>">
+                        <?php foreach ($macro_compact_labels as $metric => $meta) :
+                            $value        = isset($totals[$metric]) ? floatval($totals[$metric]) : 0.0;
+                            $target_value = isset($target[$metric]) ? floatval($target[$metric]) : 0.0;
+                            $precision    = $macro_display_map[$metric]['precision'];
+                            $unit         = $macro_display_map[$metric]['unit'];
+                            $value_text   = number_format_i18n($value, $precision) . ($unit ? ' ' . $unit : '');
+                            $target_text  = number_format_i18n($target_value, $precision) . ($unit ? ' ' . $unit : '');
+                            ?>
+                            <div class="sff-calendar-day__macro sff-calendar-day__macro--compact" data-day-metric="<?php echo esc_attr($metric); ?>" data-status="<?php echo esc_attr($macro_statuses[$metric] ?? 'neutral'); ?>">
+                                <span class="sff-calendar-day__macro-label" aria-hidden="true"><?php echo esc_html($meta['abbr']); ?></span>
+                                <span class="screen-reader-text"><?php echo esc_html($meta['label']); ?></span>
+                                <span class="sff-calendar-day__macro-number" data-unit="<?php echo esc_attr($unit); ?>"><?php echo esc_html($value_text); ?></span>
+                                <span class="sff-calendar-day__macro-target" data-unit="<?php echo esc_attr($unit); ?>"><?php echo esc_html('/ ' . $target_text); ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
 
                 <div class="sff-calendar-day__body">
@@ -150,35 +172,19 @@ $preview_is_admin     = !empty($preview_context['is_admin_preview']);
                             $macros = $recipe['macros'];
                             $swaps  = $recipe['swaps'];
                             ?>
-                            <article class="sff-preview-meal" data-recipe-id="<?php echo esc_attr($recipe['id']); ?>" data-calories="<?php echo esc_attr($macros['calories']); ?>" data-protein="<?php echo esc_attr($macros['protein']); ?>" data-carbs="<?php echo esc_attr($macros['carbs']); ?>" data-fat="<?php echo esc_attr($macros['fat']); ?>" data-day="<?php echo esc_attr($day_key); ?>" draggable="true" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false">
+                            <article class="sff-preview-meal" data-recipe-id="<?php echo esc_attr($recipe['id']); ?>" data-calories="<?php echo esc_attr($macros['calories']); ?>" data-protein="<?php echo esc_attr($macros['protein']); ?>" data-carbs="<?php echo esc_attr($macros['carbs']); ?>" data-fat="<?php echo esc_attr($macros['fat']); ?>" data-day="<?php echo esc_attr($day_key); ?>" data-time-label="<?php echo esc_attr($recipe['time_label']); ?>" draggable="true" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false">
                                 <div class="sff-preview-meal__summary">
                                     <header class="sff-preview-meal__header">
+                                        <?php if (!empty($recipe['time_label'])) : ?>
+                                            <span class="sff-preview-meal__time"><?php echo esc_html($recipe['time_label']); ?></span>
+                                        <?php endif; ?>
                                         <div class="sff-preview-meal__titles">
                                             <h4 class="sff-preview-meal__title"><?php echo esc_html($recipe['title']); ?></h4>
                                             <?php if (!empty($recipe['has_customization'])) : ?>
                                                 <span class="sff-preview-meal__badge"><?php esc_html_e('Customized', 'simplified-food-fitness'); ?></span>
                                             <?php endif; ?>
                                         </div>
-                                        <dl class="sff-preview-meal__macros">
-                                            <div>
-                                                <dt><?php esc_html_e('kcal', 'simplified-food-fitness'); ?></dt>
-                                                <dd data-metric="calories"><?php echo esc_html(number_format_i18n($macros['calories'], 0)); ?></dd>
-                                            </div>
-                                            <div>
-                                                <dt><?php esc_html_e('Protein', 'simplified-food-fitness'); ?></dt>
-                                                <dd data-metric="protein"><?php echo esc_html(number_format_i18n($macros['protein'], 1)); ?></dd>
-                                            </div>
-                                            <div>
-                                                <dt><?php esc_html_e('Carbs', 'simplified-food-fitness'); ?></dt>
-                                                <dd data-metric="carbs"><?php echo esc_html(number_format_i18n($macros['carbs'], 1)); ?></dd>
-                                            </div>
-                                            <div>
-                                                <dt><?php esc_html_e('Fat', 'simplified-food-fitness'); ?></dt>
-                                                <dd data-metric="fat"><?php echo esc_html(number_format_i18n($macros['fat'], 1)); ?></dd>
-                                            </div>
-                                        </dl>
                                     </header>
-                                    <p class="sff-preview-meal__prompt"><?php esc_html_e('Click to customize or drag to another day.', 'simplified-food-fitness'); ?></p>
                                 </div>
 
                                 <div class="sff-preview-meal__drawer" data-recipe-panel hidden>
